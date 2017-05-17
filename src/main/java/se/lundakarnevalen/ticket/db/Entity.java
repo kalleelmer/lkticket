@@ -3,6 +3,7 @@ package se.lundakarnevalen.ticket.db;
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -49,13 +50,16 @@ public abstract class Entity {
 		return getConnection().createStatement().executeQuery(query);
 	}
 
+	protected static PreparedStatement prepare(String query) throws SQLException {
+		return getConnection().prepareStatement(query);
+	}
+
 	/**
 	 * Generates a list of columns for an SQL query string based on @Column
 	 * annotations on the fields.
 	 * 
 	 * @param entity
-	 * @return
-	 * A String in the format "`id`,`col1`,`col2`" etc.
+	 * @return A String in the format "`id`,`col1`,`col2`" etc.
 	 */
 	public static String getCols(Class<? extends Entity> entity) {
 		StringBuilder cols = new StringBuilder();
