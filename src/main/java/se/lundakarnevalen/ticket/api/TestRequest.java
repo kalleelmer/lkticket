@@ -1,4 +1,4 @@
-package se.lundakarnevalen.ticket;
+package se.lundakarnevalen.ticket.api;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

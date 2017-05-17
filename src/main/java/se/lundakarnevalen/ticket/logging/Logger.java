@@ -4,23 +4,25 @@ import java.util.logging.Level;
 
 public class Logger {
 
-	public static enum LogLevel {
-		DEBUG, INFO, WARNING, ERROR, MINIMAL
-	};
-
 	private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger("DEFAULT");
 
-	public static void log(String message, LogLevel logLevel) {
+	public static void log(String message, Level level) {
 		logger.log(Level.INFO, message);
 	}
 
-	/**
-	 * A shorthand for sending log(String, LogLevel.INFO)
-	 * 
-	 * @param message
-	 *            the message
-	 */
-	public static void log(String message) {
-		log(message, LogLevel.INFO);
+	public static void trace(String message) {
+		log(message, Level.FINE);
+	}
+
+	public static void info(String message) {
+		log(message, Level.INFO);
+	}
+
+	public static void warn(String message) {
+		log(message, Level.WARNING);
+	}
+
+	public static void error(String message) {
+		log(message, Level.SEVERE);
 	}
 }

@@ -1,4 +1,4 @@
-package se.lundakarnevalen.ticket;
+package se.lundakarnevalen.ticket.api;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
@@ -9,7 +9,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
 import se.lundakarnevalen.ticket.logging.Logger;
-import se.lundakarnevalen.ticket.logging.Logger.LogLevel;
 
 public abstract class Request {
 
@@ -40,7 +39,7 @@ public abstract class Request {
 	/** Checks that an object isn't null, with a custom response code. */
 	protected static void assertNotNull(Object object, int status) throws WebApplicationException {
 		if (object == null) {
-			Logger.log("Object was null", LogLevel.WARNING);
+			Logger.warn("Request object was null");
 			throw new WebApplicationException(status);
 		}
 	}

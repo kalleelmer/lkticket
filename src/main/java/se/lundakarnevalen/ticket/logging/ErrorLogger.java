@@ -26,7 +26,7 @@ public class ErrorLogger {
 	public void put(Exception e) {
 		StringWriter sw = new StringWriter();
 		e.printStackTrace(new PrintWriter(sw));
-		Logger.log("Error: " + sw.toString());
+		Logger.error(sw.toString());
 	}
 
 }
