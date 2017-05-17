@@ -12,8 +12,8 @@ import org.json.JSONException;
 
 import se.lundakarnevalen.ticket.db.Event;
 
-@Path("/events")
-public class EventRequest extends Request {
+@Path("/shows")
+public class ShowRequest extends Request {
 	@GET
 	@Produces("application/json; charset=UTF-8")
 	public Response responseMsg() throws SQLException, JSONException {
