@@ -10,6 +10,8 @@ import java.sql.SQLException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.mysql.cj.api.jdbc.Statement;
+
 import se.lundakarnevalen.ticket.Environment;
 import se.lundakarnevalen.ticket.logging.Logger;
 
@@ -21,9 +23,9 @@ import se.lundakarnevalen.ticket.logging.Logger;
  *
  */
 public abstract class Entity {
-	public final long id;
+	public final int id;
 
-	public Entity(long id) {
+	public Entity(int id) {
 		this.id = id;
 	}
 
@@ -51,7 +53,7 @@ public abstract class Entity {
 	}
 
 	protected static PreparedStatement prepare(String query) throws SQLException {
-		return getConnection().prepareStatement(query);
+		return getConnection().prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 	}
 
 	/**

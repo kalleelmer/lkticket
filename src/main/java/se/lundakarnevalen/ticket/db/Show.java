@@ -15,12 +15,12 @@ public class Show extends Entity {
 	private static final String TABLE = "`shows`";
 	private static final String COLS = Entity.getCols(Show.class);
 
-	private Show(long id) throws SQLException {
+	private Show(int id) throws SQLException {
 		super(id);
 	}
 
 	private static Show create(ResultSet rs) throws SQLException {
-		Show event = new Show(rs.getLong("id"));
+		Show event = new Show(rs.getInt("id"));
 		event.name = rs.getString("name");
 		return event;
 	}
