@@ -67,12 +67,8 @@ public class AuthToken extends Entity {
 		PreparedStatement stmt = prepare(query);
 		stmt.setString(1, tokenValue);
 		stmt.setInt(2, user.id);
-		stmt.executeUpdate();
-		ResultSet rs = stmt.getGeneratedKeys();
-		if (!rs.next()) {
-			throw new SQLException("Token ID not generated");
-		}
-		AuthToken token = new AuthToken(rs.getInt(1));
+		int id = executeInsert(stmt);
+		AuthToken token = new AuthToken(id);
 		token.token = tokenValue;
 		token.user_id = user.id;
 		return token;
