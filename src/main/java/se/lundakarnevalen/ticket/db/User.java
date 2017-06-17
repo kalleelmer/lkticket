@@ -51,4 +51,8 @@ public class User extends Entity {
 		stmt.setString(1, email);
 		return new QueryMapper<User>(stmt.executeQuery()).toEntity(rs -> User.create(rs));
 	}
+
+	public List<Profile> getProfiles() throws SQLException {
+		return Profile.getByUser(this.id);
+	}
 }

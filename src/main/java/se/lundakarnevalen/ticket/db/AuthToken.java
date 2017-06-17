@@ -54,6 +54,13 @@ public class AuthToken extends Entity {
 		return new QueryMapper<AuthToken>(stmt.executeQuery()).toEntity(rs -> AuthToken.create(rs));
 	}
 
+	public static AuthToken getSingle(String token) throws SQLException {
+		String query = "SELECT " + COLS + " FROM " + TABLE + " WHERE `token`=?";
+		PreparedStatement stmt = prepare(query);
+		stmt.setString(1, token);
+		return new QueryMapper<AuthToken>(stmt.executeQuery()).toEntity(rs -> AuthToken.create(rs));
+	}
+
 	public static AuthToken issue(User user) throws SQLException {
 		String tokenValue = new BigInteger(130, random).toString(32);
 		String query = "INSERT INTO " + TABLE + " SET `token`=?, user_id=?";
@@ -69,5 +76,9 @@ public class AuthToken extends Entity {
 		token.token = tokenValue;
 		token.user_id = user.id;
 		return token;
+	}
+
+	public User getUser() throws SQLException {
+		return User.getSingle(this.user_id);
 	}
 }
