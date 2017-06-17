@@ -44,4 +44,12 @@ public class Show extends Entity {
 		stmt.setLong(1, id);
 		return new QueryMapper<Show>(stmt.executeQuery()).toEntity(rs -> Show.create(rs));
 	}
+
+	public static Show create(JSONObject input) throws SQLException, JSONException {
+		String query = "INSERT INTO " + TABLE + " SET `name`=?";
+		PreparedStatement stmt = prepare(query);
+		stmt.setString(1, input.getString("name"));
+		int id = executeInsert(stmt);
+		return getSingle(id);
+	}
 }
