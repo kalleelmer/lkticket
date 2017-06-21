@@ -39,8 +39,12 @@ public class GoogleLogin extends Request {
 		if (!data.getBoolean("verified_email")) {
 			throw new NotAuthorizedException("Email not verified");
 		}
-		User user = User.getByEmail(data.getString("email"));
-		assertNotNull(user);
+		String email = data.getString("email");
+		User user = User.getByEmail(email);
+		if (user == null) {
+			System.err.println("Didn't find email for login: " + email);
+			throw new NotAuthorizedException("Email not found");
+		}
 		AuthToken token = AuthToken.issue(user);
 		JSONObject response = new JSONObject();
 		response.put("user", user.toJSON());
