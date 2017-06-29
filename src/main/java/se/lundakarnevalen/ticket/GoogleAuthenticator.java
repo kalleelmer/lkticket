@@ -33,11 +33,6 @@ public final class GoogleAuthenticator {
 	 */
 	private static final String CLIENT_SECRET = Environment.getProperty("auth.google.secret");
 
-	/**
-	 * Callback URI that google will redirect to after successful authentication
-	 */
-	private static final String CALLBACK_URI = Environment.getProperty("auth.google.redirect");
-
 	private static final Collection<String> SCOPE = Arrays
 			.asList("https://www.googleapis.com/auth/userinfo.profile;https://www.googleapis.com/auth/userinfo.email"
 					.split(";"));
@@ -62,11 +57,11 @@ public final class GoogleAuthenticator {
 	/**
 	 * Builds a login URL based on client ID, secret, callback URI, and scope
 	 */
-	public String buildLoginUrl() {
+	public String buildLoginUrl(String redirect) {
 
 		final GoogleAuthorizationCodeRequestUrl url = flow.newAuthorizationUrl();
 
-		return url.setRedirectUri(CALLBACK_URI).setState(stateToken).build();
+		return url.setRedirectUri(redirect).setState(stateToken).build();
 	}
 
 	/**
@@ -96,9 +91,9 @@ public final class GoogleAuthenticator {
 	 *            authentication code provided by google
 	 * @throws JSONException
 	 */
-	public JSONObject getUserInfoJson(final String authCode) throws IOException, JSONException {
+	public JSONObject getUserInfoJson(final String authCode, String redirect) throws IOException, JSONException {
 
-		final GoogleTokenResponse response = flow.newTokenRequest(authCode).setRedirectUri(CALLBACK_URI).execute();
+		final GoogleTokenResponse response = flow.newTokenRequest(authCode).setRedirectUri(redirect).execute();
 		final Credential credential = flow.createAndStoreCredential(response, null);
 		final HttpRequestFactory requestFactory = HTTP_TRANSPORT.createRequestFactory(credential);
 		final GenericUrl url = new GenericUrl(USER_INFO_URL);
