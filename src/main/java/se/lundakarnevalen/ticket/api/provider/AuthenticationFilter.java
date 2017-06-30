@@ -43,6 +43,10 @@ public class AuthenticationFilter implements javax.ws.rs.container.ContainerRequ
 			return;
 		}
 
+		if (requestContext.getMethod().equals("OPTIONS")) {
+			return;
+		}
+
 		final MultivaluedMap<String, String> headers = requestContext.getHeaders();
 
 		final List<String> authorizations = headers.get(AUTHORIZATION_PROPERTY);
@@ -70,6 +74,7 @@ public class AuthenticationFilter implements javax.ws.rs.container.ContainerRequ
 				if (user == null) {
 					throw new NotAuthorizedException("User not authenticated");
 				}
+				requestContext.setProperty("user_id", user.id);
 				if (rolesSet.contains("USER")) {
 					return;
 				}

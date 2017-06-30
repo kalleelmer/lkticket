@@ -15,11 +15,9 @@ public class HeaderResponseFilter implements ContainerResponseFilter {
 			throws IOException {
 		// Headers to allow CORS
 		responseContext.getHeaders().add("Access-Control-Allow-Origin", "*");
-		responseContext.getHeaders().add("Access-Control-Allow-Headers",
-				"Content-Type, X-User-ID, X-Auth-Token");
-		responseContext.getHeaders().add("Access-Control-Expose-Headers",
-				"Content-Type, X-User-ID, X-Auth-Token");
-		responseContext.getHeaders().add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+		responseContext.getHeaders().add("Access-Control-Allow-Headers", "Content-Type, Authorization");
+		responseContext.getHeaders().add("Access-Control-Expose-Headers", "Content-Type");
+		responseContext.getHeaders().add("Access-Control-Allow-Methods", "OPTIONS, GET, POST, PUT, DELETE");
 
 		// Custom server
 		responseContext.getHeaders().add("Server", "Lundakarnevalen Ticket System");
