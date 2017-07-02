@@ -30,7 +30,7 @@ public class Profile extends Entity {
 
 	public static List<Profile> getAll() throws SQLException {
 		String query = "SELECT " + COLS + " FROM " + TABLE;
-		return new QueryMapper<Profile>(query(query)).toEntityList(rs -> Profile.create(rs));
+		return new Mapper<Profile>(getCon(), query).toEntityList(rs -> Profile.create(rs));
 	}
 
 	@Override
@@ -45,7 +45,7 @@ public class Profile extends Entity {
 		String query = "SELECT " + COLS + " FROM " + TABLE + " WHERE `id`=?";
 		PreparedStatement stmt = prepare(query);
 		stmt.setLong(1, id);
-		return new QueryMapper<Profile>(stmt.executeQuery()).toEntity(rs -> Profile.create(rs));
+		return new Mapper<Profile>(stmt).toEntity(rs -> Profile.create(rs));
 	}
 
 	public static List<Profile> getByUser(long user_id) throws SQLException {
@@ -53,6 +53,6 @@ public class Profile extends Entity {
 				+ "(SELECT `profile_id` FROM `user_profiles` WHERE `user_id`=?)";
 		PreparedStatement stmt = prepare(query);
 		stmt.setLong(1, user_id);
-		return new QueryMapper<Profile>(stmt.executeQuery()).toEntityList(rs -> Profile.create(rs));
+		return new Mapper<Profile>(stmt).toEntityList(rs -> Profile.create(rs));
 	}
 }

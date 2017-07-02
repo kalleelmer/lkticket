@@ -27,7 +27,7 @@ public class Show extends Entity {
 
 	public static List<Show> getAll() throws SQLException {
 		String query = "SELECT " + COLS + " FROM " + TABLE;
-		return new QueryMapper<Show>(query(query)).toEntityList(rs -> Show.create(rs));
+		return new Mapper<Show>(getCon(), query).toEntityList(rs -> Show.create(rs));
 	}
 
 	@Override
@@ -42,7 +42,7 @@ public class Show extends Entity {
 		String query = "SELECT " + COLS + " FROM " + TABLE + " WHERE `id`=?";
 		PreparedStatement stmt = prepare(query);
 		stmt.setLong(1, id);
-		return new QueryMapper<Show>(stmt.executeQuery()).toEntity(rs -> Show.create(rs));
+		return new Mapper<Show>(stmt).toEntity(rs -> Show.create(rs));
 	}
 
 	public static Show create(JSONObject input) throws SQLException, JSONException {

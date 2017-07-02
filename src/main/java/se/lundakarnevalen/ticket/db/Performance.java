@@ -31,14 +31,14 @@ public class Performance extends Entity {
 
 	public static List<Performance> getAll() throws SQLException {
 		String query = "SELECT " + COLS + " FROM " + TABLE;
-		return new QueryMapper<Performance>(query(query)).toEntityList(rs -> Performance.create(rs));
+		return new Mapper<Performance>(getCon(), query).toEntityList(rs -> Performance.create(rs));
 	}
 
 	public static List<Performance> getByShow(int show_id) throws SQLException {
 		String query = "SELECT " + COLS + " FROM " + TABLE + " WHERE `show_id`=?";
 		PreparedStatement stmt = prepare(query);
 		stmt.setInt(1, show_id);
-		return new QueryMapper<Performance>(stmt.executeQuery()).toEntityList(rs -> Performance.create(rs));
+		return new Mapper<Performance>(stmt).toEntityList(rs -> Performance.create(rs));
 	}
 
 	@Override
@@ -54,7 +54,7 @@ public class Performance extends Entity {
 		String query = "SELECT " + COLS + " FROM " + TABLE + " WHERE `id`=?";
 		PreparedStatement stmt = prepare(query);
 		stmt.setLong(1, id);
-		return new QueryMapper<Performance>(stmt.executeQuery()).toEntity(rs -> Performance.create(rs));
+		return new Mapper<Performance>(stmt).toEntity(rs -> Performance.create(rs));
 	}
 
 	public static Performance create(int show_id, JSONObject input) throws SQLException, JSONException {

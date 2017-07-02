@@ -27,7 +27,7 @@ public class User extends Entity {
 
 	public static List<User> getAll() throws SQLException {
 		String query = "SELECT " + COLS + " FROM " + TABLE;
-		return new QueryMapper<User>(query(query)).toEntityList(rs -> User.create(rs));
+		return new Mapper<User>(getCon(), query).toEntityList(rs -> User.create(rs));
 	}
 
 	@Override
@@ -42,14 +42,14 @@ public class User extends Entity {
 		String query = "SELECT " + COLS + " FROM " + TABLE + " WHERE `id`=?";
 		PreparedStatement stmt = prepare(query);
 		stmt.setLong(1, id);
-		return new QueryMapper<User>(stmt.executeQuery()).toEntity(rs -> User.create(rs));
+		return new Mapper<User>(stmt).toEntity(rs -> User.create(rs));
 	}
 
 	public static User getByEmail(String email) throws SQLException {
 		String query = "SELECT " + COLS + " FROM " + TABLE + " WHERE `email`=?";
 		PreparedStatement stmt = prepare(query);
 		stmt.setString(1, email);
-		return new QueryMapper<User>(stmt.executeQuery()).toEntity(rs -> User.create(rs));
+		return new Mapper<User>(stmt).toEntity(rs -> User.create(rs));
 	}
 
 	public List<Profile> getProfiles() throws SQLException {

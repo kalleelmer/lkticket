@@ -29,7 +29,7 @@ public abstract class Entity {
 		this.id = id;
 	}
 
-	private static Connection getConnection() throws SQLException {
+	protected static Connection getCon() throws SQLException {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 			String dbName = Environment.getProperty("db.name");
@@ -49,11 +49,11 @@ public abstract class Entity {
 	}
 
 	protected static ResultSet query(String query) throws SQLException {
-		return getConnection().createStatement().executeQuery(query);
+		return getCon().createStatement().executeQuery(query);
 	}
 
 	protected static PreparedStatement prepare(String query) throws SQLException {
-		return getConnection().prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+		return getCon().prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 	}
 
 	/**

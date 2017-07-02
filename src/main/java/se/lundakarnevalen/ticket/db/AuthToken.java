@@ -39,7 +39,7 @@ public class AuthToken extends Entity {
 
 	public static List<AuthToken> getAll() throws SQLException {
 		String query = "SELECT " + COLS + " FROM " + TABLE;
-		return new QueryMapper<AuthToken>(query(query)).toEntityList(rs -> AuthToken.create(rs));
+		return new Mapper<AuthToken>(getCon(), query).toEntityList(rs -> AuthToken.create(rs));
 	}
 
 	@Override
@@ -51,14 +51,14 @@ public class AuthToken extends Entity {
 		String query = "SELECT " + COLS + " FROM " + TABLE + " WHERE `id`=?";
 		PreparedStatement stmt = prepare(query);
 		stmt.setLong(1, id);
-		return new QueryMapper<AuthToken>(stmt.executeQuery()).toEntity(rs -> AuthToken.create(rs));
+		return new Mapper<AuthToken>(stmt).toEntity(rs -> AuthToken.create(rs));
 	}
 
 	public static AuthToken getSingle(String token) throws SQLException {
 		String query = "SELECT " + COLS + " FROM " + TABLE + " WHERE `token`=?";
 		PreparedStatement stmt = prepare(query);
 		stmt.setString(1, token);
-		return new QueryMapper<AuthToken>(stmt.executeQuery()).toEntity(rs -> AuthToken.create(rs));
+		return new Mapper<AuthToken>(stmt).toEntity(rs -> AuthToken.create(rs));
 	}
 
 	public static AuthToken issue(User user) throws SQLException {
