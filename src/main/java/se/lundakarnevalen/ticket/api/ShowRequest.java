@@ -48,7 +48,7 @@ public class ShowRequest extends Request {
 	}
 
 	@POST
-	@PermitAll
+	@RolesAllowed("ADMIN")
 	@Path("/{id}/performances")
 	@Produces("application/json; charset=UTF-8")
 	public Response createPerformance(@PathParam("id") int id, String data) throws SQLException, JSONException {
