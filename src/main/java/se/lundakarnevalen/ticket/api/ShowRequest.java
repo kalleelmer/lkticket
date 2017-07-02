@@ -15,6 +15,7 @@ import javax.ws.rs.core.Response;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import se.lundakarnevalen.ticket.db.Performance;
 import se.lundakarnevalen.ticket.db.Show;
 
 @Path("/shows")
@@ -35,6 +36,25 @@ public class ShowRequest extends Request {
 		Show show = Show.getSingle(id);
 		assertNotNull(show, 404);
 		return status(200).entity(show).build();
+	}
+
+	@GET
+	@PermitAll
+	@Path("/{id}/performances")
+	@Produces("application/json; charset=UTF-8")
+	public Response getPerformances(@PathParam("id") int id) throws SQLException, JSONException {
+		List<Performance> perfs = Performance.getByShow(id);
+		return status(200).entity(perfs).build();
+	}
+
+	@POST
+	@PermitAll
+	@Path("/{id}/performances")
+	@Produces("application/json; charset=UTF-8")
+	public Response createPerformance(@PathParam("id") int id, String data) throws SQLException, JSONException {
+		JSONObject input = new JSONObject(data);
+		Performance perf = Performance.create(id, input);
+		return status(200).entity(perf.toJSON().toString()).build();
 	}
 
 	@POST
