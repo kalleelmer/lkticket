@@ -15,6 +15,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import se.lundakarnevalen.ticket.api.Request;
+import se.lundakarnevalen.ticket.db.Category;
 import se.lundakarnevalen.ticket.db.Performance;
 import se.lundakarnevalen.ticket.db.Show;
 
@@ -55,6 +56,25 @@ public class ShowRequest extends Request {
 		JSONObject input = new JSONObject(data);
 		Performance perf = Performance.create(id, input);
 		return status(200).entity(perf.toJSON().toString()).build();
+	}
+
+	@GET
+	@RolesAllowed("ADMIN")
+	@Path("/{id}/categories")
+	@Produces("application/json; charset=UTF-8")
+	public Response getCategories(@PathParam("id") int id) throws SQLException, JSONException {
+		List<Category> cats = Category.getByShow(id);
+		return status(200).entity(cats).build();
+	}
+
+	@POST
+	@RolesAllowed("ADMIN")
+	@Path("/{id}/categories")
+	@Produces("application/json; charset=UTF-8")
+	public Response createCategory(@PathParam("id") int id, String data) throws SQLException, JSONException {
+		JSONObject input = new JSONObject(data);
+		Category cat = Category.create(id, input);
+		return status(200).entity(cat.toJSON().toString()).build();
 	}
 
 	@POST
