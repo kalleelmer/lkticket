@@ -1,6 +1,6 @@
-package se.lundakarnevalen.ticket.exception;
+package se.lundakarnevalen.ticket.api.exception;
 
-import java.sql.SQLException;
+import java.io.IOException;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
@@ -9,10 +9,10 @@ import javax.ws.rs.ext.Provider;
 import se.lundakarnevalen.ticket.logging.ErrorLogger;
 
 @Provider
-public class SQLExceptionMapper implements ExceptionMapper<SQLException> {
+public class IOExceptionMapper implements ExceptionMapper<IOException> {
 
 	@Override
-	public Response toResponse(SQLException e) {
+	public Response toResponse(IOException e) {
 		ErrorLogger.getInstance().put(e);
 		return Response.status(500).build();
 	}

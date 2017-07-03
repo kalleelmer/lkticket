@@ -1,4 +1,4 @@
-package se.lundakarnevalen.ticket.exception;
+package se.lundakarnevalen.ticket.api.exception;
 
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.core.Response;
