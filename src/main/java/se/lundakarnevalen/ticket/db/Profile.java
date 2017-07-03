@@ -11,6 +11,8 @@ import org.json.JSONObject;
 import lombok.Getter;
 
 public class Profile extends Entity {
+	@Column(name = "id")
+	public final int id;
 	@Column(name = "name")
 	@Getter
 	private String name;
@@ -19,7 +21,7 @@ public class Profile extends Entity {
 	private static final String COLS = Entity.getCols(Profile.class);
 
 	private Profile(int id) throws SQLException {
-		super(id);
+		this.id = id;
 	}
 
 	private static Profile create(ResultSet rs) throws SQLException {

@@ -10,6 +10,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Performance extends Entity {
+	@Column(name = "id")
+	public final int id;
 	@Column(name = "show_id")
 	private int show_id;
 	@Column(name = "start_date")
@@ -19,7 +21,7 @@ public class Performance extends Entity {
 	private static final String COLS = Entity.getCols(Performance.class);
 
 	private Performance(int id) throws SQLException {
-		super(id);
+		this.id = id;
 	}
 
 	private static Performance create(ResultSet rs) throws SQLException {

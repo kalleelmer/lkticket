@@ -17,6 +17,7 @@ import org.json.JSONObject;
 import se.lundakarnevalen.ticket.api.Request;
 import se.lundakarnevalen.ticket.db.Category;
 import se.lundakarnevalen.ticket.db.Performance;
+import se.lundakarnevalen.ticket.db.Price;
 import se.lundakarnevalen.ticket.db.Rate;
 import se.lundakarnevalen.ticket.db.Show;
 
@@ -56,7 +57,7 @@ public class ShowRequest extends Request {
 	public Response createPerformance(@PathParam("id") int id, String data) throws SQLException, JSONException {
 		JSONObject input = new JSONObject(data);
 		Performance perf = Performance.create(id, input);
-		return status(200).entity(perf.toJSON().toString()).build();
+		return status(200).entity(perf).build();
 	}
 
 	@GET
@@ -75,7 +76,37 @@ public class ShowRequest extends Request {
 	public Response createCategory(@PathParam("id") int id, String data) throws SQLException, JSONException {
 		JSONObject input = new JSONObject(data);
 		Category cat = Category.create(id, input);
-		return status(200).entity(cat.toJSON().toString()).build();
+		return status(200).entity(cat).build();
+	}
+
+	@GET
+	@RolesAllowed("ADMIN")
+	@Path("/{id}/categories/{cid}")
+	@Produces("application/json; charset=UTF-8")
+	public Response getCategory(@PathParam("id") int id, @PathParam("cid") int cid) throws SQLException, JSONException {
+		Category cat = Category.getSingle(id);
+		return status(200).entity(cat).build();
+	}
+
+	@GET
+	@RolesAllowed("ADMIN")
+	@Path("/{id}/categories/{cid}/prices")
+	@Produces("application/json; charset=UTF-8")
+	public Response getCategoryPrices(@PathParam("id") int id, @PathParam("cid") int cid)
+			throws SQLException, JSONException {
+		List<Price> prices = Price.getByCategory(cid);
+		return status(200).entity(prices).build();
+	}
+
+	@POST
+	@RolesAllowed("ADMIN")
+	@Path("/{id}/categories/{cid}/prices")
+	@Produces("application/json; charset=UTF-8")
+	public Response createCategoryPrice(@PathParam("id") int id, @PathParam("cid") int cid, String data)
+			throws SQLException, JSONException {
+		JSONObject input = new JSONObject(data);
+		Price price = Price.create(cid, input);
+		return status(200).entity(price).build();
 	}
 
 	@GET
@@ -94,7 +125,7 @@ public class ShowRequest extends Request {
 	public Response createRate(@PathParam("id") int id, String data) throws SQLException, JSONException {
 		JSONObject input = new JSONObject(data);
 		Rate rate = Rate.create(id, input);
-		return status(200).entity(rate.toJSON().toString()).build();
+		return status(200).entity(rate).build();
 	}
 
 	@POST

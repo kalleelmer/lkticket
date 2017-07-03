@@ -9,6 +9,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Category extends Entity {
+	@Column(name = "id")
+	public final int id;
 	@Column(name = "show_id")
 	private int show_id;
 	@Column(name = "name")
@@ -20,7 +22,7 @@ public class Category extends Entity {
 	private static final String COLS = Entity.getCols(Category.class);
 
 	private Category(int id) throws SQLException {
-		super(id);
+		this.id = id;
 	}
 
 	private static Category create(ResultSet rs) throws SQLException {

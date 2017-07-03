@@ -23,11 +23,6 @@ import se.lundakarnevalen.ticket.logging.Logger;
  *
  */
 public abstract class Entity {
-	public final int id;
-
-	public Entity(int id) {
-		this.id = id;
-	}
 
 	protected static Connection getCon() throws SQLException {
 		try {
@@ -65,13 +60,14 @@ public abstract class Entity {
 	 */
 	public static String getCols(Class<? extends Entity> entity) {
 		StringBuilder cols = new StringBuilder();
-		cols.append("`id`");
 		Field[] fields = entity.getDeclaredFields();
+		int index = 0;
 		for (Field field : fields) {
 			Column col = field.getAnnotation(Column.class);
 			if (col != null) {
-				cols.append(",`" + col.name() + "`");
+				cols.append((index == 0 ? "" : ",") + "`" + col.name() + "`");
 			}
+			index++;
 		}
 		return cols.toString();
 	}

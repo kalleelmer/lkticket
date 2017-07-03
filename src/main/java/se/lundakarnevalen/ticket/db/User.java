@@ -9,6 +9,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class User extends Entity {
+	@Column(name = "id")
+	public final int id;
 	@Column(name = "email")
 	private String email;
 
@@ -16,7 +18,7 @@ public class User extends Entity {
 	private static final String COLS = Entity.getCols(User.class);
 
 	private User(int id) throws SQLException {
-		super(id);
+		this.id = id;
 	}
 
 	private static User create(ResultSet rs) throws SQLException {

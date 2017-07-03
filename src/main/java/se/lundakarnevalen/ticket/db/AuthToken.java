@@ -14,6 +14,9 @@ import lombok.Getter;
 
 public class AuthToken extends Entity {
 
+	@Column(name = "id")
+	public final int id;
+
 	@Column(name = "token")
 	@Getter
 	private String token;
@@ -27,7 +30,7 @@ public class AuthToken extends Entity {
 	private static SecureRandom random = new SecureRandom();
 
 	private AuthToken(int id) throws SQLException {
-		super(id);
+		this.id = id;
 	}
 
 	private static AuthToken create(ResultSet rs) throws SQLException {
