@@ -8,11 +8,17 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import lombok.Getter;
+
 public class User extends Entity {
 	@Column(name = "id")
 	public final int id;
 	@Column(name = "email")
 	private String email;
+
+	@Getter
+	@Column(name = "name")
+	private String name;
 
 	private static final String TABLE = "`users`";
 	private static final String COLS = Entity.getCols(User.class);
@@ -24,6 +30,7 @@ public class User extends Entity {
 	private static User create(ResultSet rs) throws SQLException {
 		User user = new User(rs.getInt("id"));
 		user.email = rs.getString("email");
+		user.name = rs.getString("name");
 		return user;
 	}
 
@@ -37,6 +44,7 @@ public class User extends Entity {
 		JSONObject json = new JSONObject();
 		json.put("id", id);
 		json.put("email", email);
+		json.put("name", name);
 		return json;
 	}
 
@@ -52,6 +60,16 @@ public class User extends Entity {
 		PreparedStatement stmt = prepare(query);
 		stmt.setString(1, email);
 		return new Mapper<User>(stmt).toEntity(rs -> User.create(rs));
+	}
+
+	public void setName(String name) throws SQLException {
+		String query = "UPDATE " + TABLE + " SET `name`=? WHERE `id`=?";
+		PreparedStatement stmt = prepare(query);
+		stmt.setString(1, name);
+		stmt.setInt(2, id);
+		stmt.executeUpdate();
+		stmt.getConnection().close();
+		this.name = name;
 	}
 
 	public List<Profile> getProfiles() throws SQLException {

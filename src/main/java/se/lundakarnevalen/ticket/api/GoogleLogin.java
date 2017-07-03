@@ -2,6 +2,7 @@ package se.lundakarnevalen.ticket.api;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.logging.Level;
 
 import javax.annotation.security.PermitAll;
 import javax.ws.rs.GET;
@@ -20,6 +21,7 @@ import se.lundakarnevalen.ticket.GoogleAuthenticator;
 import se.lundakarnevalen.ticket.db.AuthToken;
 import se.lundakarnevalen.ticket.db.User;
 import se.lundakarnevalen.ticket.logging.ErrorLogger;
+import se.lundakarnevalen.ticket.logging.Logger;
 
 @Path("/login/google")
 public class GoogleLogin extends Request {
@@ -42,6 +44,7 @@ public class GoogleLogin extends Request {
 			throws IOException, JSONException, SQLException {
 		try {
 			JSONObject data = helper.getUserInfoJson(authCode, redirect);
+			System.out.println(data.toString());
 			if (!data.getBoolean("verified_email")) {
 				throw new NotAuthorizedException("Email not verified");
 			}
@@ -50,6 +53,11 @@ public class GoogleLogin extends Request {
 			if (user == null) {
 				System.err.println("Didn't find email for login: " + email);
 				throw new NotAuthorizedException("Email not found");
+			}
+			String name = data.getString("name");
+			if (name != null && !name.equals(user.getName())) {
+				Logger.log("Updating name of " + email + " to " + name, Level.INFO);
+				user.setName(name);
 			}
 			AuthToken token = AuthToken.issue(user);
 			JSONObject response = new JSONObject();
