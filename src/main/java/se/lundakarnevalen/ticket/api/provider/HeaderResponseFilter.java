@@ -1,4 +1,4 @@
-package se.lundakarnevalen.ticket.api.filter;
+package se.lundakarnevalen.ticket.api.provider;
 
 import java.io.IOException;
 

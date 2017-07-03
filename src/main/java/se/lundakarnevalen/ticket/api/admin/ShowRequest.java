@@ -1,9 +1,8 @@
-package se.lundakarnevalen.ticket.api;
+package se.lundakarnevalen.ticket.api.admin;
 
 import java.sql.SQLException;
 import java.util.List;
 
-import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -15,13 +14,14 @@ import javax.ws.rs.core.Response;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import se.lundakarnevalen.ticket.api.Request;
 import se.lundakarnevalen.ticket.db.Performance;
 import se.lundakarnevalen.ticket.db.Show;
 
-@Path("/shows")
+@Path("/admin/shows")
 public class ShowRequest extends Request {
 	@GET
-	@PermitAll
+	@RolesAllowed("ADMIN")
 	@Produces("application/json; charset=UTF-8")
 	public Response getAll() throws SQLException, JSONException {
 		List<Show> shows = Show.getAll();
@@ -29,7 +29,7 @@ public class ShowRequest extends Request {
 	}
 
 	@GET
-	@PermitAll
+	@RolesAllowed("ADMIN")
 	@Path("/{id}")
 	@Produces("application/json; charset=UTF-8")
 	public Response getSingle(@PathParam("id") long id) throws SQLException, JSONException {
@@ -39,7 +39,7 @@ public class ShowRequest extends Request {
 	}
 
 	@GET
-	@PermitAll
+	@RolesAllowed("ADMIN")
 	@Path("/{id}/performances")
 	@Produces("application/json; charset=UTF-8")
 	public Response getPerformances(@PathParam("id") int id) throws SQLException, JSONException {
