@@ -22,7 +22,7 @@ import se.lundakarnevalen.ticket.db.Rate;
 import se.lundakarnevalen.ticket.db.Show;
 
 @Path("/admin/shows")
-public class ShowRequest extends Request {
+public class AdminShowRequest extends Request {
 	@GET
 	@RolesAllowed("ADMIN")
 	@Produces("application/json; charset=UTF-8")
