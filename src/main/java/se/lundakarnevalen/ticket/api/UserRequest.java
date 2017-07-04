@@ -24,6 +24,7 @@ public class UserRequest extends Request {
 		System.out.println("Requesting current user");
 		int userID = (Integer) context.getProperty("user_id");
 		User user = User.getSingle(userID);
-		return status(200).entity(user.toJSON().toString()).build();
+		assertNotNull(user);
+		return status(200).entity(user).build();
 	}
 }
