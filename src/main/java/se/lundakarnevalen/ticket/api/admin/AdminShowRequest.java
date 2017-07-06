@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -101,13 +102,23 @@ public class AdminShowRequest extends Request {
 
 	@PUT
 	@RolesAllowed("ADMIN")
-	@Path("/{id}/categories/{cid}/prices")
+	@Path("/{id}/categories/{category_id}/prices/{rate_id}")
 	@Produces("application/json; charset=UTF-8")
-	public Response createCategoryPrice(@PathParam("id") int id, @PathParam("cid") int cid, String data)
-			throws SQLException, JSONException {
+	public Response createCategoryPrice(@PathParam("id") int id, @PathParam("category_id") int cid,
+			@PathParam("rate_id") int rid, String data) throws SQLException, JSONException {
 		JSONObject input = new JSONObject(data);
-		Price price = Price.set(cid, input.getInt("rate_id"), input.getDouble("price"));
+		Price price = Price.set(cid, rid, input.getDouble("price"));
 		return status(200).entity(price).build();
+	}
+
+	@DELETE
+	@RolesAllowed("ADMIN")
+	@Path("/{id}/categories/{category_id}/prices/{rate_id}")
+	@Produces("application/json; charset=UTF-8")
+	public Response deleteCategoryPrice(@PathParam("id") int id, @PathParam("category_id") int cid,
+			@PathParam("rate_id") int rid, String data) throws SQLException, JSONException {
+		Price.delete(cid, rid);
+		return status(200).build();
 	}
 
 	@GET

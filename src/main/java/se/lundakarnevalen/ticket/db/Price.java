@@ -66,7 +66,17 @@ public class Price extends Entity {
 		stmt.setInt(1, category_id);
 		stmt.setInt(2, rate_id);
 		stmt.setDouble(3, price);
-		executeInsert(stmt);
+		stmt.executeUpdate();
+		stmt.getConnection().close();
 		return getSingle(category_id, rate_id);
+	}
+
+	public static void delete(int category_id, int rate_id) throws SQLException {
+		String query = "DELETE FROM " + TABLE + " WHERE `category_id`=? AND `rate_id`=?";
+		PreparedStatement stmt = prepare(query);
+		stmt.setInt(1, category_id);
+		stmt.setInt(2, rate_id);
+		stmt.executeUpdate();
+		stmt.getConnection().close();
 	}
 }
