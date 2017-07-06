@@ -6,6 +6,7 @@ import java.util.List;
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -98,14 +99,14 @@ public class AdminShowRequest extends Request {
 		return status(200).entity(prices).build();
 	}
 
-	@POST
+	@PUT
 	@RolesAllowed("ADMIN")
 	@Path("/{id}/categories/{cid}/prices")
 	@Produces("application/json; charset=UTF-8")
 	public Response createCategoryPrice(@PathParam("id") int id, @PathParam("cid") int cid, String data)
 			throws SQLException, JSONException {
 		JSONObject input = new JSONObject(data);
-		Price price = Price.create(cid, input);
+		Price price = Price.set(cid, input.getInt("rate_id"), input.getDouble("price"));
 		return status(200).entity(price).build();
 	}
 

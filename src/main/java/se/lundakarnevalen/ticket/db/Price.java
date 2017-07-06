@@ -60,13 +60,12 @@ public class Price extends Entity {
 		return new Mapper<Price>(stmt).toEntity(rs -> Price.create(rs));
 	}
 
-	public static Price create(int category_id, JSONObject input) throws SQLException, JSONException {
-		int rate_id = input.getInt("rate_id");
-		String query = "INSERT INTO " + TABLE + " SET `category_id`=?, `rate_id`=?, `price`=?";
+	public static Price set(int category_id, int rate_id, double price) throws SQLException, JSONException {
+		String query = "REPLACE INTO " + TABLE + " SET `category_id`=?, `rate_id`=?, `price`=?";
 		PreparedStatement stmt = prepare(query);
 		stmt.setInt(1, category_id);
 		stmt.setInt(2, rate_id);
-		stmt.setDouble(3, input.getDouble("price"));
+		stmt.setDouble(3, price);
 		executeInsert(stmt);
 		return getSingle(category_id, rate_id);
 	}
