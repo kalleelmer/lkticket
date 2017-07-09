@@ -63,7 +63,7 @@ public class Performance extends Entity {
 		String query = "INSERT INTO " + TABLE + " SET `show_id`=?, `start_date`=?";
 		PreparedStatement stmt = prepare(query);
 		stmt.setInt(1, show_id);
-		stmt.setString(2, input.getString("start"));
+		stmt.setTimestamp(2, Timestamp.valueOf(input.getString("start") + ":00"));
 		int id = executeInsert(stmt);
 		return getSingle(id);
 	}
