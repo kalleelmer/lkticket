@@ -33,13 +33,15 @@ public class AuthenticationFilter implements javax.ws.rs.container.ContainerRequ
 
 	@Override
 	public void filter(ContainerRequestContext requestContext) {
+		Class<?> clas = resourceInfo.getResourceClass();
+
 		Method method = resourceInfo.getResourceMethod();
 
-		if (method.isAnnotationPresent(DenyAll.class)) {
+		if (clas.isAnnotationPresent(DenyAll.class) || method.isAnnotationPresent(DenyAll.class)) {
 			throw new ForbiddenException();
 		}
 
-		if (method.isAnnotationPresent(PermitAll.class)) {
+		if (clas.isAnnotationPresent(PermitAll.class) || method.isAnnotationPresent(PermitAll.class)) {
 			return;
 		}
 
@@ -57,37 +59,51 @@ public class AuthenticationFilter implements javax.ws.rs.container.ContainerRequ
 
 		if (method.isAnnotationPresent(RolesAllowed.class)) {
 			RolesAllowed rolesAnnotation = method.getAnnotation(RolesAllowed.class);
-			Set<String> rolesSet = new HashSet<String>(Arrays.asList(rolesAnnotation.value()));
-			String authorization = authorizations.get(0);
-			User user = null;
-			try {
-				if (authorization.startsWith("Token ")) {
-					String tokenValue = authorization.substring(6, authorization.length());
-					AuthToken token = AuthToken.getSingle(tokenValue);
-					if (token == null) {
-						throw new NotAuthorizedException("Bad token");
-					}
-					user = token.getUser();
-				} else {
-					throw new NotAuthorizedException("Unknown Authorization format");
-				}
-				if (user == null) {
-					throw new NotAuthorizedException("User not authenticated");
-				}
-				requestContext.setProperty("user_id", user.id);
-				if (rolesSet.contains("USER")) {
-					return;
-				}
-				for (Profile p : user.getProfiles()) {
-					if (rolesSet.contains(p.getName())) {
-						return;
-					}
-				}
-			} catch (SQLException e) {
-				ErrorLogger.getInstance().put(e);
-				throw new InternalServerErrorException("Database error");
+			if (checkRoles(requestContext, authorizations, rolesAnnotation)) {
+				return;
+			}
+		}
+		if (clas.isAnnotationPresent(RolesAllowed.class)) {
+			RolesAllowed rolesAnnotation = clas.getAnnotation(RolesAllowed.class);
+			if (checkRoles(requestContext, authorizations, rolesAnnotation)) {
+				return;
 			}
 		}
 		throw new ForbiddenException();
+	}
+
+	private boolean checkRoles(ContainerRequestContext requestContext, final List<String> authorizations,
+			RolesAllowed rolesAnnotation) {
+		Set<String> rolesSet = new HashSet<String>(Arrays.asList(rolesAnnotation.value()));
+		String authorization = authorizations.get(0);
+		User user = null;
+		try {
+			if (authorization.startsWith("Token ")) {
+				String tokenValue = authorization.substring(6, authorization.length());
+				AuthToken token = AuthToken.getSingle(tokenValue);
+				if (token == null) {
+					throw new NotAuthorizedException("Bad token");
+				}
+				user = token.getUser();
+			} else {
+				throw new NotAuthorizedException("Unknown Authorization format");
+			}
+			if (user == null) {
+				throw new NotAuthorizedException("User not authenticated");
+			}
+			requestContext.setProperty("user_id", user.id);
+			if (rolesSet.contains("USER")) {
+				return true;
+			}
+			for (Profile p : user.getProfiles()) {
+				if (rolesSet.contains(p.getName())) {
+					return true;
+				}
+			}
+		} catch (SQLException e) {
+			ErrorLogger.getInstance().put(e);
+			throw new InternalServerErrorException("Database error");
+		}
+		return false;
 	}
 }

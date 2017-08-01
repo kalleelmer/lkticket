@@ -16,11 +16,11 @@ import se.lundakarnevalen.ticket.api.Request;
 import se.lundakarnevalen.ticket.db.User;
 
 @Path("/admin/users")
+@RolesAllowed("ADMIN")
+@Produces("application/json; charset=UTF-8")
 public class AdminUserRequest extends Request {
 
 	@GET
-	@RolesAllowed("ADMIN")
-	@Produces("application/json; charset=UTF-8")
 	public Response getAll() throws SQLException, JSONException {
 		List<User> users = User.getAll();
 		return status(200).entity(users).build();
@@ -28,8 +28,6 @@ public class AdminUserRequest extends Request {
 
 	@GET
 	@Path("/{id}")
-	@RolesAllowed("ADMIN")
-	@Produces("application/json; charset=UTF-8")
 	public Response getSingle(@PathParam("id") int id) throws SQLException, JSONException {
 		User user = User.getSingle(id);
 		return status(200).entity(user).build();
