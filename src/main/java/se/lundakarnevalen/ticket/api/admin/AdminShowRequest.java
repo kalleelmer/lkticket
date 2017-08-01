@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -73,6 +74,7 @@ public class AdminShowRequest extends Request {
 
 	@PUT
 	@Path("/{id}/name")
+	@Produces("text/plain;charset=UTF-8")
 	public Response changeName(@PathParam("id") int id, String data) throws SQLException, JSONException {
 		Show show = Show.getSingle(id);
 		assertNotNull(show, 404);
@@ -85,6 +87,20 @@ public class AdminShowRequest extends Request {
 	public Response getCategory(@PathParam("id") int id, @PathParam("cid") int cid) throws SQLException, JSONException {
 		Category cat = Category.getSingle(id);
 		return status(200).entity(cat).build();
+	}
+
+	@PUT
+	@Produces("text/plain;charset=UTF-8")
+	@Path("/{id}/categories/{cid}/ticketCount")
+	public Response getCategory(@PathParam("id") int id, @PathParam("cid") int cid, String data)
+			throws SQLException, JSONException {
+		Category cat = Category.getSingle(id);
+		try {
+			cat.setTicketCount(Integer.parseInt(data));
+		} catch (NumberFormatException e) {
+			throw new BadRequestException("Value must be integer");
+		}
+		return status(200).entity(data).build();
 	}
 
 	@GET

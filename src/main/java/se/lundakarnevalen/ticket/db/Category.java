@@ -70,4 +70,12 @@ public class Category extends Entity {
 		int id = executeInsert(stmt);
 		return getSingle(id);
 	}
+
+	public void setTicketCount(int count) throws SQLException {
+		String query = "UPDATE " + TABLE + " SET `ticketCount`=? WHERE `id`=?";
+		PreparedStatement stmt = prepare(query);
+		stmt.setInt(1, count);
+		stmt.setInt(2, id);
+		stmt.executeUpdate();
+	}
 }
