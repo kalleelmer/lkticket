@@ -22,6 +22,7 @@ import se.lundakarnevalen.ticket.db.Category;
 import se.lundakarnevalen.ticket.db.Performance;
 import se.lundakarnevalen.ticket.db.Price;
 import se.lundakarnevalen.ticket.db.Rate;
+import se.lundakarnevalen.ticket.db.Seat;
 import se.lundakarnevalen.ticket.db.Show;
 
 @Path("/admin/shows")
@@ -53,7 +54,17 @@ public class AdminShowRequest extends Request {
 	@Path("/{id}/performances")
 	public Response createPerformance(@PathParam("id") int id, String data) throws SQLException, JSONException {
 		JSONObject input = new JSONObject(data);
-		Performance perf = Performance.create(id, input);
+		Show show = Show.getSingle(id);
+		assertNotNull(show);
+		Performance perf = Performance.create(show.id, input);
+		for (Category cat : Category.getByShow(show.id)) {
+			System.out.println(
+					"Add for category " + cat.id + ", " + cat.getName() + " with ticketCount " + cat.getTicketCount());
+			for (int i = 0; i < cat.getTicketCount(); i++) {
+				System.out.println("Creating seat");
+				Seat.create(perf.id, cat.id);
+			}
+		}
 		return status(200).entity(perf).build();
 	}
 
@@ -85,7 +96,7 @@ public class AdminShowRequest extends Request {
 	@GET
 	@Path("/{id}/categories/{cid}")
 	public Response getCategory(@PathParam("id") int id, @PathParam("cid") int cid) throws SQLException, JSONException {
-		Category cat = Category.getSingle(id);
+		Category cat = Category.getSingle(cid);
 		return status(200).entity(cat).build();
 	}
 
@@ -94,7 +105,7 @@ public class AdminShowRequest extends Request {
 	@Path("/{id}/categories/{cid}/ticketCount")
 	public Response getCategory(@PathParam("id") int id, @PathParam("cid") int cid, String data)
 			throws SQLException, JSONException {
-		Category cat = Category.getSingle(id);
+		Category cat = Category.getSingle(cid);
 		try {
 			cat.setTicketCount(Integer.parseInt(data));
 		} catch (NumberFormatException e) {

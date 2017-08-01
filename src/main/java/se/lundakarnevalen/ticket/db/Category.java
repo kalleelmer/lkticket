@@ -8,13 +8,20 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import lombok.Getter;
+
 public class Category extends Entity {
 	@Column(name = "id")
 	public final int id;
+
 	@Column(name = "show_id")
 	private int show_id;
+
+	@Getter
 	@Column(name = "name")
 	private String name;
+
+	@Getter
 	@Column(name = "ticketCount")
 	private int ticketCount;
 
