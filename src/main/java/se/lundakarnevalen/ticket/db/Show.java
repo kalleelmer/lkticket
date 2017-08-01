@@ -54,4 +54,12 @@ public class Show extends Entity {
 		int id = executeInsert(stmt);
 		return getSingle(id);
 	}
+
+	public void setName(String name) throws SQLException {
+		String query = "UPDATE " + TABLE + " SET `name`=? WHERE `id`=?";
+		PreparedStatement stmt = prepare(query);
+		stmt.setString(1, name);
+		stmt.setInt(2, id);
+		stmt.executeUpdate();
+	}
 }

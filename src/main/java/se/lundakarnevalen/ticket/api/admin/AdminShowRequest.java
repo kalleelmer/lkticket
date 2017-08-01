@@ -81,6 +81,17 @@ public class AdminShowRequest extends Request {
 		return status(200).entity(cat).build();
 	}
 
+	@PUT
+	@RolesAllowed("ADMIN")
+	@Path("/{id}/name")
+	@Produces("application/json; charset=UTF-8")
+	public Response changeName(@PathParam("id") int id, String data) throws SQLException, JSONException {
+		Show show = Show.getSingle(id);
+		assertNotNull(show, 404);
+		show.setName(data);
+		return status(200).entity(data).build();
+	}
+
 	@GET
 	@RolesAllowed("ADMIN")
 	@Path("/{id}/categories/{cid}")

@@ -2,7 +2,7 @@ USE `lkticket`;
 
 GRANT SELECT ON `profiles` TO 'lkticket'@'localhost';
 
-GRANT SELECT, INSERT(`name`) ON `shows` TO 'lkticket'@'localhost';
+GRANT SELECT, INSERT(`name`), UPDATE(`name`) ON `shows` TO 'lkticket'@'localhost';
 
 GRANT SELECT, UPDATE(`name`) ON `users` TO 'lkticket'@'localhost';
 
