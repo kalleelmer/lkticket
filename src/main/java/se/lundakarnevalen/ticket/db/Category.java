@@ -15,15 +15,15 @@ public class Category extends Entity {
 	public final int id;
 
 	@Column(name = "show_id")
-	private int show_id;
+	protected int show_id;
 
 	@Getter
 	@Column(name = "name")
-	private String name;
+	protected String name;
 
 	@Getter
 	@Column(name = "ticketCount")
-	private int ticketCount;
+	protected int ticketCount;
 
 	private static final String TABLE = "`categories`";
 	private static final String COLS = Entity.getCols(Category.class);
@@ -50,16 +50,6 @@ public class Category extends Entity {
 		PreparedStatement stmt = prepare(query);
 		stmt.setInt(1, show_id);
 		return new Mapper<Category>(stmt).toEntityList(rs -> Category.create(rs));
-	}
-
-	@Override
-	public JSONObject toJSON() throws JSONException {
-		JSONObject json = new JSONObject();
-		json.put("id", id);
-		json.put("show_id", show_id);
-		json.put("name", name);
-		json.put("ticketCount", ticketCount);
-		return json;
 	}
 
 	public static Category getSingle(long id) throws SQLException {

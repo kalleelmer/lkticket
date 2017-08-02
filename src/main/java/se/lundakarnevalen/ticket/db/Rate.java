@@ -12,9 +12,9 @@ public class Rate extends Entity {
 	@Column(name = "id")
 	public final int id;
 	@Column(name = "show_id")
-	private int show_id;
+	protected int show_id;
 	@Column(name = "name")
-	private String name;
+	protected String name;
 
 	private static final String TABLE = "`rates`";
 	private static final String COLS = Entity.getCols(Rate.class);
@@ -40,15 +40,6 @@ public class Rate extends Entity {
 		PreparedStatement stmt = prepare(query);
 		stmt.setInt(1, show_id);
 		return new Mapper<Rate>(stmt).toEntityList(rs -> Rate.create(rs));
-	}
-
-	@Override
-	public JSONObject toJSON() throws JSONException {
-		JSONObject json = new JSONObject();
-		json.put("id", id);
-		json.put("show_id", show_id);
-		json.put("name", name);
-		return json;
 	}
 
 	public static Rate getSingle(long id) throws SQLException {

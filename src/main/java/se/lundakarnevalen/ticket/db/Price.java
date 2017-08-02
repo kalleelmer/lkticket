@@ -6,15 +6,14 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 public class Price extends Entity {
 	@Column(name = "category_id")
-	private int category_id;
+	protected int category_id;
 	@Column(name = "rate_id")
-	private int rate_id;
+	protected int rate_id;
 	@Column(name = "price")
-	private double price;
+	protected double price;
 
 	private static final String TABLE = "`prices`";
 	private static final String COLS = Entity.getCols(Price.class);
@@ -41,15 +40,6 @@ public class Price extends Entity {
 		PreparedStatement stmt = prepare(query);
 		stmt.setInt(1, category_id);
 		return new Mapper<Price>(stmt).toEntityList(rs -> Price.create(rs));
-	}
-
-	@Override
-	public JSONObject toJSON() throws JSONException {
-		JSONObject json = new JSONObject();
-		json.put("category_id", category_id);
-		json.put("rate_id", rate_id);
-		json.put("price", price);
-		return json;
 	}
 
 	public static Price getSingle(int category_id, int rate_id) throws SQLException {

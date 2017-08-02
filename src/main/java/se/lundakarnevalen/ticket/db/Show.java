@@ -12,7 +12,7 @@ public class Show extends Entity {
 	@Column(name = "id")
 	public final int id;
 	@Column(name = "name")
-	private String name;
+	protected String name;
 
 	private static final String TABLE = "`shows`";
 	private static final String COLS = Entity.getCols(Show.class);
@@ -30,14 +30,6 @@ public class Show extends Entity {
 	public static List<Show> getAll() throws SQLException {
 		String query = "SELECT " + COLS + " FROM " + TABLE;
 		return new Mapper<Show>(getCon(), query).toEntityList(rs -> Show.create(rs));
-	}
-
-	@Override
-	public JSONObject toJSON() throws JSONException {
-		JSONObject json = new JSONObject();
-		json.put("id", id);
-		json.put("name", name);
-		return json;
 	}
 
 	public static Show getSingle(long id) throws SQLException {

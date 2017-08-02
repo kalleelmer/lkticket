@@ -13,9 +13,9 @@ public class Performance extends Entity {
 	@Column(name = "id")
 	public final int id;
 	@Column(name = "show_id")
-	private int show_id;
+	protected int show_id;
 	@Column(name = "start_date")
-	private Timestamp start;
+	protected Timestamp start;
 
 	private static final String TABLE = "`performances`";
 	private static final String COLS = Entity.getCols(Performance.class);
@@ -41,15 +41,6 @@ public class Performance extends Entity {
 		PreparedStatement stmt = prepare(query);
 		stmt.setInt(1, show_id);
 		return new Mapper<Performance>(stmt).toEntityList(rs -> Performance.create(rs));
-	}
-
-	@Override
-	public JSONObject toJSON() throws JSONException {
-		JSONObject json = new JSONObject();
-		json.put("id", id);
-		json.put("show_id", show_id);
-		json.put("start", start.toString());
-		return json;
 	}
 
 	public static Performance getSingle(long id) throws SQLException {

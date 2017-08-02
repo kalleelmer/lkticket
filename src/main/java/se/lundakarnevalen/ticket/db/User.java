@@ -5,20 +5,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import lombok.Getter;
 
 public class User extends Entity {
 	@Column(name = "id")
 	public final int id;
 	@Column(name = "email")
-	private String email;
+	protected String email;
 
 	@Getter
 	@Column(name = "name")
-	private String name;
+	protected String name;
 
 	private static final String TABLE = "`users`";
 	private static final String COLS = Entity.getCols(User.class);
@@ -37,15 +34,6 @@ public class User extends Entity {
 	public static List<User> getAll() throws SQLException {
 		String query = "SELECT " + COLS + " FROM " + TABLE;
 		return new Mapper<User>(getCon(), query).toEntityList(rs -> User.create(rs));
-	}
-
-	@Override
-	public JSONObject toJSON() throws JSONException {
-		JSONObject json = new JSONObject();
-		json.put("id", id);
-		json.put("email", email);
-		json.put("name", name);
-		return json;
 	}
 
 	public static User getSingle(long id) throws SQLException {

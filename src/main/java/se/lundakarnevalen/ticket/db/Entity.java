@@ -88,5 +88,17 @@ public abstract class Entity {
 		return id;
 	}
 
-	public abstract JSONObject toJSON() throws JSONException;
+	public final JSONObject toJSON() throws JSONException {
+		try {
+			JSONObject output = new JSONObject();
+			for (Field field : this.getClass().getDeclaredFields()) {
+				if (field.isAnnotationPresent(Column.class)) {
+					output.put(field.getName(), field.get(this));
+				}
+			}
+			return output;
+		} catch (IllegalArgumentException | IllegalAccessException e) {
+			throw new JSONException(e);
+		}
+	}
 }

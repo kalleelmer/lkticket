@@ -5,9 +5,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import lombok.Getter;
 
 public class Profile extends Entity {
@@ -15,7 +12,7 @@ public class Profile extends Entity {
 	public final int id;
 	@Column(name = "name")
 	@Getter
-	private String name;
+	protected String name;
 
 	private static final String TABLE = "`profiles`";
 	private static final String COLS = Entity.getCols(Profile.class);
@@ -33,14 +30,6 @@ public class Profile extends Entity {
 	public static List<Profile> getAll() throws SQLException {
 		String query = "SELECT " + COLS + " FROM " + TABLE;
 		return new Mapper<Profile>(getCon(), query).toEntityList(rs -> Profile.create(rs));
-	}
-
-	@Override
-	public JSONObject toJSON() throws JSONException {
-		JSONObject json = new JSONObject();
-		json.put("id", id);
-		json.put("name", name);
-		return json;
 	}
 
 	public static Profile getSingle(long id) throws SQLException {

@@ -7,9 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import lombok.Getter;
 
 public class AuthToken extends Entity {
@@ -43,11 +40,6 @@ public class AuthToken extends Entity {
 	public static List<AuthToken> getAll() throws SQLException {
 		String query = "SELECT " + COLS + " FROM " + TABLE;
 		return new Mapper<AuthToken>(getCon(), query).toEntityList(rs -> AuthToken.create(rs));
-	}
-
-	@Override
-	public JSONObject toJSON() throws JSONException {
-		return null;
 	}
 
 	public static AuthToken getSingle(long id) throws SQLException {

@@ -6,19 +6,18 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 public class Seat extends Entity {
 	@Column(name = "id")
 	public final int id;
 	@Column(name = "performance_id")
-	private int performance_id;
+	protected int performance_id;
 	@Column(name = "category_id")
-	private int category_id;
+	protected int category_id;
 	@Column(name = "active_ticket_id")
-	private int active_ticket_id;
+	protected int active_ticket_id;
 	@Column(name = "profile_id")
-	private int profile_id;
+	protected int profile_id;
 
 	private static final String TABLE = "`seats`";
 	private static final String COLS = Entity.getCols(Seat.class);
@@ -41,17 +40,6 @@ public class Seat extends Entity {
 		PreparedStatement stmt = prepare(query);
 		stmt.setInt(1, performance_id);
 		return new Mapper<Seat>(stmt).toEntityList(rs -> Seat.create(rs));
-	}
-
-	@Override
-	public JSONObject toJSON() throws JSONException {
-		JSONObject json = new JSONObject();
-		json.put("id", id);
-		json.put("performance_id", performance_id);
-		json.put("category_id", category_id);
-		json.put("active_ticket_id", active_ticket_id);
-		json.put("profile_id", profile_id);
-		return json;
 	}
 
 	public static Seat getSingle(long id) throws SQLException {
