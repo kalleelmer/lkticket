@@ -1,10 +1,8 @@
 package se.lundakarnevalen.ticket.api.admin;
 
 import java.sql.SQLException;
-import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -15,7 +13,7 @@ import javax.ws.rs.core.Response;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import se.lundakarnevalen.ticket.api.Request;
+import se.lundakarnevalen.ticket.api.ShowRequest;
 import se.lundakarnevalen.ticket.db.Category;
 import se.lundakarnevalen.ticket.db.Performance;
 import se.lundakarnevalen.ticket.db.Rate;
@@ -25,28 +23,7 @@ import se.lundakarnevalen.ticket.db.Show;
 @Path("/admin/shows")
 @RolesAllowed("ADMIN")
 @Produces("application/json; charset=UTF-8")
-public class AdminShowRequest extends Request {
-	@GET
-	public Response getAll() throws SQLException, JSONException {
-		List<Show> shows = Show.getAll();
-		return status(200).entity(shows).build();
-	}
-
-	@GET
-	@Path("/{id}")
-	public Response getSingle(@PathParam("id") long id) throws SQLException, JSONException {
-		Show show = Show.getSingle(id);
-		assertNotNull(show, 404);
-		return status(200).entity(show).build();
-	}
-
-	@GET
-	@Path("/{id}/performances")
-	public Response getPerformances(@PathParam("id") int id) throws SQLException, JSONException {
-		List<Performance> perfs = Performance.getByShow(id);
-		return status(200).entity(perfs).build();
-	}
-
+public class AdminShowRequest extends ShowRequest {
 	@POST
 	@Path("/{id}/performances")
 	public Response createPerformance(@PathParam("id") int id, String data) throws SQLException, JSONException {
@@ -65,13 +42,6 @@ public class AdminShowRequest extends Request {
 		return status(200).entity(perf).build();
 	}
 
-	@GET
-	@Path("/{id}/categories")
-	public Response getCategories(@PathParam("id") int id) throws SQLException, JSONException {
-		List<Category> cats = Category.getByShow(id);
-		return status(200).entity(cats).build();
-	}
-
 	@POST
 	@Path("/{id}/categories")
 	public Response createCategory(@PathParam("id") int id, String data) throws SQLException, JSONException {
@@ -88,13 +58,6 @@ public class AdminShowRequest extends Request {
 		assertNotNull(show, 404);
 		show.setName(data);
 		return status(200).entity(data).build();
-	}
-
-	@GET
-	@Path("/{id}/rates")
-	public Response getRates(@PathParam("id") int id) throws SQLException, JSONException {
-		List<Rate> rates = Rate.getByShow(id);
-		return status(200).entity(rates).build();
 	}
 
 	@POST
