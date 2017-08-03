@@ -1,4 +1,4 @@
-package se.lundakarnevalen.ticket.db;
+package se.lundakarnevalen.ticket.db.framework;
 
 import java.sql.SQLException;
 

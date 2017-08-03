@@ -7,6 +7,9 @@ import java.util.List;
 
 import org.json.JSONException;
 
+import se.lundakarnevalen.ticket.db.framework.Column;
+import se.lundakarnevalen.ticket.db.framework.Mapper;
+
 public class Price extends Entity {
 	@Column(name = "category_id")
 	protected int category_id;

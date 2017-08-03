@@ -8,6 +8,9 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import se.lundakarnevalen.ticket.db.framework.Column;
+import se.lundakarnevalen.ticket.db.framework.Mapper;
+
 public class Rate extends Entity {
 	@Column(name = "id")
 	public final int id;

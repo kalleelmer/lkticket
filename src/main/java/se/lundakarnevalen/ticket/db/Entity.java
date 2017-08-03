@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import com.mysql.cj.api.jdbc.Statement;
 
 import se.lundakarnevalen.ticket.Environment;
+import se.lundakarnevalen.ticket.db.framework.Column;
 import se.lundakarnevalen.ticket.logging.Logger;
 
 /**

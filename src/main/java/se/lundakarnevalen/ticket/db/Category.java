@@ -9,6 +9,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import lombok.Getter;
+import se.lundakarnevalen.ticket.db.framework.Column;
+import se.lundakarnevalen.ticket.db.framework.Mapper;
 
 public class Category extends Entity {
 	@Column(name = "id")

@@ -6,6 +6,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 import lombok.Getter;
+import se.lundakarnevalen.ticket.db.framework.Column;
+import se.lundakarnevalen.ticket.db.framework.Mapper;
 
 public class Profile extends Entity {
 	@Column(name = "id")

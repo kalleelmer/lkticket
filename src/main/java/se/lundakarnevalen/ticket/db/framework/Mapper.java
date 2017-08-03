@@ -1,4 +1,4 @@
-package se.lundakarnevalen.ticket.db;
+package se.lundakarnevalen.ticket.db.framework;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
+
+import se.lundakarnevalen.ticket.db.Entity;
 
 public class Mapper<E extends Entity> {
 	private final ResultSet rs;
