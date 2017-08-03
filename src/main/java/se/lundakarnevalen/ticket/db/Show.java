@@ -16,6 +16,8 @@ public class Show extends Entity {
 	public final int id;
 	@Column(name = "name")
 	protected String name;
+	@Column(name = "description")
+	protected String description;
 
 	private static final String TABLE = "`shows`";
 	private static final String COLS = Entity.getCols(Show.class);
