@@ -29,7 +29,7 @@ public class Login extends Request {
 
 	@GET
 	@PermitAll
-	@Path("/url/google")
+	@Path("/google/url")
 	@Produces("text/plain; charset=UTF-8")
 	public Response getLoginUrl(@QueryParam("redirect") String redirect) {
 		assertNotNull(redirect, 400);
@@ -38,7 +38,7 @@ public class Login extends Request {
 
 	@GET
 	@PermitAll
-	@Path("/token/google")
+	@Path("/google/token")
 	@Produces("text/html; charset=UTF-8")
 	public Response validateLogin(@QueryParam("code") String authCode, @QueryParam("redirect") String redirect)
 			throws IOException, JSONException, SQLException {
