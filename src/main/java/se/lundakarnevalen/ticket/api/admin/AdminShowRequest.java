@@ -4,8 +4,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -20,7 +18,6 @@ import org.json.JSONObject;
 import se.lundakarnevalen.ticket.api.Request;
 import se.lundakarnevalen.ticket.db.Category;
 import se.lundakarnevalen.ticket.db.Performance;
-import se.lundakarnevalen.ticket.db.Price;
 import se.lundakarnevalen.ticket.db.Rate;
 import se.lundakarnevalen.ticket.db.Seat;
 import se.lundakarnevalen.ticket.db.Show;
@@ -91,52 +88,6 @@ public class AdminShowRequest extends Request {
 		assertNotNull(show, 404);
 		show.setName(data);
 		return status(200).entity(data).build();
-	}
-
-	@GET
-	@Path("/{id}/categories/{cid}")
-	public Response getCategory(@PathParam("id") int id, @PathParam("cid") int cid) throws SQLException, JSONException {
-		Category cat = Category.getSingle(cid);
-		return status(200).entity(cat).build();
-	}
-
-	@PUT
-	@Produces("text/plain;charset=UTF-8")
-	@Path("/{id}/categories/{cid}/ticketCount")
-	public Response getCategory(@PathParam("id") int id, @PathParam("cid") int cid, String data)
-			throws SQLException, JSONException {
-		Category cat = Category.getSingle(cid);
-		try {
-			cat.setTicketCount(Integer.parseInt(data));
-		} catch (NumberFormatException e) {
-			throw new BadRequestException("Value must be integer");
-		}
-		return status(200).entity(data).build();
-	}
-
-	@GET
-	@Path("/{id}/categories/{cid}/prices")
-	public Response getCategoryPrices(@PathParam("id") int id, @PathParam("cid") int cid)
-			throws SQLException, JSONException {
-		List<Price> prices = Price.getByCategory(cid);
-		return status(200).entity(prices).build();
-	}
-
-	@PUT
-	@Path("/{id}/categories/{category_id}/prices/{rate_id}")
-	public Response createCategoryPrice(@PathParam("id") int id, @PathParam("category_id") int cid,
-			@PathParam("rate_id") int rid, String data) throws SQLException, JSONException {
-		JSONObject input = new JSONObject(data);
-		Price price = Price.set(cid, rid, input.getDouble("price"));
-		return status(200).entity(price).build();
-	}
-
-	@DELETE
-	@Path("/{id}/categories/{category_id}/prices/{rate_id}")
-	public Response deleteCategoryPrice(@PathParam("id") int id, @PathParam("category_id") int cid,
-			@PathParam("rate_id") int rid, String data) throws SQLException, JSONException {
-		Price.delete(cid, rid);
-		return status(200).build();
 	}
 
 	@GET
