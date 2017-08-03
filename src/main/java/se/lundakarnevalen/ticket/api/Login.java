@@ -23,13 +23,13 @@ import se.lundakarnevalen.ticket.db.User;
 import se.lundakarnevalen.ticket.logging.ErrorLogger;
 import se.lundakarnevalen.ticket.logging.Logger;
 
-@Path("/login/google")
-public class GoogleLogin extends Request {
+@Path("/login")
+public class Login extends Request {
 	private final GoogleAuthenticator helper = new GoogleAuthenticator();
 
 	@GET
 	@PermitAll
-	@Path("/url")
+	@Path("/url/google")
 	@Produces("text/plain; charset=UTF-8")
 	public Response getLoginUrl(@QueryParam("redirect") String redirect) {
 		assertNotNull(redirect, 400);
@@ -38,7 +38,7 @@ public class GoogleLogin extends Request {
 
 	@GET
 	@PermitAll
-	@Path("/token")
+	@Path("/token/google")
 	@Produces("text/html; charset=UTF-8")
 	public Response validateLogin(@QueryParam("code") String authCode, @QueryParam("redirect") String redirect)
 			throws IOException, JSONException, SQLException {
@@ -68,5 +68,18 @@ public class GoogleLogin extends Request {
 			ErrorLogger.getInstance().put(e);
 			throw new NotAuthorizedException("Invalid token");
 		}
+	}
+
+	@GET
+	@PermitAll
+	@Path("/guest")
+	@Produces("text/html; charset=UTF-8")
+	public Response guestLogin() throws JSONException, SQLException {
+		User user = User.createGuest();
+		AuthToken token = AuthToken.issue(user);
+		JSONObject response = new JSONObject();
+		response.put("user", user.toJSON());
+		response.put("token", token.getToken());
+		return status(200).entity(response.toString()).build();
 	}
 }

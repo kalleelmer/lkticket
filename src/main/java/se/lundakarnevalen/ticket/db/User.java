@@ -65,4 +65,11 @@ public class User extends Entity {
 	public List<Profile> getProfiles() throws SQLException {
 		return Profile.getByUser(this.id);
 	}
+
+	public static User createGuest() throws SQLException {
+		String query = "INSERT INTO `users` SET `name`='guest'";
+		PreparedStatement stmt = prepare(query);
+		int id = executeInsert(stmt);
+		return getSingle(id);
+	}
 }
