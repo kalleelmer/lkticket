@@ -18,7 +18,7 @@ import se.lundakarnevalen.ticket.db.User;
 @Path("/admin/users")
 @RolesAllowed("ADMIN")
 @Produces("application/json; charset=UTF-8")
-public class AdminUserRequest extends Request {
+public class AdminUsers extends Request {
 
 	@GET
 	public Response getAll() throws SQLException, JSONException {

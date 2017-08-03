@@ -13,7 +13,7 @@ import javax.ws.rs.core.Response;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import se.lundakarnevalen.ticket.api.ShowRequest;
+import se.lundakarnevalen.ticket.api.PublicShows;
 import se.lundakarnevalen.ticket.db.Category;
 import se.lundakarnevalen.ticket.db.Performance;
 import se.lundakarnevalen.ticket.db.Rate;
@@ -23,7 +23,7 @@ import se.lundakarnevalen.ticket.db.Show;
 @Path("/admin/shows")
 @RolesAllowed("ADMIN")
 @Produces("application/json; charset=UTF-8")
-public class AdminShowRequest extends ShowRequest {
+public class AdminShows extends PublicShows {
 	@POST
 	@Path("/{id}/performances")
 	public Response createPerformance(@PathParam("id") int id, String data) throws SQLException, JSONException {

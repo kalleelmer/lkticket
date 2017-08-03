@@ -18,7 +18,7 @@ import se.lundakarnevalen.ticket.db.Seat;
 @Path("/admin/performances")
 @RolesAllowed("ADMIN")
 @Produces("application/json; charset=UTF-8")
-public class AdminPerformanceRequest extends Request {
+public class AdminPerformances extends Request {
 
 	@GET
 	@Path("/{id}")

@@ -13,14 +13,14 @@ import javax.ws.rs.core.Response;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import se.lundakarnevalen.ticket.api.CategoryRequest;
+import se.lundakarnevalen.ticket.api.PublicCategories;
 import se.lundakarnevalen.ticket.db.Category;
 import se.lundakarnevalen.ticket.db.Price;
 
 @Path("/admin/categories")
 @RolesAllowed("ADMIN")
 @Produces("application/json; charset=UTF-8")
-public class AdminCategoryRequest extends CategoryRequest {
+public class AdminCategories extends PublicCategories {
 
 	@PUT
 	@Produces("text/plain;charset=UTF-8")

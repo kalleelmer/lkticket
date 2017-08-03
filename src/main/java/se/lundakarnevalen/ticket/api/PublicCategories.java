@@ -18,7 +18,7 @@ import se.lundakarnevalen.ticket.db.Price;
 @Path("/public/categories")
 @RolesAllowed("ADMIN")
 @Produces("application/json; charset=UTF-8")
-public class CategoryRequest extends Request {
+public class PublicCategories extends Request {
 
 	@GET
 	@Path("/{id}")

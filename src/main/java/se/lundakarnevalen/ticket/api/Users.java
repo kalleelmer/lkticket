@@ -14,7 +14,7 @@ import org.json.JSONException;
 import se.lundakarnevalen.ticket.db.User;
 
 @Path("/users")
-public class UserRequest extends Request {
+public class Users extends Request {
 
 	@GET
 	@Path("/current")

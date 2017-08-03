@@ -20,7 +20,7 @@ import se.lundakarnevalen.ticket.db.Show;
 @Path("/public/shows")
 @PermitAll
 @Produces("application/json; charset=UTF-8")
-public class ShowRequest extends Request {
+public class PublicShows extends Request {
 	@GET
 	public Response getAll() throws SQLException, JSONException {
 		List<Show> shows = Show.getAll();
