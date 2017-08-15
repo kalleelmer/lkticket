@@ -69,17 +69,4 @@ public class Login extends Request {
 			throw new NotAuthorizedException("Invalid token");
 		}
 	}
-
-	@GET
-	@PermitAll
-	@Path("/guest")
-	@Produces("text/html; charset=UTF-8")
-	public Response guestLogin() throws JSONException, SQLException {
-		User user = User.createGuest();
-		AuthToken token = AuthToken.issue(user);
-		JSONObject response = new JSONObject();
-		response.put("user", user.toJSON());
-		response.put("token", token.getToken());
-		return status(200).entity(response.toString()).build();
-	}
 }
