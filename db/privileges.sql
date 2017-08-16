@@ -19,3 +19,5 @@ GRANT SELECT, INSERT(`show_id`, `name`) ON `rates` TO 'lkticket'@'localhost';
 GRANT SELECT, INSERT ON `seats` TO 'lkticket'@'localhost';
 
 GRANT SELECT, INSERT(`category_id`, `rate_id`, `price`), DELETE ON `prices` TO 'lkticket'@'localhost';
+
+GRANT SELECT, INSERT(`expires`, `identifier`) ON `orders` TO 'lkticket'@'localhost';
