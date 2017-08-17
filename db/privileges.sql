@@ -16,10 +16,10 @@ GRANT SELECT, INSERT(`show_id`, `name`, `ticketCount`), UPDATE(`ticketCount`) ON
 
 GRANT SELECT, INSERT(`show_id`, `name`) ON `rates` TO 'lkticket'@'localhost';
 
-GRANT SELECT, INSERT ON `seats` TO 'lkticket'@'localhost';
+GRANT SELECT, INSERT, UPDATE(`active_ticket_id`) ON `seats` TO 'lkticket'@'localhost';
 
 GRANT SELECT, INSERT(`category_id`, `rate_id`, `price`), DELETE ON `prices` TO 'lkticket'@'localhost';
 
 GRANT SELECT, INSERT(`expires`, `identifier`) ON `orders` TO 'lkticket'@'localhost';
 
-GRANT SELECT ON `tickets` TO 'lkticket'@'localhost';
+GRANT SELECT, INSERT (`order_id`, `seat_id`, `rate_id`, `price`) ON `tickets` TO 'lkticket'@'localhost';

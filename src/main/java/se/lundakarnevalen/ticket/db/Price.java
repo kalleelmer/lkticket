@@ -16,7 +16,7 @@ public class Price extends Entity {
 	@Column
 	protected int rate_id;
 	@Column
-	protected double price;
+	protected int price;
 
 	private static final String TABLE = "`prices`";
 	private static final String COLS = Entity.getCols(Price.class);

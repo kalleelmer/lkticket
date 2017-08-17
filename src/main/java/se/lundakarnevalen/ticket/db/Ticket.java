@@ -1,12 +1,13 @@
 package se.lundakarnevalen.ticket.db;
 
-import java.math.BigInteger;
-import java.security.SecureRandom;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
+
+import com.mysql.cj.api.jdbc.Statement;
 
 import se.lundakarnevalen.ticket.db.framework.Column;
 import se.lundakarnevalen.ticket.db.framework.Mapper;
@@ -39,8 +40,6 @@ public class Ticket extends Entity {
 	private static final String TABLE = "`tickets`";
 	private static final String COLS = Entity.getCols(Ticket.class);
 
-	private static SecureRandom random = new SecureRandom();
-
 	private Ticket(int id) throws SQLException {
 		this.id = id;
 	}
@@ -70,12 +69,22 @@ public class Ticket extends Entity {
 		return new Mapper<Ticket>(stmt).toEntity(rs -> Ticket.create(rs));
 	}
 
-	public static Ticket create() throws SQLException {
-		String query = "INSERT INTO " + TABLE + " SET `expires`=?, `identifier`=?";
-		PreparedStatement stmt = prepare(query);
-		stmt.setTimestamp(1, new Timestamp(System.currentTimeMillis() + 30 * 60)); // 30min
-		stmt.setString(2, new BigInteger(48, random).toString(32).substring(0, 8));
+	public static Ticket getSingle(Connection con, long id) throws SQLException {
+		String query = "SELECT " + COLS + " FROM " + TABLE + " WHERE `id`=?";
+		PreparedStatement stmt = con.prepareStatement(query);
+		stmt.setLong(1, id);
+		ResultSet rs = stmt.executeQuery();
+		return rs.next() ? Ticket.create(rs) : null;
+	}
+
+	public static Ticket create(Connection con, int order_id, int seat_id, int rate_id, int price) throws SQLException {
+		String query = "INSERT INTO " + TABLE + " SET `order_id`=?, `seat_id`=?, `rate_id`=?, `price`=?";
+		PreparedStatement stmt = con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+		stmt.setInt(1, order_id);
+		stmt.setInt(2, seat_id);
+		stmt.setInt(3, rate_id);
+		stmt.setInt(4, price);
 		int id = executeInsert(stmt);
-		return getSingle(id);
+		return getSingle(con, id);
 	}
 }

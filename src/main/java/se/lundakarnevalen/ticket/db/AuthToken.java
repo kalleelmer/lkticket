@@ -71,7 +71,6 @@ public class AuthToken extends Entity {
 	}
 
 	public User getUser() throws SQLException {
-		System.out.println("User id in token is: " + this.user_id);
 		return User.getSingle(this.user_id);
 	}
 }
