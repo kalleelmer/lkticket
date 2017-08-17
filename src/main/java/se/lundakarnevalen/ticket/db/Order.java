@@ -78,6 +78,7 @@ public class Order extends Entity {
 			Price price = Price.getSingle(category_id, rate_id);
 
 			List<Ticket> tickets = new LinkedList<Ticket>();
+			int ticketsAvailable = 0;
 			while (rs.next()) {
 				int seat_id = rs.getInt("id");
 				Ticket ticket = Ticket.create(con, id, seat_id, rate_id, price.price);
@@ -86,6 +87,11 @@ public class Order extends Entity {
 				stmt.setInt(2, seat_id);
 				stmt.executeUpdate();
 				tickets.add(ticket);
+				ticketsAvailable++;
+			}
+			if (ticketsAvailable < ticketCount) {
+				con.rollback();
+				return null;
 			}
 			con.commit();
 			con.close();
