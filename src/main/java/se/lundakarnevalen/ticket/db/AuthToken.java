@@ -13,14 +13,14 @@ import se.lundakarnevalen.ticket.db.framework.Mapper;
 
 public class AuthToken extends Entity {
 
-	@Column(name = "id")
+	@Column
 	public final int id;
 
-	@Column(name = "token")
+	@Column
 	@Getter
 	private String token;
 
-	@Column(name = "user_id")
+	@Column
 	private int user_id;
 
 	private static final String TABLE = "`user_tokens`";

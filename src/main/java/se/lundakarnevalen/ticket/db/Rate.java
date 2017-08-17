@@ -12,11 +12,11 @@ import se.lundakarnevalen.ticket.db.framework.Column;
 import se.lundakarnevalen.ticket.db.framework.Mapper;
 
 public class Rate extends Entity {
-	@Column(name = "id")
+	@Column
 	public final int id;
-	@Column(name = "show_id")
+	@Column
 	protected int show_id;
-	@Column(name = "name")
+	@Column
 	protected String name;
 
 	private static final String TABLE = "`rates`";

@@ -10,13 +10,13 @@ import se.lundakarnevalen.ticket.db.framework.Column;
 import se.lundakarnevalen.ticket.db.framework.Mapper;
 
 public class User extends Entity {
-	@Column(name = "id")
+	@Column
 	public final int id;
-	@Column(name = "email")
+	@Column
 	protected String email;
 
 	@Getter
-	@Column(name = "name")
+	@Column
 	protected String name;
 
 	private static final String TABLE = "`users`";

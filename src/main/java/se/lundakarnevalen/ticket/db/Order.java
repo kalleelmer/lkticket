@@ -12,15 +12,15 @@ import se.lundakarnevalen.ticket.db.framework.Column;
 import se.lundakarnevalen.ticket.db.framework.Mapper;
 
 public class Order extends Entity {
-	@Column(name = "id")
+	@Column
 	public final int id;
-	@Column(name = "created")
+	@Column
 	protected Timestamp created;
-	@Column(name = "expires")
+	@Column
 	protected Timestamp expires;
-	@Column(name = "identifier")
+	@Column
 	protected String identifier;
-	@Column(name = "customer_id")
+	@Column
 	protected int customer_id;
 
 	private static final String TABLE = "`orders`";

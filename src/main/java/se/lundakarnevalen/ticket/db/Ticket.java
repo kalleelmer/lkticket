@@ -12,28 +12,28 @@ import se.lundakarnevalen.ticket.db.framework.Column;
 import se.lundakarnevalen.ticket.db.framework.Mapper;
 
 public class Ticket extends Entity {
-	@Column(name = "id")
+	@Column
 	public final int id;
-	@Column(name = "identifier")
+	@Column
 	protected String identifier;
 
-	@Column(name = "seat_id")
+	@Column
 	protected int seat_id;
-	@Column(name = "order_id")
+	@Column
 	protected int order_id;
-	@Column(name = "rate_id")
+	@Column
 	protected int rate_id;
 
-	@Column(name = "price")
+	@Column
 	protected int price;
 
-	@Column(name = "paid")
+	@Column
 	protected Timestamp paid;
-	@Column(name = "printed")
+	@Column
 	protected Timestamp printed;
-	@Column(name = "scanned")
+	@Column
 	protected Timestamp scanned;
-	@Column(name = "confirmed")
+	@Column
 	protected Timestamp confirmed;
 
 	private static final String TABLE = "`tickets`";

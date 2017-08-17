@@ -13,11 +13,11 @@ import se.lundakarnevalen.ticket.db.framework.Column;
 import se.lundakarnevalen.ticket.db.framework.Mapper;
 
 public class Performance extends Entity {
-	@Column(name = "id")
+	@Column
 	public final int id;
-	@Column(name = "show_id")
+	@Column
 	protected int show_id;
-	@Column(name = "start_date")
+	@Column
 	protected Timestamp start;
 
 	private static final String TABLE = "`performances`";
@@ -30,7 +30,7 @@ public class Performance extends Entity {
 	private static Performance create(ResultSet rs) throws SQLException {
 		Performance perf = new Performance(rs.getInt("id"));
 		perf.show_id = rs.getInt("show_id");
-		perf.start = rs.getTimestamp("start_date");
+		perf.start = rs.getTimestamp("start");
 		return perf;
 	}
 

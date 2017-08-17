@@ -11,15 +11,15 @@ import se.lundakarnevalen.ticket.db.framework.Column;
 import se.lundakarnevalen.ticket.db.framework.Mapper;
 
 public class Seat extends Entity {
-	@Column(name = "id")
+	@Column
 	public final int id;
-	@Column(name = "performance_id")
+	@Column
 	protected int performance_id;
-	@Column(name = "category_id")
+	@Column
 	protected int category_id;
-	@Column(name = "active_ticket_id")
+	@Column
 	protected int active_ticket_id;
-	@Column(name = "profile_id")
+	@Column
 	protected int profile_id;
 
 	private static final String TABLE = "`seats`";

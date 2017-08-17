@@ -64,9 +64,8 @@ public abstract class Entity {
 		Field[] fields = entity.getDeclaredFields();
 		int index = 0;
 		for (Field field : fields) {
-			Column col = field.getAnnotation(Column.class);
-			if (col != null) {
-				cols.append((index == 0 ? "" : ",") + "`" + col.name() + "`");
+			if (field.isAnnotationPresent(Column.class)) {
+				cols.append((index == 0 ? "" : ",") + "`" + field.getName() + "`");
 			}
 			index++;
 		}

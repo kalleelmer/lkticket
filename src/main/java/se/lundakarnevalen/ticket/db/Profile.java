@@ -10,9 +10,9 @@ import se.lundakarnevalen.ticket.db.framework.Column;
 import se.lundakarnevalen.ticket.db.framework.Mapper;
 
 public class Profile extends Entity {
-	@Column(name = "id")
+	@Column
 	public final int id;
-	@Column(name = "name")
+	@Column
 	@Getter
 	protected String name;
 

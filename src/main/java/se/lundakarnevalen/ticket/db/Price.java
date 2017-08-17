@@ -11,11 +11,11 @@ import se.lundakarnevalen.ticket.db.framework.Column;
 import se.lundakarnevalen.ticket.db.framework.Mapper;
 
 public class Price extends Entity {
-	@Column(name = "category_id")
+	@Column
 	protected int category_id;
-	@Column(name = "rate_id")
+	@Column
 	protected int rate_id;
-	@Column(name = "price")
+	@Column
 	protected double price;
 
 	private static final String TABLE = "`prices`";

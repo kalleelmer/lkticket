@@ -13,18 +13,18 @@ import se.lundakarnevalen.ticket.db.framework.Column;
 import se.lundakarnevalen.ticket.db.framework.Mapper;
 
 public class Category extends Entity {
-	@Column(name = "id")
+	@Column
 	public final int id;
 
-	@Column(name = "show_id")
+	@Column
 	protected int show_id;
 
 	@Getter
-	@Column(name = "name")
+	@Column
 	protected String name;
 
 	@Getter
-	@Column(name = "ticketCount")
+	@Column
 	protected int ticketCount;
 
 	private static final String TABLE = "`categories`";

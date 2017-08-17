@@ -12,11 +12,11 @@ import se.lundakarnevalen.ticket.db.framework.Column;
 import se.lundakarnevalen.ticket.db.framework.Mapper;
 
 public class Show extends Entity {
-	@Column(name = "id")
+	@Column
 	public final int id;
-	@Column(name = "name")
+	@Column
 	protected String name;
-	@Column(name = "description")
+	@Column
 	protected String description;
 
 	private static final String TABLE = "`shows`";
