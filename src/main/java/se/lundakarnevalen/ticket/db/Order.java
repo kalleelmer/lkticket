@@ -34,10 +34,7 @@ public class Order extends Entity {
 
 	private static Order create(ResultSet rs) throws SQLException {
 		Order order = new Order(rs.getInt("id"));
-		order.created = rs.getTimestamp("created");
-		order.expires = rs.getTimestamp("expires");
-		order.identifier = rs.getString("identifier");
-		order.customer_id = rs.getInt("customer_id");
+		populateColumns(order, rs);
 		return order;
 	}
 

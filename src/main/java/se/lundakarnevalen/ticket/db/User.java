@@ -28,8 +28,7 @@ public class User extends Entity {
 
 	private static User create(ResultSet rs) throws SQLException {
 		User user = new User(rs.getInt("id"));
-		user.email = rs.getString("email");
-		user.name = rs.getString("name");
+		populateColumns(user, rs);
 		return user;
 	}
 

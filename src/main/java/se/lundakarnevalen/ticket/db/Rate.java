@@ -28,8 +28,7 @@ public class Rate extends Entity {
 
 	private static Rate create(ResultSet rs) throws SQLException {
 		Rate rate = new Rate(rs.getInt("id"));
-		rate.show_id = rs.getInt("show_id");
-		rate.name = rs.getString("name");
+		populateColumns(rate, rs);
 		return rate;
 	}
 

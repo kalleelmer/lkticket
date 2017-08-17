@@ -18,10 +18,10 @@ public class AuthToken extends Entity {
 
 	@Column
 	@Getter
-	private String token;
+	protected String token;
 
 	@Column
-	private int user_id;
+	protected int user_id;
 
 	private static final String TABLE = "`user_tokens`";
 	private static final String COLS = Entity.getCols(AuthToken.class);
@@ -34,8 +34,7 @@ public class AuthToken extends Entity {
 
 	private static AuthToken create(ResultSet rs) throws SQLException {
 		AuthToken token = new AuthToken(rs.getInt("id"));
-		token.token = rs.getString("token");
-		token.user_id = rs.getInt("user_id");
+		populateColumns(token, rs);
 		return token;
 	}
 
@@ -72,6 +71,7 @@ public class AuthToken extends Entity {
 	}
 
 	public User getUser() throws SQLException {
+		System.out.println("User id in token is: " + this.user_id);
 		return User.getSingle(this.user_id);
 	}
 }

@@ -26,9 +26,7 @@ public class Price extends Entity {
 
 	private static Price create(ResultSet rs) throws SQLException {
 		Price rate = new Price();
-		rate.category_id = rs.getInt("category_id");
-		rate.rate_id = rs.getInt("rate_id");
-		rate.price = rs.getDouble("price");
+		populateColumns(rate, rs);
 		return rate;
 	}
 

@@ -25,7 +25,7 @@ public class Profile extends Entity {
 
 	private static Profile create(ResultSet rs) throws SQLException {
 		Profile profile = new Profile(rs.getInt("id"));
-		profile.name = rs.getString("name");
+		populateColumns(profile, rs);
 		return profile;
 	}
 

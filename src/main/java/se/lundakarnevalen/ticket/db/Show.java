@@ -27,9 +27,9 @@ public class Show extends Entity {
 	}
 
 	private static Show create(ResultSet rs) throws SQLException {
-		Show event = new Show(rs.getInt("id"));
-		event.name = rs.getString("name");
-		return event;
+		Show show = new Show(rs.getInt("id"));
+		populateColumns(show, rs);
+		return show;
 	}
 
 	public static List<Show> getAll() throws SQLException {

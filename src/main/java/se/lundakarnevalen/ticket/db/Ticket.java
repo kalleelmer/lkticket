@@ -47,15 +47,7 @@ public class Ticket extends Entity {
 
 	private static Ticket create(ResultSet rs) throws SQLException {
 		Ticket ticket = new Ticket(rs.getInt("id"));
-		ticket.identifier = rs.getString("identifier");
-		ticket.seat_id = rs.getInt("seat_id");
-		ticket.order_id = rs.getInt("order_id");
-		ticket.rate_id = rs.getInt("rate_id");
-		ticket.price = rs.getInt("price");
-		ticket.paid = rs.getTimestamp("paid");
-		ticket.printed = rs.getTimestamp("printed");
-		ticket.scanned = rs.getTimestamp("scanned");
-		ticket.confirmed = rs.getTimestamp("confirmed");
+		populateColumns(ticket, rs);
 		return ticket;
 	}
 

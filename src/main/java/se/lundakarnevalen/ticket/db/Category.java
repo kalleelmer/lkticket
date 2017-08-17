@@ -36,9 +36,7 @@ public class Category extends Entity {
 
 	private static Category create(ResultSet rs) throws SQLException {
 		Category perf = new Category(rs.getInt("id"));
-		perf.show_id = rs.getInt("show_id");
-		perf.name = rs.getString("name");
-		perf.ticketCount = rs.getInt("ticketCount");
+		populateColumns(perf, rs);
 		return perf;
 	}
 

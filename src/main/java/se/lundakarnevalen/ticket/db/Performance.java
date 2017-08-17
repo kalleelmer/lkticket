@@ -29,8 +29,7 @@ public class Performance extends Entity {
 
 	private static Performance create(ResultSet rs) throws SQLException {
 		Performance perf = new Performance(rs.getInt("id"));
-		perf.show_id = rs.getInt("show_id");
-		perf.start = rs.getTimestamp("start");
+		populateColumns(perf, rs);
 		return perf;
 	}
 

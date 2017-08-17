@@ -1,11 +1,13 @@
 package se.lundakarnevalen.ticket.db;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -70,6 +72,30 @@ public abstract class Entity {
 			index++;
 		}
 		return cols.toString();
+	}
+
+	public static void populateColumns(Entity object, ResultSet rs) throws SQLException {
+		Class<? extends Entity> entity = object.getClass();
+		Field[] fields = entity.getDeclaredFields();
+		try {
+			for (Field field : fields) {
+				if (field.isAnnotationPresent(Column.class) && !Modifier.isFinal(field.getModifiers())) {
+					if (field.getType().equals(int.class)) {
+						field.setInt(object, rs.getInt(field.getName()));
+					} else if (field.getType().equals(String.class)) {
+						field.set(object, rs.getString(field.getName()));
+					} else if (field.getType().equals(Timestamp.class)) {
+						field.set(object, rs.getTimestamp(field.getName()));
+					} else if (field.getType().equals(double.class)) {
+						field.setDouble(object, rs.getDouble(field.getName()));
+					} else {
+						throw new SQLException("Unknown column type '" + field.getType().toString() + "'");
+					}
+				}
+			}
+		} catch (IllegalArgumentException | IllegalAccessException e) {
+			throw new SQLException(e);
+		}
 	}
 
 	/**

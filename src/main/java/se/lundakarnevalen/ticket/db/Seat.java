@@ -31,10 +31,7 @@ public class Seat extends Entity {
 
 	private static Seat create(ResultSet rs) throws SQLException {
 		Seat perf = new Seat(rs.getInt("id"));
-		perf.performance_id = rs.getInt("performance_id");
-		perf.category_id = rs.getInt("category_id");
-		perf.active_ticket_id = rs.getInt("active_ticket_id");
-		perf.profile_id = rs.getInt("profile_id");
+		populateColumns(perf, rs);
 		return perf;
 	}
 
