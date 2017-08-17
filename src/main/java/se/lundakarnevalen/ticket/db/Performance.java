@@ -53,11 +53,15 @@ public class Performance extends Entity {
 	}
 
 	public static Performance create(int show_id, JSONObject input) throws SQLException, JSONException {
-		String query = "INSERT INTO " + TABLE + " SET `show_id`=?, `start_date`=?";
+		String query = "INSERT INTO " + TABLE + " SET `show_id`=?, `start`=?";
 		PreparedStatement stmt = prepare(query);
 		stmt.setInt(1, show_id);
 		stmt.setTimestamp(2, Timestamp.valueOf(input.getString("start") + ":00"));
 		int id = executeInsert(stmt);
 		return getSingle(id);
+	}
+
+	public Show getShow() throws SQLException {
+		return Show.getSingle(show_id);
 	}
 }

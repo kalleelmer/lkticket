@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.LinkedList;
 import java.util.List;
 
 import se.lundakarnevalen.ticket.db.framework.Column;
@@ -57,5 +58,11 @@ public class Order extends Entity {
 		stmt.setString(2, new BigInteger(48, random).toString(32).substring(0, 8));
 		int id = executeInsert(stmt);
 		return getSingle(id);
+	}
+
+	public static List<Ticket> addTickets(int id2, int id3, int id4, int ticketCount) {
+		List<Ticket> tickets = new LinkedList<Ticket>();
+		// TODO
+		return tickets;
 	}
 }

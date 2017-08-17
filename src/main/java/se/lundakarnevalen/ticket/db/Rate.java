@@ -59,4 +59,8 @@ public class Rate extends Entity {
 		int id = executeInsert(stmt);
 		return getSingle(id);
 	}
+
+	public boolean showIs(Show show) {
+		return show_id == show.id;
+	}
 }

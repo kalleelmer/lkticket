@@ -75,4 +75,8 @@ public class Category extends Entity {
 		stmt.setInt(2, id);
 		stmt.executeUpdate();
 	}
+
+	public boolean showIs(Show show) {
+		return show_id == show.id;
+	}
 }
