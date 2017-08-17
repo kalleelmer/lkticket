@@ -10,8 +10,10 @@ import java.util.List;
 import com.mysql.cj.api.jdbc.Statement;
 
 import se.lundakarnevalen.ticket.db.framework.Column;
+import se.lundakarnevalen.ticket.db.framework.Table;
 import se.lundakarnevalen.ticket.db.framework.Mapper;
 
+@Table(name = "tickets")
 public class Ticket extends Entity {
 	@Column
 	public final int id;
@@ -25,6 +27,9 @@ public class Ticket extends Entity {
 	@Column
 	protected int rate_id;
 
+	@Column(table = "seats")
+	protected int performance_id;
+
 	@Column
 	protected int price;
 
@@ -37,7 +42,7 @@ public class Ticket extends Entity {
 	@Column
 	protected Timestamp confirmed;
 
-	private static final String TABLE = "`tickets`";
+	private static final String TABLE = "`tickets` LEFT JOIN `seats` ON `tickets`.`seat_id`=`seats`.`id`";
 	private static final String COLS = Entity.getCols(Ticket.class);
 
 	private Ticket(int id) throws SQLException {

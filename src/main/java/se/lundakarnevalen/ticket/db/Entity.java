@@ -16,6 +16,7 @@ import com.mysql.cj.api.jdbc.Statement;
 
 import se.lundakarnevalen.ticket.Environment;
 import se.lundakarnevalen.ticket.db.framework.Column;
+import se.lundakarnevalen.ticket.db.framework.Table;
 import se.lundakarnevalen.ticket.logging.Logger;
 
 /**
@@ -65,9 +66,14 @@ public abstract class Entity {
 		StringBuilder cols = new StringBuilder();
 		Field[] fields = entity.getDeclaredFields();
 		int index = 0;
+		String classPrefix = entity.isAnnotationPresent(Table.class)
+				? "`" + entity.getAnnotation(Table.class).name() + "`." : "";
+
 		for (Field field : fields) {
 			if (field.isAnnotationPresent(Column.class)) {
-				cols.append((index == 0 ? "" : ",") + "`" + field.getName() + "`");
+				String fieldTable = field.getAnnotation(Column.class).table();
+				String prefix = fieldTable.isEmpty() ? classPrefix : "`" + fieldTable + "`.";
+				cols.append((index == 0 ? "" : ",") + prefix + "`" + field.getName() + "`");
 			}
 			index++;
 		}
