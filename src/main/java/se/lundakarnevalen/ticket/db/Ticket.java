@@ -61,21 +61,21 @@ public class Ticket extends Entity {
 	}
 
 	public static List<Ticket> getByOrder(int show_id) throws SQLException {
-		String query = "SELECT " + COLS + " FROM " + TABLE + " WHERE `order_id`=?";
+		String query = "SELECT " + COLS + " FROM " + TABLE + " WHERE `tickets`.`order_id`=?";
 		PreparedStatement stmt = prepare(query);
 		stmt.setLong(1, show_id);
 		return new Mapper<Ticket>(stmt).toEntityList(rs -> Ticket.create(rs));
 	}
 
 	public static Ticket getSingle(long id) throws SQLException {
-		String query = "SELECT " + COLS + " FROM " + TABLE + " WHERE `id`=?";
+		String query = "SELECT " + COLS + " FROM " + TABLE + " WHERE `tickets`.`id`=?";
 		PreparedStatement stmt = prepare(query);
 		stmt.setLong(1, id);
 		return new Mapper<Ticket>(stmt).toEntity(rs -> Ticket.create(rs));
 	}
 
 	public static Ticket getSingle(Connection con, long id) throws SQLException {
-		String query = "SELECT " + COLS + " FROM " + TABLE + " WHERE `id`=?";
+		String query = "SELECT " + COLS + " FROM " + TABLE + " WHERE `tickets`.`id`=?";
 		PreparedStatement stmt = con.prepareStatement(query);
 		stmt.setLong(1, id);
 		ResultSet rs = stmt.executeQuery();
@@ -83,7 +83,7 @@ public class Ticket extends Entity {
 	}
 
 	public static Ticket create(Connection con, int order_id, int seat_id, int rate_id, int price) throws SQLException {
-		String query = "INSERT INTO " + TABLE + " SET `order_id`=?, `seat_id`=?, `rate_id`=?, `price`=?";
+		String query = "INSERT INTO `tickets` SET `order_id`=?, `seat_id`=?, `rate_id`=?, `price`=?";
 		PreparedStatement stmt = con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 		stmt.setInt(1, order_id);
 		stmt.setInt(2, seat_id);
