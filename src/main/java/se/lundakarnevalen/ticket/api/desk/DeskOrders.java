@@ -1,6 +1,7 @@
 package se.lundakarnevalen.ticket.api.desk;
 
 import java.sql.SQLException;
+import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.GET;
@@ -11,6 +12,7 @@ import javax.ws.rs.core.Response;
 
 import se.lundakarnevalen.ticket.api.Request;
 import se.lundakarnevalen.ticket.db.Order;
+import se.lundakarnevalen.ticket.db.Ticket;
 
 @Path("/desk/orders")
 @RolesAllowed("USER")
@@ -29,5 +31,14 @@ public class DeskOrders extends Request {
 		Order order = Order.getSingle(id);
 		assertNotNull(order, 404);
 		return status(200).entity(order).build();
+	}
+
+	@GET
+	@Path("/{id}/tickets")
+	public Response getTickets(@PathParam("id") int id) throws SQLException {
+		Order order = Order.getSingle(id);
+		assertNotNull(order, 404);
+		List<Ticket> tickets = Ticket.getByOrder(order.id);
+		return status(200).entity(tickets).build();
 	}
 }
