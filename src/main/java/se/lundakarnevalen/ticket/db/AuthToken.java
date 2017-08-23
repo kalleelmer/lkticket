@@ -64,6 +64,7 @@ public class AuthToken extends Entity {
 		stmt.setString(1, tokenValue);
 		stmt.setInt(2, user.id);
 		int id = executeInsert(stmt);
+		stmt.getConnection().close();
 		AuthToken token = new AuthToken(id);
 		token.token = tokenValue;
 		token.user_id = user.id;

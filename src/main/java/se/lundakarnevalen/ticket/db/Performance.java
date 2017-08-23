@@ -58,6 +58,7 @@ public class Performance extends Entity {
 		stmt.setInt(1, show_id);
 		stmt.setTimestamp(2, Timestamp.valueOf(input.getString("start") + ":00"));
 		int id = executeInsert(stmt);
+		stmt.getConnection().close();
 		return getSingle(id);
 	}
 

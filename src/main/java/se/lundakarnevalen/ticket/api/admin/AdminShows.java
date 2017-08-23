@@ -34,10 +34,7 @@ public class AdminShows extends PublicShows {
 		for (Category cat : Category.getByShow(show.id)) {
 			System.out.println(
 					"Add for category " + cat.id + ", " + cat.getName() + " with ticketCount " + cat.getTicketCount());
-			for (int i = 0; i < cat.getTicketCount(); i++) {
-				System.out.println("Creating seat");
-				Seat.create(perf.id, cat.id);
-			}
+			Seat.create(perf.id, cat.id, cat.getTicketCount());
 		}
 		return status(200).entity(perf).build();
 	}

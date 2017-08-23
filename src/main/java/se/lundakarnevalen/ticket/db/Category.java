@@ -65,6 +65,7 @@ public class Category extends Entity {
 		stmt.setInt(1, show_id);
 		stmt.setString(2, input.getString("name"));
 		int id = executeInsert(stmt);
+		stmt.getConnection().close();
 		return getSingle(id);
 	}
 

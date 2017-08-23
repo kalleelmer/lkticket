@@ -1,5 +1,6 @@
 package se.lundakarnevalen.ticket.db;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -49,13 +50,21 @@ public class Seat extends Entity {
 		return new Mapper<Seat>(stmt).toEntity(rs -> Seat.create(rs));
 	}
 
-	public static Seat create(int performance_id, int category_id) throws SQLException, JSONException {
+	public static void create(int performance_id, int category_id, int count) throws SQLException, JSONException {
 		String query = "INSERT INTO " + TABLE + " SET `performance_id`=?, `category_id`=?";
 		System.out.println(query + " : " + performance_id + " : " + category_id);
-		PreparedStatement stmt = prepare(query);
-		stmt.setInt(1, performance_id);
-		stmt.setInt(2, category_id);
-		int id = executeInsert(stmt);
-		return getSingle(id);
+		Connection con = getCon();
+		try {
+			con.setAutoCommit(false);
+			PreparedStatement stmt = con.prepareStatement(query);
+			stmt.setInt(1, performance_id);
+			stmt.setInt(2, category_id);
+			for (int i = 0; i < count; i++) {
+				stmt.executeUpdate();
+			}
+			con.commit();
+		} finally {
+			con.close();
+		}
 	}
 }

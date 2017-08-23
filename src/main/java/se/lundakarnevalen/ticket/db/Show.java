@@ -49,6 +49,7 @@ public class Show extends Entity {
 		PreparedStatement stmt = prepare(query);
 		stmt.setString(1, input.getString("name"));
 		int id = executeInsert(stmt);
+		stmt.getConnection().close();
 		return getSingle(id);
 	}
 

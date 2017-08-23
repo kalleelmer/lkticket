@@ -58,6 +58,7 @@ public class Order extends Entity {
 		stmt.setTimestamp(1, new Timestamp(System.currentTimeMillis() + 30 * 60)); // 30min
 		stmt.setString(2, new BigInteger(48, random).toString(32).substring(0, 8));
 		int id = executeInsert(stmt);
+		stmt.getConnection().close();
 		return getSingle(id);
 	}
 
