@@ -35,6 +35,9 @@ public class Ticket extends Entity {
 	@Column(table = "categories", column = "name")
 	protected String category_name;
 
+	@Column(table = "rates", column = "name")
+	protected String rate_name;
+
 	@Column(table = "performances", column = "start")
 	protected Timestamp performance_start;
 
@@ -53,7 +56,8 @@ public class Ticket extends Entity {
 	@Column
 	protected Timestamp confirmed;
 
-	private static final String TABLE = "`tickets` " + "LEFT JOIN `seats` ON `tickets`.`seat_id`=`seats`.`id` "
+	private static final String TABLE = "`tickets` " + "LEFT JOIN `rates` ON `tickets`.`rate_id`=`rates`.`id` "
+			+ "LEFT JOIN `seats` ON `tickets`.`seat_id`=`seats`.`id` "
 			+ "LEFT JOIN `categories` ON `seats`.`category_id`=`categories`.`id`"
 			+ "LEFT JOIN `performances` ON `seats`.`performance_id`=`performances`.`id`"
 			+ "LEFT JOIN `shows` ON `performances`.`show_id`=`shows`.`id`";
