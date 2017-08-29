@@ -29,9 +29,17 @@ public class Ticket extends Entity {
 
 	@Column(table = "seats")
 	protected int performance_id;
-
 	@Column(table = "seats")
 	protected int category_id;
+
+	@Column(table = "categories", column = "name")
+	protected String category_name;
+
+	@Column(table = "performances", column = "start")
+	protected Timestamp performance_start;
+
+	@Column(table = "shows", column = "name")
+	protected String show_name;
 
 	@Column
 	protected int price;
@@ -45,7 +53,10 @@ public class Ticket extends Entity {
 	@Column
 	protected Timestamp confirmed;
 
-	private static final String TABLE = "`tickets` LEFT JOIN `seats` ON `tickets`.`seat_id`=`seats`.`id`";
+	private static final String TABLE = "`tickets` " + "LEFT JOIN `seats` ON `tickets`.`seat_id`=`seats`.`id` "
+			+ "LEFT JOIN `categories` ON `seats`.`category_id`=`categories`.`id`"
+			+ "LEFT JOIN `performances` ON `seats`.`performance_id`=`performances`.`id`"
+			+ "LEFT JOIN `shows` ON `performances`.`show_id`=`shows`.`id`";
 	private static final String COLS = Entity.getCols(Ticket.class);
 
 	private Ticket(int id) throws SQLException {

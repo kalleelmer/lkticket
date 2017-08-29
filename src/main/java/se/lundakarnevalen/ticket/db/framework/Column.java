@@ -10,4 +10,6 @@ import java.lang.annotation.Target;
 @Target(FIELD)
 public @interface Column {
 	String table() default "";
+
+	String column() default "";
 }

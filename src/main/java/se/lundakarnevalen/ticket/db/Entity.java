@@ -71,12 +71,15 @@ public abstract class Entity {
 
 		for (Field field : fields) {
 			if (field.isAnnotationPresent(Column.class)) {
-				String fieldTable = field.getAnnotation(Column.class).table();
+				Column column = field.getAnnotation(Column.class);
+				String fieldTable = column.table();
 				String prefix = fieldTable.isEmpty() ? classPrefix : "`" + fieldTable + "`.";
-				cols.append((index == 0 ? "" : ",") + prefix + "`" + field.getName() + "`");
+				String fieldColumn = column.column().isEmpty() ? field.getName() : column.column();
+				cols.append((index == 0 ? "" : ",") + prefix + "`" + fieldColumn + "` as `" + field.getName() + "`");
 			}
 			index++;
 		}
+		System.out.println(cols.toString());
 		return cols.toString();
 	}
 
