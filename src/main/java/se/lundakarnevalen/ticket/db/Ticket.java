@@ -30,6 +30,9 @@ public class Ticket extends Entity {
 	@Column(table = "seats")
 	protected int performance_id;
 
+	@Column(table = "seats")
+	protected int category_id;
+
 	@Column
 	protected int price;
 
