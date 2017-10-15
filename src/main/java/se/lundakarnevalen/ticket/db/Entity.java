@@ -9,9 +9,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.mysql.cj.api.jdbc.Statement;
 
 import se.lundakarnevalen.ticket.Environment;
@@ -120,19 +117,5 @@ public abstract class Entity {
 		}
 		int id = rs.getInt(1);
 		return id;
-	}
-
-	public final JSONObject toJSON() throws JSONException {
-		try {
-			JSONObject output = new JSONObject();
-			for (Field field : this.getClass().getDeclaredFields()) {
-				if (field.isAnnotationPresent(Column.class)) {
-					output.put(field.getName(), field.get(this));
-				}
-			}
-			return output;
-		} catch (IllegalArgumentException | IllegalAccessException e) {
-			throw new JSONException(e);
-		}
 	}
 }

@@ -36,10 +36,20 @@ public class Login extends Request {
 		return status(200).entity(helper.buildLoginUrl(redirect)).build();
 	}
 
+	public static class LoginResponse {
+		public final User user;
+		public final String token;
+
+		public LoginResponse(User user, String token) {
+			this.user = user;
+			this.token = token;
+		}
+	}
+
 	@GET
 	@PermitAll
 	@Path("/google/token")
-	@Produces("text/html; charset=UTF-8")
+	@Produces("application/json")
 	public Response validateLogin(@QueryParam("code") String authCode, @QueryParam("redirect") String redirect)
 			throws IOException, JSONException, SQLException {
 		try {
@@ -60,10 +70,8 @@ public class Login extends Request {
 				user.setName(name);
 			}
 			AuthToken token = AuthToken.issue(user);
-			JSONObject response = new JSONObject();
-			response.put("user", user.toJSON());
-			response.put("token", token.getToken());
-			return status(200).entity(response.toString()).build();
+			LoginResponse response = new LoginResponse(user, token.getToken());
+			return status(200).entity(response).build();
 		} catch (TokenResponseException e) {
 			ErrorLogger.getInstance().put(e);
 			throw new NotAuthorizedException("Invalid token");

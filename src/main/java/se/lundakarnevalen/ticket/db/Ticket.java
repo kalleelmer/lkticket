@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.mysql.cj.api.jdbc.Statement;
 
+import lombok.Getter;
 import se.lundakarnevalen.ticket.db.framework.Column;
 import se.lundakarnevalen.ticket.db.framework.Table;
 import se.lundakarnevalen.ticket.db.framework.Mapper;
@@ -18,42 +19,57 @@ public class Ticket extends Entity {
 	@Column
 	public final int id;
 	@Column
+	@Getter
 	protected String identifier;
 
 	@Column
+	@Getter
 	protected int seat_id;
 	@Column
+	@Getter
 	protected int order_id;
 	@Column
+	@Getter
 	protected int rate_id;
 
 	@Column(table = "seats")
+	@Getter
 	protected int performance_id;
 	@Column(table = "seats")
+	@Getter
 	protected int category_id;
 
 	@Column(table = "categories", column = "name")
+	@Getter
 	protected String category_name;
 
 	@Column(table = "rates", column = "name")
+	@Getter
 	protected String rate_name;
 
 	@Column(table = "performances", column = "start")
+	@Getter
 	protected Timestamp performance_start;
 
 	@Column(table = "shows", column = "name")
+	@Getter
 	protected String show_name;
 
 	@Column
+	@Getter
 	protected int price;
 
 	@Column
+	@Getter
 	protected Timestamp paid;
 	@Column
+	@Getter
 	protected Timestamp printed;
 	@Column
+	@Getter
 	protected Timestamp scanned;
 	@Column
+	@Getter
 	protected Timestamp confirmed;
 
 	private static final String TABLE = "`tickets` " + "LEFT JOIN `rates` ON `tickets`.`rate_id`=`rates`.`id` "

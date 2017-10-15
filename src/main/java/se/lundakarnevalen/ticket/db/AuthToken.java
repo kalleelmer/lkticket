@@ -21,6 +21,7 @@ public class AuthToken extends Entity {
 	protected String token;
 
 	@Column
+	@Getter
 	protected int user_id;
 
 	private static final String TABLE = "`user_tokens`";

@@ -7,15 +7,19 @@ import java.util.List;
 
 import org.json.JSONException;
 
+import lombok.Getter;
 import se.lundakarnevalen.ticket.db.framework.Column;
 import se.lundakarnevalen.ticket.db.framework.Mapper;
 
 public class Price extends Entity {
 	@Column
+	@Getter
 	protected int category_id;
 	@Column
+	@Getter
 	protected int rate_id;
 	@Column
+	@Getter
 	protected int price;
 
 	private static final String TABLE = "`prices`";

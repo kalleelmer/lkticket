@@ -13,10 +13,11 @@ public class User extends Entity {
 	@Column
 	public final int id;
 	@Column
+	@Getter
 	protected String email;
 
-	@Getter
 	@Column
+	@Getter
 	protected String name;
 
 	private static final String TABLE = "`users`";

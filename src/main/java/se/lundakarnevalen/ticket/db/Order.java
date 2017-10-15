@@ -10,6 +10,7 @@ import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.List;
 
+import lombok.Getter;
 import se.lundakarnevalen.ticket.db.framework.Column;
 import se.lundakarnevalen.ticket.db.framework.Mapper;
 
@@ -17,12 +18,16 @@ public class Order extends Entity {
 	@Column
 	public final int id;
 	@Column
+	@Getter
 	protected Timestamp created;
 	@Column
+	@Getter
 	protected Timestamp expires;
 	@Column
+	@Getter
 	protected String identifier;
 	@Column
+	@Getter
 	protected int customer_id;
 
 	private static final String TABLE = "`orders`";

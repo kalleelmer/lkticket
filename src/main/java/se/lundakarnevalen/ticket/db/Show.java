@@ -8,6 +8,7 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import lombok.Getter;
 import se.lundakarnevalen.ticket.db.framework.Column;
 import se.lundakarnevalen.ticket.db.framework.Mapper;
 
@@ -15,8 +16,10 @@ public class Show extends Entity {
 	@Column
 	public final int id;
 	@Column
+	@Getter
 	protected String name;
 	@Column
+	@Getter
 	protected String description;
 
 	private static final String TABLE = "`shows`";

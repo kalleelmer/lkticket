@@ -17,14 +17,15 @@ public class Category extends Entity {
 	public final int id;
 
 	@Column
+	@Getter
 	protected int show_id;
 
-	@Getter
 	@Column
+	@Getter
 	protected String name;
 
-	@Getter
 	@Column
+	@Getter
 	protected int ticketCount;
 
 	private static final String TABLE = "`categories`";

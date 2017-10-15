@@ -9,6 +9,7 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import lombok.Getter;
 import se.lundakarnevalen.ticket.db.framework.Column;
 import se.lundakarnevalen.ticket.db.framework.Mapper;
 
@@ -18,6 +19,7 @@ public class Performance extends Entity {
 	@Column
 	protected int show_id;
 	@Column
+	@Getter
 	protected Timestamp start;
 
 	private static final String TABLE = "`performances`";

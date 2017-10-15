@@ -69,7 +69,7 @@ public class AdminShows extends PublicShows {
 	public Response createNew(String data) throws JSONException, SQLException {
 		JSONObject input = new JSONObject(data);
 		Show show = Show.create(input);
-		return status(200).entity(show.toJSON().toString()).build();
+		return status(200).entity(show).build();
 	}
 
 }

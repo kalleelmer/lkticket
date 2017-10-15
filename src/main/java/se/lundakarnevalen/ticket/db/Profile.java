@@ -14,7 +14,7 @@ public class Profile extends Entity {
 	public final int id;
 	@Column
 	@Getter
-	protected String name;
+	public String name;
 
 	private static final String TABLE = "`profiles`";
 	private static final String COLS = Entity.getCols(Profile.class);
