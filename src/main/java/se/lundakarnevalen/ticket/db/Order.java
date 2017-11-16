@@ -57,6 +57,13 @@ public class Order extends Entity {
 		return new Mapper<Order>(stmt).toEntity(rs -> Order.create(rs));
 	}
 
+	public static List<Order> getByCustomer(Customer customer) throws SQLException {
+		String query = "SELECT " + COLS + " FROM " + TABLE + " WHERE `customer_id`=?";
+		PreparedStatement stmt = prepare(query);
+		stmt.setLong(1, customer.id);
+		return new Mapper<Order>(stmt).toEntityList(rs -> Order.create(rs));
+	}
+
 	public static Order create() throws SQLException {
 		String query = "INSERT INTO " + TABLE + " SET `expires`=?, `identifier`=?";
 		PreparedStatement stmt = prepare(query);
