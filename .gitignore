@@ -2,3 +2,8 @@
 /.settings/
 /.project
 /doc/
+.idea/
+*.iml
+context.xml
+.vagrant/
+*.log
