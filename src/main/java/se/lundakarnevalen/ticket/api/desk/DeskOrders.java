@@ -19,6 +19,7 @@ import org.json.JSONObject;
 
 import se.lundakarnevalen.ticket.api.Request;
 import se.lundakarnevalen.ticket.db.Category;
+import se.lundakarnevalen.ticket.db.Customer;
 import se.lundakarnevalen.ticket.db.Order;
 import se.lundakarnevalen.ticket.db.Performance;
 import se.lundakarnevalen.ticket.db.Rate;
@@ -42,6 +43,15 @@ public class DeskOrders extends Request {
 		Order order = Order.getSingle(id);
 		assertNotNull(order, 404);
 		return status(200).entity(order).build();
+	}
+
+	@GET
+	@Path("/{id}/customer")
+	public Response getCustomer(@PathParam("id") int id) throws SQLException {
+		Order order = Order.getSingle(id);
+		assertNotNull(order, 404);
+		Customer customer = Customer.getSingle(order.getCustomer_id());
+		return status(200).entity(customer).build();
 	}
 
 	@GET
