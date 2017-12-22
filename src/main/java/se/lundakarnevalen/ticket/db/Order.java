@@ -68,7 +68,7 @@ public class Order extends Entity {
 		String query = "INSERT INTO " + TABLE + " SET `expires`=?, `identifier`=?";
 		PreparedStatement stmt = prepare(query);
 		stmt.setTimestamp(1, new Timestamp(System.currentTimeMillis() + 30 * 60)); // 30min
-		stmt.setString(2, new BigInteger(48, random).toString(32).substring(0, 8));
+		stmt.setString(2, new BigInteger(48, random).toString(32).substring(0, 8).toUpperCase());
 		int id = executeInsert(stmt);
 		stmt.getConnection().close();
 		return getSingle(id);
