@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.BadRequestException;
+import javax.ws.rs.ClientErrorException;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -71,5 +73,19 @@ public class DeskOrders extends Request {
 		List<Ticket> tickets = order.addTickets(perf.id, cat.id, rate.id, ticketCount);
 		assertNotNull(tickets, 409);
 		return status(200).entity(tickets).build();
+	}
+
+	@DELETE
+	@Path("/{id}/tickets/{ticketID}")
+	public Response deleteTicket(@PathParam("id") int id, @PathParam("ticketID") int ticketID) throws SQLException {
+		Order order = Order.getSingle(id);
+		assertNotNull(order, 404);
+		Ticket ticket = Ticket.getSingle(ticketID);
+		assertNotNull(ticket);
+		if (ticket.getOrder_id() != order.id) {
+			throw new ClientErrorException(409);
+		}
+		ticket.remove();
+		return status(204).build();
 	}
 }

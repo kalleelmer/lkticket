@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
 
+import javax.ws.rs.ClientErrorException;
+
 import com.mysql.cj.api.jdbc.Statement;
 
 import lombok.Getter;
@@ -125,5 +127,29 @@ public class Ticket extends Entity {
 		stmt.setInt(4, price);
 		int id = executeInsert(stmt);
 		return getSingle(con, id);
+	}
+
+	public void remove() throws SQLException {
+		if (paid != null) {
+			throw new ClientErrorException(409);
+		}
+		Connection con = getCon();
+		try {
+			con.setAutoCommit(false);
+			String query = "UPDATE `tickets` SET `order_id`=NULL WHERE `id`=?";
+			PreparedStatement stmt = con.prepareStatement(query);
+			stmt.setLong(1, id);
+			stmt.executeUpdate();
+			String query2 = "UPDATE `seats` SET `active_ticket_id`=NULL WHERE `active_ticket_id`=?";
+			PreparedStatement stmt2 = con.prepareStatement(query2);
+			stmt2.setLong(1, id);
+			stmt2.executeUpdate();
+			con.commit();
+		} catch (SQLException e) {
+			con.rollback();
+			throw e;
+		} finally {
+			con.close();
+		}
 	}
 }
