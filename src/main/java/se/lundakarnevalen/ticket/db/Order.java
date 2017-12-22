@@ -10,6 +10,8 @@ import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.ws.rs.ClientErrorException;
+
 import lombok.Getter;
 import se.lundakarnevalen.ticket.db.framework.Column;
 import se.lundakarnevalen.ticket.db.framework.Mapper;
@@ -115,5 +117,17 @@ public class Order extends Entity {
 		} finally {
 			con.close();
 		}
+	}
+
+	public void setCustomer(int new_customer) throws SQLException {
+		if (customer_id > 0) {
+			throw new ClientErrorException(409);
+		}
+		String query = "UPDATE " + TABLE + " SET `customer_id`=? WHERE `id`=?";
+		PreparedStatement stmt = prepare(query);
+		stmt.setLong(2, id);
+		stmt.setInt(1, new_customer);
+		stmt.executeUpdate();
+		this.customer_id = new_customer;
 	}
 }

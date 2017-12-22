@@ -20,7 +20,7 @@ GRANT SELECT, INSERT, UPDATE(`active_ticket_id`) ON `seats` TO 'lkticket';
 
 GRANT SELECT, INSERT(`category_id`, `rate_id`, `price`), DELETE ON `prices` TO 'lkticket';
 
-GRANT SELECT, INSERT(`expires`, `identifier`) ON `orders` TO 'lkticket';
+GRANT SELECT, INSERT(`expires`, `identifier`), UPDATE(`customer_id`) ON `orders` TO 'lkticket';
 
 GRANT SELECT, INSERT (`order_id`, `seat_id`, `rate_id`, `price`), UPDATE (`order_id`) ON `tickets` TO 'lkticket';
 
