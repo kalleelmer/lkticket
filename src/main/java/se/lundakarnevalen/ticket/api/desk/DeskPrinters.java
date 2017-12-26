@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
+import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -33,10 +34,14 @@ public class DeskPrinters extends Request {
 		JSONArray inputTickets = input.getJSONArray("tickets");
 		for (int i = 0; i < inputTickets.length(); i++) {
 			Ticket ticket = Ticket.getSingle(inputTickets.getInt(i));
+			if (ticket.getPrinted() != null) {
+				throw new ClientErrorException(409);
+			}
 			tickets.add(ticket);
 		}
 		for (Ticket t : tickets) {
 			printer.print(t);
+			t.setPrinted();
 		}
 		return status(200).build();
 	}

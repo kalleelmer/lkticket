@@ -164,4 +164,11 @@ public class Ticket extends Entity {
 		json.put("performance_start", performance_start);
 		return json.toString();
 	}
+
+	public void setPrinted() throws SQLException {
+		String query = "UPDATE `tickets` SET `tickets`.`printed`=1 WHERE `tickets`.`id`=?";
+		PreparedStatement stmt = prepare(query);
+		stmt.setInt(1, id);
+		stmt.executeUpdate();
+	}
 }
