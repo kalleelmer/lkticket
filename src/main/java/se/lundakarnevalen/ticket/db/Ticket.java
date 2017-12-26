@@ -160,6 +160,7 @@ public class Ticket extends Entity {
 		JSONObject json = new JSONObject();
 		json.put("id", id);
 		json.put("show_name", show_name);
+		json.put("rate_name", rate_name);
 		json.put("category_name", category_name);
 		json.put("performance_start", performance_start);
 		return json.toString();
