@@ -9,6 +9,9 @@ import java.util.List;
 
 import javax.ws.rs.ClientErrorException;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.mysql.cj.api.jdbc.Statement;
 
 import lombok.Getter;
@@ -151,5 +154,14 @@ public class Ticket extends Entity {
 		} finally {
 			con.close();
 		}
+	}
+
+	public String renderPrint() throws JSONException {
+		JSONObject json = new JSONObject();
+		json.put("id", id);
+		json.put("show_name", show_name);
+		json.put("category_name", category_name);
+		json.put("performance_start", performance_start);
+		return json.toString();
 	}
 }
