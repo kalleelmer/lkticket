@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.ClientErrorException;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -54,5 +55,13 @@ public class DeskPrinters extends Request {
 		assertNotNull(printer, 404);
 		printer.setAlive();
 		return status(204).build();
+	}
+
+	@GET
+	@Path("/{id}")
+	public Response getPrinter(@PathParam("id") int id) throws SQLException, JSONException {
+		Printer printer = Printer.getSingle(id);
+		assertNotNull(printer, 404);
+		return status(200).entity(printer).build();
 	}
 }
