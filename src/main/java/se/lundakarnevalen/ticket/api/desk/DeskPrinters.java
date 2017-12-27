@@ -7,6 +7,7 @@ import java.util.List;
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -43,6 +44,15 @@ public class DeskPrinters extends Request {
 			printer.print(t);
 			t.setPrinted();
 		}
-		return status(200).build();
+		return status(204).build();
+	}
+
+	@PUT
+	@Path("/{id}/alive")
+	public Response setAlive(@PathParam("id") int id, String data) throws SQLException, JSONException {
+		Printer printer = Printer.getSingle(id);
+		assertNotNull(printer, 404);
+		printer.setAlive();
+		return status(204).build();
 	}
 }

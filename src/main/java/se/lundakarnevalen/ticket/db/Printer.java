@@ -57,4 +57,11 @@ public class Printer extends Entity {
 		SendMessageRequest request = new SendMessageRequest().withQueueUrl(url).withMessageBody(data);
 		sqs.sendMessage(request);
 	}
+
+	public void setAlive() throws SQLException {
+		String query = "UPDATE " + TABLE + " SET `alive`=CURRENT_TIMESTAMP WHERE `id`=?";
+		PreparedStatement stmt = prepare(query);
+		stmt.setLong(1, id);
+		stmt.executeUpdate();
+	}
 }
