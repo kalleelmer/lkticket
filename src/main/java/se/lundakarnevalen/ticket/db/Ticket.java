@@ -5,7 +5,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.TimeZone;
 
 import javax.ws.rs.ClientErrorException;
 
@@ -162,7 +164,9 @@ public class Ticket extends Entity {
 		json.put("show_name", show_name);
 		json.put("rate_name", rate_name);
 		json.put("category_name", category_name);
-		json.put("performance_start", performance_start);
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		format.setTimeZone(TimeZone.getTimeZone("CET"));
+		json.put("performance_start", format.format(performance_start));
 		return json.toString();
 	}
 
