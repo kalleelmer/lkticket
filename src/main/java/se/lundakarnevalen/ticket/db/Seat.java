@@ -54,7 +54,8 @@ public class Seat extends Entity {
 	}
 
 	public static Seat getSingle(long id) throws SQLException {
-		String query = "SELECT " + COLS + " FROM " + TABLE + " WHERE `id`=?";
+		String query = "SELECT " + COLS + " FROM " + TABLE + " WHERE `seats`.`id`=?";
+		System.out.println(query);
 		PreparedStatement stmt = prepare(query);
 		stmt.setLong(1, id);
 		return new Mapper<Seat>(stmt).toEntity(rs -> Seat.create(rs));
@@ -87,6 +88,13 @@ public class Seat extends Entity {
 	}
 
 	public boolean isAvailable() {
-		return active_ticket_id != 0;
+		return active_ticket_id == 0;
+	}
+
+	public void removeProfile() throws SQLException {
+		String query = "UPDATE `seats` SET `profile_id`=NULL WHERE `id`=?";
+		PreparedStatement stmt = prepare(query);
+		stmt.setInt(1, id);
+		stmt.executeUpdate();
 	}
 }

@@ -18,7 +18,7 @@ GRANT SELECT, INSERT(`show_id`, `name`, `ticketCount`), UPDATE(`ticketCount`) ON
 
 GRANT SELECT, INSERT(`show_id`, `name`) ON `rates` TO 'lkticket';
 
-GRANT SELECT, INSERT, UPDATE(`active_ticket_id`) ON `seats` TO 'lkticket';
+GRANT SELECT, INSERT, UPDATE(`active_ticket_id`, `profile_id`) ON `seats` TO 'lkticket';
 
 GRANT SELECT, INSERT(`category_id`, `rate_id`, `price`), DELETE ON `prices` TO 'lkticket';
 

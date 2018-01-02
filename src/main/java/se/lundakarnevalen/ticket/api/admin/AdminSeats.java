@@ -3,6 +3,7 @@ package se.lundakarnevalen.ticket.api.admin;
 import java.sql.SQLException;
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.ClientErrorException;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -40,4 +41,16 @@ public class AdminSeats extends Request {
 		seat.setProfile(profile.id);
 		return status(200).entity(seat).build();
 	}
+
+	@DELETE
+	@Path("/{id}/profile")
+	public Response deleteProfile(@PathParam("id") int id) throws SQLException, JSONException {
+		Seat seat = Seat.getSingle(id);
+		if (!seat.isAvailable()) {
+			throw new ClientErrorException(409);
+		}
+		seat.removeProfile();
+		return status(200).entity(seat).build();
+	}
+
 }
