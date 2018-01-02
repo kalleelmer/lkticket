@@ -76,18 +76,19 @@ public class Order extends Entity {
 		return getSingle(id);
 	}
 
-	public List<Ticket> addTickets(int performance_id, int category_id, int rate_id, int ticketCount)
+	public List<Ticket> addTickets(int performance_id, int category_id, int rate_id, int profile_id, int ticketCount)
 			throws SQLException {
 		System.out.println("Reserving " + ticketCount + " tickets for perf=" + performance_id + ", cat=" + category_id
-				+ " and rate=" + rate_id);
+				+ ", rate=" + rate_id + " and profile=" + profile_id);
 		Connection con = getCon();
 		try {
 			con.setAutoCommit(false);
-			String query = "SELECT `id` FROM `seats` WHERE `active_ticket_id` IS NULL AND `category_id`=? AND `performance_id`=? LIMIT ? FOR UPDATE";
+			String query = "SELECT `id` FROM `seats` WHERE `active_ticket_id` IS NULL AND `category_id`=? AND `performance_id`=? AND (`profile_id`=? OR `profile_id` IS NULL) LIMIT ? FOR UPDATE";
 			PreparedStatement stmt = con.prepareStatement(query);
 			stmt.setInt(1, category_id);
 			stmt.setInt(2, performance_id);
-			stmt.setInt(3, ticketCount);
+			stmt.setInt(3, profile_id);
+			stmt.setInt(4, ticketCount);
 			ResultSet rs = stmt.executeQuery();
 
 			Price price = Price.getSingle(category_id, rate_id);

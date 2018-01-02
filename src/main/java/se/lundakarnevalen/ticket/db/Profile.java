@@ -48,4 +48,15 @@ public class Profile extends Entity {
 		stmt.setLong(1, user_id);
 		return new Mapper<Profile>(stmt).toEntityList(rs -> Profile.create(rs));
 	}
+
+	public boolean hasUser(int user_id) throws SQLException {
+		String query = "SELECT `user_id` FROM `user_profiles` WHERE `user_id`=? AND `profile_id`=?";
+		PreparedStatement stmt = prepare(query);
+		stmt.setLong(1, user_id);
+		stmt.setLong(2, id);
+		ResultSet rs = stmt.executeQuery();
+		boolean result = rs.next();
+		stmt.getConnection().close();
+		return result;
+	}
 }
