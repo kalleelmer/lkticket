@@ -10,7 +10,11 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import se.lundakarnevalen.ticket.api.PublicPerformances;
+import se.lundakarnevalen.ticket.db.Performance;
 import se.lundakarnevalen.ticket.db.Seat;
 
 @Path("/admin/performances")
@@ -22,5 +26,12 @@ public class AdminPerformances extends PublicPerformances {
 	public Response getSeats(@PathParam("id") int id) throws SQLException {
 		List<Seat> seats = Seat.getByPerformance(id);
 		return status(200).entity(seats).build();
+	}
+
+	@GET
+	@Path("/{id}/availability")
+	public Response getAvailability(@PathParam("id") int id) throws SQLException, JSONException {
+		JSONObject availability = Performance.availability(id);
+		return status(200).entity(availability.toString()).build();
 	}
 }

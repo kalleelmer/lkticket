@@ -77,4 +77,16 @@ public class Seat extends Entity {
 			con.close();
 		}
 	}
+
+	public void setProfile(int profile_id) throws SQLException {
+		String query = "UPDATE `seats` SET `profile_id`=? WHERE `id`=?";
+		PreparedStatement stmt = prepare(query);
+		stmt.setInt(1, profile_id);
+		stmt.setInt(2, id);
+		stmt.executeUpdate();
+	}
+
+	public boolean isAvailable() {
+		return active_ticket_id != 0;
+	}
 }

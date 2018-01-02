@@ -67,4 +67,22 @@ public class Performance extends Entity {
 	public Show getShow() throws SQLException {
 		return Show.getSingle(show_id);
 	}
+
+	public static JSONObject availability(int id) throws SQLException, JSONException {
+		String query = "SELECT `profiles`.`id`, COUNT(*) as `total`, "
+				+ "SUM(IF(`active_ticket_id` IS NULL, 1, 0)) as `available` "
+				+ "FROM `seats` LEFT JOIN `profiles` ON `seats`.`profile_id`=`profiles`.`id` "
+				+ "WHERE `performance_id`=? GROUP BY `profiles`.`id`";
+		PreparedStatement stmt = prepare(query);
+		stmt.setInt(1, id);
+		ResultSet rs = stmt.executeQuery();
+		JSONObject profiles = new JSONObject();
+		while (rs.next()) {
+			JSONObject profile = new JSONObject();
+			profile.put("total", rs.getInt("total"));
+			profile.put("available", rs.getInt("available"));
+			profiles.put(Integer.toString(rs.getInt("id")), profile);
+		}
+		return profiles;
+	}
 }
