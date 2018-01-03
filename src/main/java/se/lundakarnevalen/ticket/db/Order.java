@@ -12,10 +12,14 @@ import java.util.List;
 
 import javax.ws.rs.ClientErrorException;
 
+import org.json.JSONException;
+
 import lombok.Getter;
 import se.lundakarnevalen.ticket.db.framework.Column;
 import se.lundakarnevalen.ticket.db.framework.Mapper;
+import se.lundakarnevalen.ticket.db.framework.Table;
 
+@Table(name = "orders")
 public class Order extends Entity {
 	@Column
 	public final int id;
@@ -31,8 +35,11 @@ public class Order extends Entity {
 	@Column
 	@Getter
 	protected int customer_id;
+	@Column(table = "payments", column = "id")
+	@Getter
+	protected int payment_id;
 
-	private static final String TABLE = "`orders`";
+	private static final String TABLE = "`orders` LEFT JOIN `payments` ON `orders`.`id`=`payments`.`order_id`";
 	private static final String COLS = Entity.getCols(Order.class);
 
 	private static SecureRandom random = new SecureRandom();
@@ -53,14 +60,14 @@ public class Order extends Entity {
 	}
 
 	public static Order getSingle(long id) throws SQLException {
-		String query = "SELECT " + COLS + " FROM " + TABLE + " WHERE `id`=?";
+		String query = "SELECT " + COLS + " FROM " + TABLE + " WHERE `orders`.`id`=?";
 		PreparedStatement stmt = prepare(query);
 		stmt.setLong(1, id);
 		return new Mapper<Order>(stmt).toEntity(rs -> Order.create(rs));
 	}
 
 	public static List<Order> getByCustomer(Customer customer) throws SQLException {
-		String query = "SELECT " + COLS + " FROM " + TABLE + " WHERE `customer_id`=?";
+		String query = "SELECT " + COLS + " FROM " + TABLE + " WHERE `orders`.`customer_id`=?";
 		PreparedStatement stmt = prepare(query);
 		stmt.setLong(1, customer.id);
 		return new Mapper<Order>(stmt).toEntityList(rs -> Order.create(rs));
@@ -124,11 +131,32 @@ public class Order extends Entity {
 		if (customer_id > 0) {
 			throw new ClientErrorException(409);
 		}
-		String query = "UPDATE " + TABLE + " SET `customer_id`=? WHERE `id`=?";
+		String query = "UPDATE `orders` SET `customer_id`=? WHERE `orders`.`id`=?";
 		PreparedStatement stmt = prepare(query);
 		stmt.setLong(2, id);
 		stmt.setInt(1, new_customer);
 		stmt.executeUpdate();
 		this.customer_id = new_customer;
+	}
+
+	public Payment pay(int user_id, int profile_id, int amount, List<Ticket> tickets)
+			throws SQLException, JSONException {
+		Connection con = getCon();
+		try {
+			con.setAutoCommit(false);
+			int transaction_id = Transaction.create(con, user_id, id, profile_id);
+			int payment_id = Payment.create(con, transaction_id, id, amount);
+			for (Ticket t : tickets) {
+				Transaction.addTicket(con, transaction_id, t.id, Transaction.TICKET_PAID);
+				t.setPaid(con);
+			}
+			con.commit();
+			return Payment.getSingle(payment_id);
+		} catch (SQLException e) {
+			con.rollback();
+			throw e;
+		} finally {
+			con.close();
+		}
 	}
 }

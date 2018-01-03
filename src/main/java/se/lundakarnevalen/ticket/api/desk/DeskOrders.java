@@ -7,7 +7,6 @@ import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.DELETE;
-import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -98,9 +97,7 @@ public class DeskOrders extends Request {
 			Profile profile = Profile.getSingle(profile_id);
 			assertNotNull(profile, 400);
 			User user = User.getSingle((Integer) context.getProperty("user_id"));
-			if (!profile.hasUser(user.id)) {
-				throw new ForbiddenException();
-			}
+			profile.assertAccess(user);
 		}
 		Show show = perf.getShow();
 		if (!rate.showIs(show) || !cat.showIs(show)) {
@@ -124,5 +121,30 @@ public class DeskOrders extends Request {
 		}
 		ticket.remove();
 		return status(204).build();
+	}
+
+	@POST
+	@Path("/{id}/payments")
+	public Response pay(@PathParam("id") int id, @Context ContainerRequestContext context, String data)
+			throws JSONException, SQLException {
+		User user = User.getSingle((Integer) context.getProperty("user_id"));
+		JSONObject input = new JSONObject(data);
+		Order order = Order.getSingle(id);
+		assertNotNull(order, 404);
+		if (order.getPayment_id() > 0) {
+			throw new ClientErrorException(409);
+		}
+		int amount = input.getInt("amount");
+		List<Ticket> tickets = Ticket.getByOrder(order.id);
+		int sum = 0;
+		for (Ticket t : tickets) {
+			sum += t.getPrice();
+		}
+		if (sum != amount) {
+			throw new ClientErrorException(409);
+		}
+		Profile profile = Profile.getSingle(input.getInt("profile_id"));
+		profile.assertAccess(user);
+		return Response.status(200).entity(order.pay(user.id, profile.id, amount, tickets)).build();
 	}
 }
