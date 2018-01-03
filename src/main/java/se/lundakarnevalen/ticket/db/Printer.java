@@ -3,6 +3,7 @@ package se.lundakarnevalen.ticket.db;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.List;
 
 import org.json.JSONException;
@@ -24,6 +25,9 @@ public class Printer extends Entity {
 	@Column
 	@Getter
 	protected String url;
+	@Column
+	@Getter
+	protected Timestamp alive;
 
 	private static final String TABLE = "`printers`";
 	private static final String COLS = Entity.getCols(Printer.class);

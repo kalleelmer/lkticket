@@ -26,6 +26,20 @@ import se.lundakarnevalen.ticket.db.Ticket;
 @RolesAllowed("USER")
 @Produces("application/json; charset=UTF-8")
 public class DeskPrinters extends Request {
+	@GET
+	public Response getPrinters() throws SQLException, JSONException {
+		List<Printer> printers = Printer.getAll();
+		return status(200).entity(printers).build();
+	}
+
+	@GET
+	@Path("/{id}")
+	public Response getPrinter(@PathParam("id") int id) throws SQLException, JSONException {
+		Printer printer = Printer.getSingle(id);
+		assertNotNull(printer, 404);
+		return status(200).entity(printer).build();
+	}
+
 	@POST
 	@Path("/{id}/print")
 	public Response printOrder(@PathParam("id") int id, String data) throws SQLException, JSONException {
@@ -57,11 +71,4 @@ public class DeskPrinters extends Request {
 		return status(204).build();
 	}
 
-	@GET
-	@Path("/{id}")
-	public Response getPrinter(@PathParam("id") int id) throws SQLException, JSONException {
-		Printer printer = Printer.getSingle(id);
-		assertNotNull(printer, 404);
-		return status(200).entity(printer).build();
-	}
 }
