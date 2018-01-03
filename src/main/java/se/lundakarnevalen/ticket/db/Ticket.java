@@ -5,7 +5,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.TimeZone;
+
+import javax.ws.rs.ClientErrorException;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.mysql.cj.api.jdbc.Statement;
 
@@ -125,5 +132,48 @@ public class Ticket extends Entity {
 		stmt.setInt(4, price);
 		int id = executeInsert(stmt);
 		return getSingle(con, id);
+	}
+
+	public void remove() throws SQLException {
+		if (paid != null) {
+			throw new ClientErrorException(409);
+		}
+		Connection con = getCon();
+		try {
+			con.setAutoCommit(false);
+			String query = "UPDATE `tickets` SET `order_id`=NULL WHERE `id`=?";
+			PreparedStatement stmt = con.prepareStatement(query);
+			stmt.setLong(1, id);
+			stmt.executeUpdate();
+			String query2 = "UPDATE `seats` SET `active_ticket_id`=NULL WHERE `active_ticket_id`=?";
+			PreparedStatement stmt2 = con.prepareStatement(query2);
+			stmt2.setLong(1, id);
+			stmt2.executeUpdate();
+			con.commit();
+		} catch (SQLException e) {
+			con.rollback();
+			throw e;
+		} finally {
+			con.close();
+		}
+	}
+
+	public String renderPrint() throws JSONException {
+		JSONObject json = new JSONObject();
+		json.put("id", id);
+		json.put("show_name", show_name);
+		json.put("rate_name", rate_name);
+		json.put("category_name", category_name);
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		format.setTimeZone(TimeZone.getTimeZone("CET"));
+		json.put("performance_start", format.format(performance_start));
+		return json.toString();
+	}
+
+	public void setPrinted() throws SQLException {
+		String query = "UPDATE `tickets` SET `tickets`.`printed`=1 WHERE `tickets`.`id`=?";
+		PreparedStatement stmt = prepare(query);
+		stmt.setInt(1, id);
+		stmt.executeUpdate();
 	}
 }

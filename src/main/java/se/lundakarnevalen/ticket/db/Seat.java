@@ -11,7 +11,9 @@ import org.json.JSONException;
 import lombok.Getter;
 import se.lundakarnevalen.ticket.db.framework.Column;
 import se.lundakarnevalen.ticket.db.framework.Mapper;
+import se.lundakarnevalen.ticket.db.framework.Table;
 
+@Table(name = "seats")
 public class Seat extends Entity {
 	@Column
 	public final int id;
@@ -27,8 +29,11 @@ public class Seat extends Entity {
 	@Column
 	@Getter
 	protected int profile_id;
+	@Column(table = "profiles", column = "name")
+	@Getter
+	protected String profile_name;
 
-	private static final String TABLE = "`seats`";
+	private static final String TABLE = "`seats` LEFT JOIN `profiles` ON `seats`.`profile_id`=`profiles`.`id`";
 	private static final String COLS = Entity.getCols(Seat.class);
 
 	private Seat(int id) throws SQLException {
@@ -49,7 +54,8 @@ public class Seat extends Entity {
 	}
 
 	public static Seat getSingle(long id) throws SQLException {
-		String query = "SELECT " + COLS + " FROM " + TABLE + " WHERE `id`=?";
+		String query = "SELECT " + COLS + " FROM " + TABLE + " WHERE `seats`.`id`=?";
+		System.out.println(query);
 		PreparedStatement stmt = prepare(query);
 		stmt.setLong(1, id);
 		return new Mapper<Seat>(stmt).toEntity(rs -> Seat.create(rs));
@@ -71,5 +77,24 @@ public class Seat extends Entity {
 		} finally {
 			con.close();
 		}
+	}
+
+	public void setProfile(int profile_id) throws SQLException {
+		String query = "UPDATE `seats` SET `profile_id`=? WHERE `id`=?";
+		PreparedStatement stmt = prepare(query);
+		stmt.setInt(1, profile_id);
+		stmt.setInt(2, id);
+		stmt.executeUpdate();
+	}
+
+	public boolean isAvailable() {
+		return active_ticket_id == 0;
+	}
+
+	public void removeProfile() throws SQLException {
+		String query = "UPDATE `seats` SET `profile_id`=NULL WHERE `id`=?";
+		PreparedStatement stmt = prepare(query);
+		stmt.setInt(1, id);
+		stmt.executeUpdate();
 	}
 }

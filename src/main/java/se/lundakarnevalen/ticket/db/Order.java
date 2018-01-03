@@ -10,6 +10,8 @@ import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.ws.rs.ClientErrorException;
+
 import lombok.Getter;
 import se.lundakarnevalen.ticket.db.framework.Column;
 import se.lundakarnevalen.ticket.db.framework.Mapper;
@@ -68,24 +70,25 @@ public class Order extends Entity {
 		String query = "INSERT INTO " + TABLE + " SET `expires`=?, `identifier`=?";
 		PreparedStatement stmt = prepare(query);
 		stmt.setTimestamp(1, new Timestamp(System.currentTimeMillis() + 30 * 60)); // 30min
-		stmt.setString(2, new BigInteger(48, random).toString(32).substring(0, 8));
+		stmt.setString(2, new BigInteger(48, random).toString(32).substring(0, 8).toUpperCase());
 		int id = executeInsert(stmt);
 		stmt.getConnection().close();
 		return getSingle(id);
 	}
 
-	public List<Ticket> addTickets(int performance_id, int category_id, int rate_id, int ticketCount)
+	public List<Ticket> addTickets(int performance_id, int category_id, int rate_id, int profile_id, int ticketCount)
 			throws SQLException {
 		System.out.println("Reserving " + ticketCount + " tickets for perf=" + performance_id + ", cat=" + category_id
-				+ " and rate=" + rate_id);
+				+ ", rate=" + rate_id + " and profile=" + profile_id);
 		Connection con = getCon();
 		try {
 			con.setAutoCommit(false);
-			String query = "SELECT `id` FROM `seats` WHERE `active_ticket_id` IS NULL AND `category_id`=? AND `performance_id`=? LIMIT ? FOR UPDATE";
+			String query = "SELECT `id` FROM `seats` WHERE `active_ticket_id` IS NULL AND `category_id`=? AND `performance_id`=? AND (`profile_id`=? OR `profile_id` IS NULL) LIMIT ? FOR UPDATE";
 			PreparedStatement stmt = con.prepareStatement(query);
 			stmt.setInt(1, category_id);
 			stmt.setInt(2, performance_id);
-			stmt.setInt(3, ticketCount);
+			stmt.setInt(3, profile_id);
+			stmt.setInt(4, ticketCount);
 			ResultSet rs = stmt.executeQuery();
 
 			Price price = Price.getSingle(category_id, rate_id);
@@ -115,5 +118,17 @@ public class Order extends Entity {
 		} finally {
 			con.close();
 		}
+	}
+
+	public void setCustomer(int new_customer) throws SQLException {
+		if (customer_id > 0) {
+			throw new ClientErrorException(409);
+		}
+		String query = "UPDATE " + TABLE + " SET `customer_id`=? WHERE `id`=?";
+		PreparedStatement stmt = prepare(query);
+		stmt.setLong(2, id);
+		stmt.setInt(1, new_customer);
+		stmt.executeUpdate();
+		this.customer_id = new_customer;
 	}
 }
