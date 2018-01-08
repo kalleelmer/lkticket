@@ -24,6 +24,7 @@ import se.lundakarnevalen.ticket.api.Request;
 import se.lundakarnevalen.ticket.db.Category;
 import se.lundakarnevalen.ticket.db.Customer;
 import se.lundakarnevalen.ticket.db.Order;
+import se.lundakarnevalen.ticket.db.Payment;
 import se.lundakarnevalen.ticket.db.Performance;
 import se.lundakarnevalen.ticket.db.Profile;
 import se.lundakarnevalen.ticket.db.Rate;
@@ -155,6 +156,8 @@ public class DeskOrders extends Request {
 			throw new ClientErrorException(409);
 		}
 		int amount = input.getInt("amount");
+		String method = input.getString("method");
+		String reference = input.has("reference") ? input.getString("reference") : null;
 		List<Ticket> tickets = Ticket.getByOrder(order.id);
 		int sum = 0;
 		for (Ticket t : tickets) {
@@ -165,6 +168,7 @@ public class DeskOrders extends Request {
 		}
 		Profile profile = Profile.getSingle(input.getInt("profile_id"));
 		profile.assertAccess(user);
-		return Response.status(200).entity(order.pay(user.id, profile.id, amount, tickets)).build();
+		Payment payment = order.pay(user.id, profile.id, amount, tickets, method, reference);
+		return Response.status(200).entity(payment).build();
 	}
 }

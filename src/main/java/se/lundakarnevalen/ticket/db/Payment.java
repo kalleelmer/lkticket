@@ -19,6 +19,10 @@ public class Payment extends Entity {
 	protected int order_id;
 	@Column
 	public int amount;
+	@Column
+	public String method;
+	@Column
+	public String reference;
 
 	private static final String TABLE = "`payments`";
 	private static final String COLS = Entity.getCols(Payment.class);
@@ -40,13 +44,15 @@ public class Payment extends Entity {
 		return new Mapper<Payment>(stmt).toEntity(rs -> Payment.create(rs));
 	}
 
-	public static int create(Connection con, int transaction_id, int order_id, int amount)
-			throws SQLException, JSONException {
-		String query = "INSERT INTO `payments` SET `transaction_id`=?, `order_id`=?, `amount`=?";
+	public static int create(Connection con, int transaction_id, int order_id, int amount, String method,
+			String reference) throws SQLException, JSONException {
+		String query = "INSERT INTO `payments` SET `transaction_id`=?, `order_id`=?, `amount`=?, `method`=?, `reference`=?";
 		PreparedStatement stmt = con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 		stmt.setInt(1, transaction_id);
 		stmt.setInt(2, order_id);
 		stmt.setInt(3, amount);
+		stmt.setString(4, method);
+		stmt.setString(5, reference);
 		int id = executeInsert(stmt);
 		return id;
 	}

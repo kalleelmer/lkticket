@@ -149,13 +149,13 @@ public class Order extends Entity {
 		this.customer_id = new_customer;
 	}
 
-	public Payment pay(int user_id, int profile_id, int amount, List<Ticket> tickets)
+	public Payment pay(int user_id, int profile_id, int amount, List<Ticket> tickets, String method, String reference)
 			throws SQLException, JSONException {
 		Connection con = getCon();
 		try {
 			con.setAutoCommit(false);
 			int transaction_id = Transaction.create(con, user_id, id, profile_id);
-			int payment_id = Payment.create(con, transaction_id, id, amount);
+			int payment_id = Payment.create(con, transaction_id, id, amount, method, reference);
 			for (Ticket t : tickets) {
 				Transaction.addTicket(con, transaction_id, t.id, Transaction.TICKET_PAID);
 				t.setPaid(con);
