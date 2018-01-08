@@ -36,6 +36,26 @@ import se.lundakarnevalen.ticket.db.User;
 @Produces("application/json; charset=UTF-8")
 public class DeskOrders extends Request {
 	@GET
+	public Response getOrders() throws SQLException {
+		List<Order> orders = Order.getAll();
+		return status(200).entity(orders).build();
+	}
+
+	@GET
+	@Path("/unpaid")
+	public Response getUnpaid() throws SQLException {
+		List<Order> orders = Order.getUnpaid();
+		return status(200).entity(orders).build();
+	}
+
+	@GET
+	@Path("/paid")
+	public Response getPaid() throws SQLException {
+		List<Order> orders = Order.getPaid();
+		return status(200).entity(orders).build();
+	}
+
+	@GET
 	@Path("/create")
 	public Response createOrder() throws SQLException {
 		Order order = Order.create();

@@ -59,6 +59,16 @@ public class Order extends Entity {
 		return new Mapper<Order>(getCon(), query).toEntityList(rs -> Order.create(rs));
 	}
 
+	public static List<Order> getUnpaid() throws SQLException {
+		String query = "SELECT " + COLS + " FROM " + TABLE + " WHERE `payments`.`id` IS NULL";
+		return new Mapper<Order>(getCon(), query).toEntityList(rs -> Order.create(rs));
+	}
+
+	public static List<Order> getPaid() throws SQLException {
+		String query = "SELECT " + COLS + " FROM " + TABLE + " WHERE `payments`.`id` IS NOT NULL";
+		return new Mapper<Order>(getCon(), query).toEntityList(rs -> Order.create(rs));
+	}
+
 	public static Order getSingle(long id) throws SQLException {
 		String query = "SELECT " + COLS + " FROM " + TABLE + " WHERE `orders`.`id`=?";
 		PreparedStatement stmt = prepare(query);
