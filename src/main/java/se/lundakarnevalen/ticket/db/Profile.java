@@ -5,6 +5,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.ws.rs.ForbiddenException;
+
 import lombok.Getter;
 import se.lundakarnevalen.ticket.db.framework.Column;
 import se.lundakarnevalen.ticket.db.framework.Mapper;
@@ -47,6 +49,12 @@ public class Profile extends Entity {
 		PreparedStatement stmt = prepare(query);
 		stmt.setLong(1, user_id);
 		return new Mapper<Profile>(stmt).toEntityList(rs -> Profile.create(rs));
+	}
+
+	public void assertAccess(User user) throws SQLException {
+		if (!hasUser(user.id)) {
+			throw new ForbiddenException();
+		}
 	}
 
 	public boolean hasUser(int user_id) throws SQLException {

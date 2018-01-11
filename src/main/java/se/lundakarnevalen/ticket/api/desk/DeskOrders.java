@@ -7,7 +7,6 @@ import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.DELETE;
-import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -25,6 +24,7 @@ import se.lundakarnevalen.ticket.api.Request;
 import se.lundakarnevalen.ticket.db.Category;
 import se.lundakarnevalen.ticket.db.Customer;
 import se.lundakarnevalen.ticket.db.Order;
+import se.lundakarnevalen.ticket.db.Payment;
 import se.lundakarnevalen.ticket.db.Performance;
 import se.lundakarnevalen.ticket.db.Profile;
 import se.lundakarnevalen.ticket.db.Rate;
@@ -36,6 +36,26 @@ import se.lundakarnevalen.ticket.db.User;
 @RolesAllowed("USER")
 @Produces("application/json; charset=UTF-8")
 public class DeskOrders extends Request {
+	@GET
+	public Response getOrders() throws SQLException {
+		List<Order> orders = Order.getAll();
+		return status(200).entity(orders).build();
+	}
+
+	@GET
+	@Path("/unpaid")
+	public Response getUnpaid() throws SQLException {
+		List<Order> orders = Order.getUnpaid();
+		return status(200).entity(orders).build();
+	}
+
+	@GET
+	@Path("/paid")
+	public Response getPaid() throws SQLException {
+		List<Order> orders = Order.getPaid();
+		return status(200).entity(orders).build();
+	}
+
 	@GET
 	@Path("/create")
 	public Response createOrder() throws SQLException {
@@ -98,9 +118,7 @@ public class DeskOrders extends Request {
 			Profile profile = Profile.getSingle(profile_id);
 			assertNotNull(profile, 400);
 			User user = User.getSingle((Integer) context.getProperty("user_id"));
-			if (!profile.hasUser(user.id)) {
-				throw new ForbiddenException();
-			}
+			profile.assertAccess(user);
 		}
 		Show show = perf.getShow();
 		if (!rate.showIs(show) || !cat.showIs(show)) {
@@ -124,5 +142,33 @@ public class DeskOrders extends Request {
 		}
 		ticket.remove();
 		return status(204).build();
+	}
+
+	@POST
+	@Path("/{id}/payments")
+	public Response pay(@PathParam("id") int id, @Context ContainerRequestContext context, String data)
+			throws JSONException, SQLException {
+		User user = User.getSingle((Integer) context.getProperty("user_id"));
+		JSONObject input = new JSONObject(data);
+		Order order = Order.getSingle(id);
+		assertNotNull(order, 404);
+		if (order.getPayment_id() > 0) {
+			throw new ClientErrorException(409);
+		}
+		int amount = input.getInt("amount");
+		String method = input.getString("method");
+		String reference = input.has("reference") ? input.getString("reference") : null;
+		List<Ticket> tickets = Ticket.getByOrder(order.id);
+		int sum = 0;
+		for (Ticket t : tickets) {
+			sum += t.getPrice();
+		}
+		if (sum != amount) {
+			throw new ClientErrorException(409);
+		}
+		Profile profile = Profile.getSingle(input.getInt("profile_id"));
+		profile.assertAccess(user);
+		Payment payment = order.pay(user.id, profile.id, amount, tickets, method, reference);
+		return Response.status(200).entity(payment).build();
 	}
 }

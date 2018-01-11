@@ -176,4 +176,11 @@ public class Ticket extends Entity {
 		stmt.setInt(1, id);
 		stmt.executeUpdate();
 	}
+
+	public void setPaid(Connection con) throws SQLException {
+		String query = "UPDATE `tickets` SET `tickets`.`paid`=1 WHERE `tickets`.`id`=?";
+		PreparedStatement stmt = con.prepareStatement(query);
+		stmt.setInt(1, id);
+		stmt.executeUpdate();
+	}
 }
