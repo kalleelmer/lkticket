@@ -1,13 +1,13 @@
 package se.lundakarnevalen.ticket.db;
 
+import lombok.Getter;
+import se.lundakarnevalen.ticket.db.framework.Column;
+import se.lundakarnevalen.ticket.db.framework.Mapper;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-
-import lombok.Getter;
-import se.lundakarnevalen.ticket.db.framework.Column;
-import se.lundakarnevalen.ticket.db.framework.Mapper;
 
 public class User extends Entity {
 	@Column
@@ -60,6 +60,15 @@ public class User extends Entity {
 		stmt.executeUpdate();
 		stmt.getConnection().close();
 		this.name = name;
+	}
+
+	public static User createUser(String email) throws SQLException {
+		String query = "INSERT INTO `users` (`email`) VALUES (?)";
+		PreparedStatement stmt = prepare(query);
+		stmt.setString(1, email);
+		int id = executeInsert(stmt);
+		stmt.getConnection().close();
+		return getSingle(id);
 	}
 
 	public List<Profile> getProfiles() throws SQLException {
