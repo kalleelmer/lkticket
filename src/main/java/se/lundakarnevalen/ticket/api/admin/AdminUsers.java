@@ -1,19 +1,15 @@
 package se.lundakarnevalen.ticket.api.admin;
 
-import java.sql.SQLException;
-import java.util.List;
-
-import javax.annotation.security.RolesAllowed;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Response;
-
 import org.json.JSONException;
-
+import org.json.JSONObject;
 import se.lundakarnevalen.ticket.api.Request;
 import se.lundakarnevalen.ticket.db.User;
+
+import javax.annotation.security.RolesAllowed;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Response;
+import java.sql.SQLException;
+import java.util.List;
 
 @Path("/admin/users")
 @RolesAllowed("ADMIN")
@@ -30,6 +26,14 @@ public class AdminUsers extends Request {
 	@Path("/{id}")
 	public Response getSingle(@PathParam("id") int id) throws SQLException, JSONException {
 		User user = User.getSingle(id);
+		return status(200).entity(user).build();
+	}
+
+	@POST
+	public Response createUser(String data) throws JSONException, SQLException {
+		JSONObject input = new JSONObject(data);
+		String email = input.getString("email");
+		User user = User.createUser(email);
 		return status(200).entity(user).build();
 	}
 }
