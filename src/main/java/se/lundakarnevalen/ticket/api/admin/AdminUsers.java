@@ -3,6 +3,7 @@ package se.lundakarnevalen.ticket.api.admin;
 import org.json.JSONException;
 import org.json.JSONObject;
 import se.lundakarnevalen.ticket.api.Request;
+import se.lundakarnevalen.ticket.db.Profile;
 import se.lundakarnevalen.ticket.db.User;
 
 import javax.annotation.security.RolesAllowed;
@@ -35,5 +36,29 @@ public class AdminUsers extends Request {
 		String email = input.getString("email");
 		User user = User.createUser(email);
 		return status(200).entity(user).build();
+	}
+
+	@PUT
+	@Path("/{id}/profiles/{profile_id}")
+	public Response addProfile(@PathParam("id") int id, @PathParam("profile_id") int profile_id)
+			throws SQLException, JSONException {
+		User user = User.getSingle(id);
+		assertNotNull(user, 404);
+		Profile profile = Profile.getSingle(profile_id);
+		assertNotNull(profile, 400);
+		user.addProfile(profile.id);
+		return status(200).entity(profile).build();
+	}
+
+	@DELETE
+	@Path("/{id}/profiles/{pid}")
+	public Response removeProfile(@PathParam("id") int id, @PathParam("pid") int profile_id)
+			throws SQLException, JSONException {
+		User user = User.getSingle(id);
+		assertNotNull(user, 404);
+		Profile profile = Profile.getSingle(profile_id);
+		assertNotNull(profile, 400);
+		user.removeProfile(profile.id);
+		return status(200).entity(profile).build();
 	}
 }

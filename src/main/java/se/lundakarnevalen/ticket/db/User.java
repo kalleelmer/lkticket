@@ -74,4 +74,22 @@ public class User extends Entity {
 	public List<Profile> getProfiles() throws SQLException {
 		return Profile.getByUser(this.id);
 	}
+
+	public void addProfile(int profile_id) throws SQLException {
+		String query = "INSERT INTO `user_profiles` (`user_id`,`profile_id`) VALUES (?,?)";
+		PreparedStatement stmt = prepare(query);
+		stmt.setInt(1, id);
+		stmt.setInt(2, profile_id);
+		stmt.executeUpdate();
+		stmt.getConnection().close();
+	}
+
+	public void removeProfile(int profile_id) throws SQLException {
+		String query = "DELETE FROM `user_profiles` WHERE `user_id`=? AND `profile_id`=?";
+		PreparedStatement stmt = prepare(query);
+		stmt.setInt(1, id);
+		stmt.setInt(2, profile_id);
+		stmt.executeUpdate();
+		stmt.getConnection().close();
+	}
 }

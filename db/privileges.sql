@@ -8,7 +8,7 @@ GRANT SELECT, INSERT(`name`), UPDATE(`name`) ON `shows` TO 'lkticket';
 
 GRANT SELECT, INSERT(`name`), UPDATE(`name`) ON `users` TO 'lkticket';
 
-GRANT SELECT ON `user_profiles` TO 'lkticket';
+GRANT SELECT, INSERT, DELETE ON `user_profiles` TO 'lkticket';
 
 GRANT SELECT, INSERT(`token`,`user_id`) ON `user_tokens` TO 'lkticket';
 
