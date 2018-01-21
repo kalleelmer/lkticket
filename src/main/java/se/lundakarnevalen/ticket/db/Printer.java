@@ -27,6 +27,9 @@ public class Printer extends Entity {
 	protected String url;
 	@Column
 	@Getter
+	protected String sno;
+	@Column
+	@Getter
 	protected Timestamp alive;
 
 	private static final String TABLE = "`printers`";
@@ -67,5 +70,12 @@ public class Printer extends Entity {
 		PreparedStatement stmt = prepare(query);
 		stmt.setLong(1, id);
 		stmt.executeUpdate();
+	}
+
+	public static Printer getBySerialNumber(String sno) throws SQLException {
+		String query = "SELECT " + COLS + " FROM " + TABLE + " WHERE `sno`=?";
+		PreparedStatement stmt = prepare(query);
+		stmt.setString(1, sno);
+		return new Mapper<Printer>(stmt).toEntity(rs -> Printer.create(rs));
 	}
 }

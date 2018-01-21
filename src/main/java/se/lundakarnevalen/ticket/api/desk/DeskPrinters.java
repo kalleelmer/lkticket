@@ -40,6 +40,14 @@ public class DeskPrinters extends Request {
 		return status(200).entity(printer).build();
 	}
 
+	@GET
+	@Path("/sno/{sno}")
+	public Response getPrinterBySerialNumber(@PathParam("sno") String sno) throws SQLException, JSONException {
+		Printer printer = Printer.getBySerialNumber(sno);
+		assertNotNull(printer, 404);
+		return status(200).entity(printer).build();
+	}
+
 	@POST
 	@Path("/{id}/print")
 	public Response printOrder(@PathParam("id") int id, String data) throws SQLException, JSONException {
