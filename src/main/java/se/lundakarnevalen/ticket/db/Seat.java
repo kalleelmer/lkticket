@@ -62,7 +62,7 @@ public class Seat extends Entity {
 	}
 
 	public static void create(int performance_id, int category_id, int count) throws SQLException, JSONException {
-		String query = "INSERT INTO " + TABLE + " SET `performance_id`=?, `category_id`=?";
+		String query = "INSERT INTO `seats` SET `performance_id`=?, `category_id`=?";
 		System.out.println(query + " : " + performance_id + " : " + category_id);
 		Connection con = getCon();
 		try {
