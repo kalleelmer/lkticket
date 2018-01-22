@@ -7,7 +7,7 @@ import javax.ws.rs.Produces;
 import se.lundakarnevalen.ticket.api.PublicPerformances;
 
 @Path("/desk/performances")
-@RolesAllowed("ADMIN")
+@RolesAllowed("USER")
 @Produces("application/json; charset=UTF-8")
 public class DeskPerformances extends PublicPerformances {
 }

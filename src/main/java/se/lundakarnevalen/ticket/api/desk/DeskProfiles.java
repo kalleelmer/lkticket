@@ -15,7 +15,7 @@ import se.lundakarnevalen.ticket.api.Request;
 import se.lundakarnevalen.ticket.db.Profile;
 
 @Path("/desk/profiles")
-@RolesAllowed("ADMIN")
+@RolesAllowed("USER")
 @Produces("application/json; charset=UTF-8")
 public class DeskProfiles extends Request {
 	@GET
