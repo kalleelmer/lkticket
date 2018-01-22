@@ -61,7 +61,7 @@ public final class GoogleAuthenticator {
 
 		final GoogleAuthorizationCodeRequestUrl url = flow.newAuthorizationUrl();
 
-		return url.setRedirectUri(redirect).setState(stateToken).set("hd", "lundakarnevalen.lu.se").build();
+		return url.setRedirectUri(redirect).setState(stateToken).build();
 	}
 
 	/**
