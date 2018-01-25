@@ -35,9 +35,7 @@ public abstract class Entity {
 			String port = Environment.getProperty("db.port");
 			String jdbcUrl = "jdbc:mysql://" + hostname + ":" + port + "/" + dbName + "?user=" + userName + "&password="
 					+ password + "&serverTimezone=UTC";
-			Logger.trace("Getting remote connection with connection string from environment variables.");
 			Connection con = DriverManager.getConnection(jdbcUrl);
-			Logger.trace("Remote connection successful.");
 			return con;
 		} catch (ClassNotFoundException e) {
 			throw new SQLException(e);
