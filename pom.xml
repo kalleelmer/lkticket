@@ -99,6 +99,13 @@
 				<version>2.6</version>
 				<configuration>
 					<webXml>WebContent/WEB-INF/web.xml</webXml>
+					<webResources>
+						<resource>
+							<directory>src/main/ebextensions</directory>
+							<targetPath>.ebextensions</targetPath>
+							<filtering>true</filtering>
+						</resource>
+					</webResources>
 				</configuration>
 			</plugin>
 			<plugin>
