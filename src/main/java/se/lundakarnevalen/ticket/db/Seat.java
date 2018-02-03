@@ -23,6 +23,9 @@ public class Seat extends Entity {
 	@Column
 	@Getter
 	protected int category_id;
+	@Column(table = "categories", column = "name")
+	@Getter
+	protected String category_name;
 	@Column
 	@Getter
 	protected int active_ticket_id;
@@ -33,7 +36,8 @@ public class Seat extends Entity {
 	@Getter
 	protected String profile_name;
 
-	private static final String TABLE = "`seats` LEFT JOIN `profiles` ON `seats`.`profile_id`=`profiles`.`id`";
+	private static final String TABLE = "`seats` LEFT JOIN `profiles` ON `seats`.`profile_id`=`profiles`.`id`"
+			+ " LEFT JOIN `categories` ON `seats`.`category_id`=`categories`.`id`";
 	private static final String COLS = Entity.getCols(Seat.class);
 
 	private Seat(int id) throws SQLException {
