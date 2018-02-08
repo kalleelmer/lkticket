@@ -9,6 +9,8 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
 import org.json.JSONException;
@@ -17,25 +19,26 @@ import org.json.JSONObject;
 import se.lundakarnevalen.ticket.api.Request;
 import se.lundakarnevalen.ticket.db.Customer;
 import se.lundakarnevalen.ticket.db.Order;
+import se.lundakarnevalen.ticket.db.Profile;
+import se.lundakarnevalen.ticket.db.User;
 
 @Path("/desk/customers")
 @RolesAllowed("USER")
 @Produces("application/json; charset=UTF-8")
 public class DeskCustomers extends Request {
 	@POST
-	public Response createCustomer(String data) throws SQLException, JSONException {
+	public Response createCustomer(@Context ContainerRequestContext context, String data)
+			throws SQLException, JSONException {
+		User user = User.getSingle((Integer) context.getProperty("user_id"));
 		JSONObject input = new JSONObject(data);
 		String name = input.getString("name");
 		String phone = input.getString("phone");
 		String email = input.getString("email");
+		Profile profile = Profile.getSingle(input.getInt("profile_id"));
+		profile.assertAccess(user);
 		Customer customer = Customer.create(name, email, phone);
+		profile.addCustomer(customer.id);
 		return status(200).entity(customer).build();
-	}
-
-	@GET
-	public Response getCustomers() throws SQLException {
-		List<Customer> customers = Customer.getAll();
-		return status(200).entity(customers).build();
 	}
 
 	@GET

@@ -67,4 +67,12 @@ public class Customer extends Entity {
 		stmt.getConnection().close();
 		return getSingle(id);
 	}
+
+	public static List<Customer> getByProfile(int profile_id) throws SQLException {
+		String query = "SELECT " + COLS + " FROM " + TABLE + " WHERE `id` IN "
+				+ "(SELECT `customer_id` FROM `customer_profiles` WHERE `profile_id`=?)";
+		PreparedStatement stmt = prepare(query);
+		stmt.setInt(1, profile_id);
+		return new Mapper<Customer>(stmt).toEntityList(rs -> Customer.create(rs));
+	}
 }

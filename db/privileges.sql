@@ -28,6 +28,8 @@ GRANT SELECT, INSERT (`order_id`, `seat_id`, `rate_id`, `price`), UPDATE (`order
 
 GRANT SELECT, INSERT (`email`, `phone`, `name`) ON `customers` TO 'lkticket';
 
+GRANT SELECT, INSERT ON `customer_profiles` TO 'lkticket';
+
 GRANT SELECT, INSERT (`transaction_id`, `order_id`, `amount`, `method`, `reference`) ON `payments` TO 'lkticket';
 
 GRANT SELECT, INSERT (`user_id`, `order_id`, `profile_id`) ON `transactions` TO 'lkticket';

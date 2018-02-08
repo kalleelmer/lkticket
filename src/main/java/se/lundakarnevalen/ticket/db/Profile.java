@@ -67,4 +67,12 @@ public class Profile extends Entity {
 		stmt.getConnection().close();
 		return result;
 	}
+
+	public void addCustomer(int customer_id) throws SQLException {
+		String query = "INSERT INTO `customer_profiles` (`customer_id`, `profile_id`) VALUES (?,?)";
+		PreparedStatement stmt = prepare(query);
+		stmt.setLong(1, customer_id);
+		stmt.setLong(2, id);
+		stmt.executeUpdate();
+	}
 }
