@@ -40,22 +40,18 @@ public class ServletApplication extends Application {
 	}
 
 	private void configureSwagger() {
-		System.out.println("Configure SWAGGER!!");
 		BeanConfig beanConfig = new BeanConfig();
 		beanConfig.setVersion("1.0.0");
 		beanConfig.setSchemes(new String[]{"http", "https"});
-		beanConfig.setHost("localhost:8080");
-		beanConfig.setBasePath("/lkticket");
+		beanConfig.setHost("api-dev.lkticket.net:80");
 		beanConfig.setResourcePackage("se.lundakarnevalen.ticket.api");
 		beanConfig.setPrettyPrint(true);
 		beanConfig.getSwagger().info(new Info()
 				.version("1.0.0")
-				.title("Lkticket")
+				.title("LKTicket")
 				.contact(new Contact()
 						.name("Lundakarnevalen")
-						.email("foo@bar.baz")
-						.url("http://lundakarnevalen.se")))
-				.basePath("/lkticket");
+						.url("http://lundakarnevalen.se")));
 		beanConfig.setScan(true);
 	}
 }
