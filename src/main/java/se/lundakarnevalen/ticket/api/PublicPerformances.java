@@ -1,17 +1,18 @@
 package se.lundakarnevalen.ticket.api;
 
-import java.sql.SQLException;
+import io.swagger.annotations.Api;
+import org.json.JSONException;
+import se.lundakarnevalen.ticket.db.Performance;
+
 import javax.annotation.security.PermitAll;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
+import java.sql.SQLException;
 
-import org.json.JSONException;
-import se.lundakarnevalen.ticket.api.Request;
-import se.lundakarnevalen.ticket.db.Performance;
-
+@Api
 @Path("/public/performances")
 @PermitAll
 @Produces("application/json; charset=UTF-8")

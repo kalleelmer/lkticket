@@ -1,11 +1,10 @@
 package se.lundakarnevalen.ticket.api.provider;
 
-import java.lang.reflect.Method;
-import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import se.lundakarnevalen.ticket.db.AuthToken;
+import se.lundakarnevalen.ticket.db.Profile;
+import se.lundakarnevalen.ticket.db.User;
+import se.lundakarnevalen.ticket.logging.ErrorLogger;
+
 import javax.annotation.security.DenyAll;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
@@ -17,11 +16,12 @@ import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.Provider;
-
-import se.lundakarnevalen.ticket.db.AuthToken;
-import se.lundakarnevalen.ticket.db.Profile;
-import se.lundakarnevalen.ticket.db.User;
-import se.lundakarnevalen.ticket.logging.ErrorLogger;
+import java.lang.reflect.Method;
+import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Provider
 public class AuthenticationFilter implements javax.ws.rs.container.ContainerRequestFilter {
@@ -33,6 +33,7 @@ public class AuthenticationFilter implements javax.ws.rs.container.ContainerRequ
 
 	@Override
 	public void filter(ContainerRequestContext requestContext) {
+		if (requestContext.getUriInfo().getPath().equals("swagger.json")) return;
 		Class<?> clas = resourceInfo.getResourceClass();
 
 		Method method = resourceInfo.getResourceMethod();
@@ -73,7 +74,7 @@ public class AuthenticationFilter implements javax.ws.rs.container.ContainerRequ
 	}
 
 	private boolean checkRoles(ContainerRequestContext requestContext, final List<String> authorizations,
-			RolesAllowed rolesAnnotation) {
+	                           RolesAllowed rolesAnnotation) {
 		Set<String> rolesSet = new HashSet<String>(Arrays.asList(rolesAnnotation.value()));
 		String authorization = authorizations.get(0);
 		User user = null;

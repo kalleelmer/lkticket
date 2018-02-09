@@ -1,25 +1,17 @@
 package se.lundakarnevalen.ticket.api.admin;
 
-import java.sql.SQLException;
-
-import javax.annotation.security.RolesAllowed;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Response;
-
+import io.swagger.annotations.Api;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import se.lundakarnevalen.ticket.api.PublicShows;
-import se.lundakarnevalen.ticket.db.Category;
-import se.lundakarnevalen.ticket.db.Performance;
-import se.lundakarnevalen.ticket.db.Rate;
-import se.lundakarnevalen.ticket.db.Seat;
-import se.lundakarnevalen.ticket.db.Show;
+import se.lundakarnevalen.ticket.db.*;
 
+import javax.annotation.security.RolesAllowed;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Response;
+import java.sql.SQLException;
+
+@Api
 @Path("/admin/shows")
 @RolesAllowed("ADMIN")
 @Produces("application/json; charset=UTF-8")
