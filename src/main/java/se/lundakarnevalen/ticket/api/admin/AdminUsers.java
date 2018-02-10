@@ -1,5 +1,6 @@
 package se.lundakarnevalen.ticket.api.admin;
 
+import io.swagger.annotations.Api;
 import org.json.JSONException;
 import org.json.JSONObject;
 import se.lundakarnevalen.ticket.api.Request;
@@ -12,6 +13,7 @@ import javax.ws.rs.core.Response;
 import java.sql.SQLException;
 import java.util.List;
 
+@Api
 @Path("/admin/users")
 @RolesAllowed("ADMIN")
 @Produces("application/json; charset=UTF-8")

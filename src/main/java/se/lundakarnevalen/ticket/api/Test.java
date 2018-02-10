@@ -1,5 +1,7 @@
 package se.lundakarnevalen.ticket.api;
 
+import io.swagger.annotations.Api;
+
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.GET;
@@ -8,6 +10,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
+@Api
 @Path("/test")
 public class Test extends Request {
 	@GET

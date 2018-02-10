@@ -1,10 +1,13 @@
 package se.lundakarnevalen.ticket.api.desk;
 
+import io.swagger.annotations.Api;
+import se.lundakarnevalen.ticket.api.PublicCategories;
+
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import se.lundakarnevalen.ticket.api.PublicCategories;
 
+@Api
 @Path("/desk/categories")
 @RolesAllowed("USER")
 @Produces("application/json; charset=UTF-8")

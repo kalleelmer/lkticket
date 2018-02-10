@@ -1,7 +1,11 @@
 package se.lundakarnevalen.ticket.api.admin;
 
-import java.sql.SQLException;
-import java.util.List;
+import io.swagger.annotations.Api;
+import org.json.JSONException;
+import org.json.JSONObject;
+import se.lundakarnevalen.ticket.api.PublicPerformances;
+import se.lundakarnevalen.ticket.db.Performance;
+import se.lundakarnevalen.ticket.db.Seat;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.GET;
@@ -9,14 +13,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
+import java.sql.SQLException;
+import java.util.List;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import se.lundakarnevalen.ticket.api.PublicPerformances;
-import se.lundakarnevalen.ticket.db.Performance;
-import se.lundakarnevalen.ticket.db.Seat;
-
+@Api
 @Path("/admin/performances")
 @RolesAllowed("ADMIN")
 @Produces("application/json; charset=UTF-8")

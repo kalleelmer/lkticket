@@ -1,7 +1,6 @@
 /target/
 /.settings/
 /.project
-/doc/
 .idea/
 *.iml
 context.xml

@@ -1,37 +1,20 @@
 package se.lundakarnevalen.ticket.api.desk;
 
-import java.sql.SQLException;
-import java.util.List;
+import io.swagger.annotations.Api;
+import org.json.JSONException;
+import org.json.JSONObject;
+import se.lundakarnevalen.ticket.api.Request;
+import se.lundakarnevalen.ticket.db.*;
 
 import javax.annotation.security.RolesAllowed;
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.ClientErrorException;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+import java.sql.SQLException;
+import java.util.List;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import se.lundakarnevalen.ticket.api.Request;
-import se.lundakarnevalen.ticket.db.Category;
-import se.lundakarnevalen.ticket.db.Customer;
-import se.lundakarnevalen.ticket.db.Order;
-import se.lundakarnevalen.ticket.db.Payment;
-import se.lundakarnevalen.ticket.db.Performance;
-import se.lundakarnevalen.ticket.db.Profile;
-import se.lundakarnevalen.ticket.db.Rate;
-import se.lundakarnevalen.ticket.db.Show;
-import se.lundakarnevalen.ticket.db.Ticket;
-import se.lundakarnevalen.ticket.db.User;
-
+@Api
 @Path("/desk/orders")
 @RolesAllowed("USER")
 @Produces("application/json; charset=UTF-8")
