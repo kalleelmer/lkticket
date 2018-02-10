@@ -69,19 +69,22 @@ public class Performance extends Entity {
 	}
 
 	public static JSONObject availability(int id) throws SQLException, JSONException {
-		String query = "SELECT `profiles`.`id`, COUNT(*) as `total`, "
+		String query = "SELECT `profiles`.`id` as `profile_id`, `seats`.`category_id`, COUNT(*) as `total`, "
 				+ "SUM(IF(`active_ticket_id` IS NULL, 1, 0)) as `available` "
 				+ "FROM `seats` LEFT JOIN `profiles` ON `seats`.`profile_id`=`profiles`.`id` "
-				+ "WHERE `performance_id`=? GROUP BY `profiles`.`id`";
+				+ "WHERE `performance_id`=? GROUP BY `profiles`.`id`, `seats`.`category_id`";
 		PreparedStatement stmt = prepare(query);
 		stmt.setInt(1, id);
 		ResultSet rs = stmt.executeQuery();
 		JSONObject profiles = new JSONObject();
 		while (rs.next()) {
-			JSONObject profile = new JSONObject();
-			profile.put("total", rs.getInt("total"));
-			profile.put("available", rs.getInt("available"));
-			profiles.put(Integer.toString(rs.getInt("id")), profile);
+			JSONObject category = new JSONObject();
+			category.put("total", rs.getInt("total"));
+			category.put("available", rs.getInt("available"));
+			String profile_id = Integer.toString(rs.getInt("profile_id"));
+			JSONObject profile = profiles.has(profile_id) ? profiles.getJSONObject(profile_id) : new JSONObject();
+			profile.put(Integer.toString(rs.getInt("category_id")), category);
+			profiles.put(profile_id, profile);
 		}
 		return profiles;
 	}
