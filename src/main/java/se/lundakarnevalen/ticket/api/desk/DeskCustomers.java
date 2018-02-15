@@ -53,4 +53,17 @@ public class DeskCustomers extends Request {
 		List<Order> orders = Order.getByCustomer(customer);
 		return status(200).entity(orders).build();
 	}
+
+	@PUT
+	@Path("/{id}")
+	public Response changeCustomer(@PathParam("id") int id, String data) throws JSONException, SQLException {
+		Customer customer = Customer.getSingle(id);
+		assertNotNull(customer, 404);
+		JSONObject input = new JSONObject(data);
+		String name = input.getString("name");
+		String email = input.getString("email");
+		String phone = input.getString("phone");
+		customer = Customer.update(id, name, email, phone);
+		return status(200).entity(customer).build();
+	}
 }
