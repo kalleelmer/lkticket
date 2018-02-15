@@ -43,7 +43,7 @@ public class ServletApplication extends Application {
 		BeanConfig beanConfig = new BeanConfig();
 		beanConfig.setVersion("1.0.0");
 		beanConfig.setSchemes(new String[]{"http", "https"});
-		beanConfig.setHost("api-dev.lkticket.net:80");
+		beanConfig.setHost("api-dev.lkticket.net");
 		beanConfig.setResourcePackage("se.lundakarnevalen.ticket.api");
 		beanConfig.setPrettyPrint(true);
 		beanConfig.getSwagger().info(new Info()
