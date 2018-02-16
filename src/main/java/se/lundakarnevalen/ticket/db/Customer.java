@@ -1,13 +1,13 @@
 package se.lundakarnevalen.ticket.db;
 
+import lombok.Getter;
+import se.lundakarnevalen.ticket.db.framework.Column;
+import se.lundakarnevalen.ticket.db.framework.Mapper;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-
-import lombok.Getter;
-import se.lundakarnevalen.ticket.db.framework.Column;
-import se.lundakarnevalen.ticket.db.framework.Mapper;
 
 public class Customer extends Entity {
 	@Column
@@ -65,6 +65,18 @@ public class Customer extends Entity {
 		stmt.setString(3, name);
 		int id = executeInsert(stmt);
 		stmt.getConnection().close();
+		return getSingle(id);
+	}
+
+	public static Customer update(long id, String name, String email, String phone) throws SQLException {
+		String query = "UPDATE " + TABLE + " SET `email`=?, `phone`=?, `name`=? WHERE `id`=?";
+		PreparedStatement stmt = prepare(query);
+		stmt.setString(1, email);
+		stmt.setString(2, phone);
+		stmt.setString(3, name);
+		stmt.setLong(4, id);
+		stmt.executeUpdate();
+		stmt.close();
 		return getSingle(id);
 	}
 
