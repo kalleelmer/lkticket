@@ -108,7 +108,7 @@ public class DeskOrders extends Request {
 			throw new BadRequestException();
 		}
 		int ticketCount = input.getInt("count");
-		List<Ticket> tickets = order.addTickets(perf.id, cat.id, rate.id, profile_id, ticketCount);
+		List<Ticket> tickets = order.addTickets(perf, cat.id, rate.id, profile_id, ticketCount);
 		assertNotNull(tickets, 409);
 		return status(200).entity(tickets).build();
 	}

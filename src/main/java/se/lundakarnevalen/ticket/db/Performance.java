@@ -20,6 +20,9 @@ public class Performance extends Entity {
 	protected int show_id;
 	@Column
 	@Getter
+	protected int surcharge;
+	@Column
+	@Getter
 	protected Timestamp start;
 
 	private static final String TABLE = "`performances`";

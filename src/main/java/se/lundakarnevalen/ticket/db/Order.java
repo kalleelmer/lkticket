@@ -93,9 +93,9 @@ public class Order extends Entity {
 		return getSingle(id);
 	}
 
-	public List<Ticket> addTickets(int performance_id, int category_id, int rate_id, int profile_id, int ticketCount)
-			throws SQLException {
-		System.out.println("Reserving " + ticketCount + " tickets for perf=" + performance_id + ", cat=" + category_id
+	public List<Ticket> addTickets(Performance performance, int category_id, int rate_id, int profile_id,
+			int ticketCount) throws SQLException {
+		System.out.println("Reserving " + ticketCount + " tickets for perf=" + performance.id + ", cat=" + category_id
 				+ ", rate=" + rate_id + " and profile=" + profile_id);
 		Connection con = getCon();
 		try {
@@ -103,7 +103,7 @@ public class Order extends Entity {
 			String query = "SELECT `id` FROM `seats` WHERE `active_ticket_id` IS NULL AND `category_id`=? AND `performance_id`=? AND (`profile_id`=? OR `profile_id` IS NULL) LIMIT ? FOR UPDATE";
 			PreparedStatement stmt = con.prepareStatement(query);
 			stmt.setInt(1, category_id);
-			stmt.setInt(2, performance_id);
+			stmt.setInt(2, performance.id);
 			stmt.setInt(3, profile_id);
 			stmt.setInt(4, ticketCount);
 			ResultSet rs = stmt.executeQuery();
@@ -114,7 +114,8 @@ public class Order extends Entity {
 			int ticketsAvailable = 0;
 			while (rs.next()) {
 				int seat_id = rs.getInt("id");
-				Ticket ticket = Ticket.create(con, id, seat_id, rate_id, price.price);
+				int ticketPrice = Math.max(0, price.price + performance.surcharge);
+				Ticket ticket = Ticket.create(con, id, seat_id, rate_id, ticketPrice);
 				stmt = con.prepareStatement("UPDATE `seats` SET `active_ticket_id`=? WHERE `id`=?");
 				stmt.setInt(1, ticket.id);
 				stmt.setInt(2, seat_id);
