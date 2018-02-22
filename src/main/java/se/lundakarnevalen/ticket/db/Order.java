@@ -100,7 +100,7 @@ public class Order extends Entity {
 		Connection con = getCon();
 		try {
 			con.setAutoCommit(false);
-			String query = "SELECT `id` FROM `seats` WHERE `active_ticket_id` IS NULL AND `category_id`=? AND `performance_id`=? AND (`profile_id`=? OR `profile_id` IS NULL) LIMIT ? FOR UPDATE";
+			String query = "SELECT `id` FROM `seats` WHERE `active_ticket_id` IS NULL AND `category_id`=? AND `performance_id`=? AND `profile_id`=? LIMIT ? FOR UPDATE";
 			PreparedStatement stmt = con.prepareStatement(query);
 			stmt.setInt(1, category_id);
 			stmt.setInt(2, performance.id);
