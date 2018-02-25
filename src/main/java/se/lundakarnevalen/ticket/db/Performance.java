@@ -91,4 +91,24 @@ public class Performance extends Entity {
 		}
 		return profiles;
 	}
+
+	public static JSONObject availability(int id, int profile_id) throws SQLException, JSONException {
+		String query = "SELECT `seats`.`category_id`, `categories`.`name`, COUNT(*) as `total`, "
+				+ "SUM(IF(`active_ticket_id` IS NULL, 1, 0)) as `available` "
+				+ "FROM `seats` LEFT JOIN `categories` ON `seats`.`category_id` = `categories`.`id` "
+				+ "WHERE `performance_id`=? AND `profile_id`=? GROUP BY `seats`.`category_id`";
+		PreparedStatement stmt = prepare(query);
+		stmt.setInt(1, id);
+		stmt.setInt(2, profile_id);
+		ResultSet rs = stmt.executeQuery();
+		JSONObject profile = new JSONObject();
+		while (rs.next()) {
+			JSONObject category = new JSONObject();
+			category.put("name", rs.getString("name"));
+			category.put("total", rs.getInt("total"));
+			category.put("available", rs.getInt("available"));
+			profile.put(Integer.toString(rs.getInt("category_id")), category);
+		}
+		return profile;
+	}
 }
