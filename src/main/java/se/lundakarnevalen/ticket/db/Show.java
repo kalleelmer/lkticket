@@ -13,12 +13,12 @@ import se.lundakarnevalen.ticket.db.framework.Column;
 import se.lundakarnevalen.ticket.db.framework.Mapper;
 
 public class Show extends Entity {
-	@Column
+	@Column(table = "shows")
 	public final int id;
-	@Column
+	@Column(table = "shows")
 	@Getter
 	protected String name;
-	@Column
+	@Column(table = "shows")
 	@Getter
 	protected String description;
 
@@ -62,5 +62,15 @@ public class Show extends Entity {
 		stmt.setString(1, name);
 		stmt.setInt(2, id);
 		stmt.executeUpdate();
+	}
+
+	public static List<Show> getByProfile(int profile_id) throws SQLException {
+		String query = "SELECT " + COLS
+				+ " FROM `shows` INNER JOIN `performances` ON `shows`.`id` = `performances`.`show_id`"
+				+ " INNER JOIN `seats` ON `performances`.`id` = `seats`.`performance_id` AND `seats`.`profile_id`=?"
+				+ " GROUP BY `shows`.`id`";
+		PreparedStatement stmt = prepare(query);
+		stmt.setInt(1, profile_id);
+		return new Mapper<Show>(stmt).toEntityList(rs -> Show.create(rs));
 	}
 }

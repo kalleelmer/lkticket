@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import se.lundakarnevalen.ticket.api.Request;
 import se.lundakarnevalen.ticket.db.Customer;
 import se.lundakarnevalen.ticket.db.Profile;
+import se.lundakarnevalen.ticket.db.Show;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.GET;
@@ -34,5 +35,12 @@ public class DeskProfiles extends Request {
 			throws SQLException {
 		List<Customer> customers = Customer.getByProfile(id);
 		return status(200).entity(customers).build();
+	}
+
+	@GET
+	@Path("/{id}/shows")
+	public Response getShows(@Context ContainerRequestContext context, @PathParam("id") int id) throws SQLException {
+		List<Show> shows = Show.getByProfile(id);
+		return status(200).entity(shows).build();
 	}
 }
