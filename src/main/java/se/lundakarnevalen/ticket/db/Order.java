@@ -1,23 +1,17 @@
 package se.lundakarnevalen.ticket.db;
 
-import java.math.BigInteger;
-import java.security.SecureRandom;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.ws.rs.ClientErrorException;
-
-import org.json.JSONException;
-
 import lombok.Getter;
+import org.json.JSONException;
 import se.lundakarnevalen.ticket.db.framework.Column;
 import se.lundakarnevalen.ticket.db.framework.Mapper;
 import se.lundakarnevalen.ticket.db.framework.Table;
+
+import javax.ws.rs.ClientErrorException;
+import java.math.BigInteger;
+import java.security.SecureRandom;
+import java.sql.*;
+import java.util.LinkedList;
+import java.util.List;
 
 @Table(name = "orders")
 public class Order extends Entity {
@@ -74,6 +68,13 @@ public class Order extends Entity {
 		PreparedStatement stmt = prepare(query);
 		stmt.setLong(1, id);
 		return new Mapper<Order>(stmt).toEntity(rs -> Order.create(rs));
+	}
+
+	public static Order getByIdentifier(String id) throws SQLException {
+		String query = "SELECT " + COLS + " FROM " + TABLE + " WHERE `orders`.`identifier`=?";
+		PreparedStatement stmt = prepare(query);
+		stmt.setString(1, id);
+		return new Mapper<Order>(stmt).toEntity(Order::create);
 	}
 
 	public static List<Order> getByCustomer(Customer customer) throws SQLException {

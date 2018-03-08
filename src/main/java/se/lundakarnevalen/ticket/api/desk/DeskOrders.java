@@ -47,6 +47,14 @@ public class DeskOrders extends Request {
 	}
 
 	@GET
+	@Path("/identifier/{id}")
+	public Response getOrderByIdentifier(@PathParam("id") String id) throws SQLException {
+		Order order = Order.getByIdentifier(id);
+		assertNotNull(order, 404);
+		return status(200).entity(order).build();
+	}
+
+	@GET
 	@Path("/{id}")
 	public Response getOrder(@PathParam("id") int id) throws SQLException {
 		Order order = Order.getSingle(id);
