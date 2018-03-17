@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 
 import org.json.JSONException;
 import se.lundakarnevalen.ticket.db.framework.Column;
@@ -42,6 +43,13 @@ public class Payment extends Entity {
 		PreparedStatement stmt = prepare(query);
 		stmt.setLong(1, id);
 		return new Mapper<Payment>(stmt).toEntity(rs -> Payment.create(rs));
+	}
+
+	public static List<Payment> getByOrder(long order_id) throws SQLException {
+		String query = "SELECT " + COLS + " FROM " + TABLE + " WHERE `order_id`=?";
+		PreparedStatement stmt = prepare(query);
+		stmt.setLong(1, order_id);
+		return new Mapper<Payment>(stmt).toEntityList(rs -> Payment.create(rs));
 	}
 
 	public static int create(Connection con, int transaction_id, int order_id, int amount, String method,

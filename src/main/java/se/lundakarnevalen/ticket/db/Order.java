@@ -140,14 +140,16 @@ public class Order extends Entity {
 	}
 
 	public void setCustomer(int new_customer) throws SQLException {
-		if (customer_id > 0) {
-			throw new ClientErrorException(409);
-		}
 		String query = "UPDATE `orders` SET `customer_id`=? WHERE `orders`.`id`=?";
 		PreparedStatement stmt = prepare(query);
 		stmt.setLong(2, id);
-		stmt.setInt(1, new_customer);
+		if (new_customer == 0) {
+			stmt.setNull(1, java.sql.Types.INTEGER);
+		} else {
+			stmt.setInt(1, new_customer);
+		}
 		stmt.executeUpdate();
+		stmt.getConnection().close();
 		this.customer_id = new_customer;
 	}
 
@@ -170,5 +172,15 @@ public class Order extends Entity {
 		} finally {
 			con.close();
 		}
+	}
+
+	public boolean isPaid() throws SQLException {
+		List<Payment> payments = Payment.getByOrder(id);
+		return !payments.isEmpty();
+	}
+
+	public boolean hasTickets() throws SQLException {
+		List<Ticket> tickets = Ticket.getByOrder(id);
+		return !tickets.isEmpty();
 	}
 }

@@ -76,10 +76,27 @@ public class DeskOrders extends Request {
 	public Response setCustomer(@PathParam("id") int id, int data) throws SQLException {
 		Order order = Order.getSingle(id);
 		assertNotNull(order, 404);
+		if (order.getCustomer_id() > 0) {
+			throw new ClientErrorException(409);
+		}
 		Customer customer = Customer.getSingle(data);
 		assertNotNull(customer, 400);
 		order.setCustomer(customer.id);
 		return status(200).entity(customer).build();
+	}
+
+	@DELETE
+	@Path("/{id}/customer")
+	public Response deleteCustomer(@PathParam("id") int id) throws SQLException {
+		Order order = Order.getSingle(id);
+		assertNotNull(order, 404);
+		if (order.isPaid()) {
+			throw new ClientErrorException(409);
+		} else if (order.hasTickets()) {
+			throw new ClientErrorException(409);
+		}
+		order.setCustomer(0);
+		return status(204).build();
 	}
 
 	@GET
