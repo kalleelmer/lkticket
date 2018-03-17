@@ -86,9 +86,13 @@ public class Seat extends Entity {
 	public void setProfile(int profile_id) throws SQLException {
 		String query = "UPDATE `seats` SET `profile_id`=? WHERE `id`=?";
 		PreparedStatement stmt = prepare(query);
-		stmt.setInt(1, profile_id);
-		stmt.setInt(2, id);
-		stmt.executeUpdate();
+		try {
+			stmt.setInt(1, profile_id);
+			stmt.setInt(2, id);
+			stmt.executeUpdate();
+		} finally {
+			stmt.getConnection().close();
+		}
 	}
 
 	public boolean isAvailable() {
@@ -100,5 +104,6 @@ public class Seat extends Entity {
 		PreparedStatement stmt = prepare(query);
 		stmt.setInt(1, id);
 		stmt.executeUpdate();
+		stmt.getConnection().close();
 	}
 }
