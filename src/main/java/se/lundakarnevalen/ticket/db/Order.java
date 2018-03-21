@@ -90,7 +90,7 @@ public class Order extends Entity {
 			stmt.setTimestamp(1, new Timestamp(System.currentTimeMillis() + 30 * 60)); // 30min
 			stmt.setString(2, new BigInteger(48, random).toString(32).substring(0, 8).toUpperCase());
 			int id = executeInsert(stmt);
-			Transaction.create(con, user.id, id, 0, 0);
+			Transaction.create(con, user.id, id, 0, 0, 0);
 			commit(con);
 			return getSingle(id);
 		} finally {
@@ -115,13 +115,13 @@ public class Order extends Entity {
 
 			Price price = Price.getSingle(category_id, rate_id);
 
-			int transaction_id = Transaction.create(con, user.id, id, profile_id, 0);
+			int transaction_id = Transaction.create(con, user.id, id, profile_id, 0, 0);
 
 			List<Ticket> tickets = new LinkedList<Ticket>();
 			int ticketsAvailable = 0;
 			while (rs.next()) {
 				int seat_id = rs.getInt("id");
-				
+
 				int ticketPrice = Math.max(0, price.price + performance.surcharge);
 				if (price.price == 0) {
 					// Complimentary tickets are not subject to surcharge
@@ -161,7 +161,7 @@ public class Order extends Entity {
 			setIntNullable(stmt, 1, new_customer);
 			stmt.executeUpdate();
 			this.customer_id = new_customer;
-			int transaction_id = Transaction.create(con, user.id, id, 0, new_customer);
+			int transaction_id = Transaction.create(con, user.id, id, 0, new_customer, 0);
 			for (Ticket t : Ticket.getByOrder(id)) {
 				Transaction.addTicket(con, transaction_id, t.id, Transaction.CUSTOMER_SET);
 			}
@@ -179,7 +179,7 @@ public class Order extends Entity {
 		Connection con = getCon();
 		try {
 			con.setAutoCommit(false);
-			int transaction_id = Transaction.create(con, user_id, id, profile_id, 0);
+			int transaction_id = Transaction.create(con, user_id, id, profile_id, 0, 0);
 			int payment_id = Payment.create(con, transaction_id, id, amount, method, reference);
 			for (Ticket t : tickets) {
 				Transaction.addTicket(con, transaction_id, t.id, Transaction.TICKET_PAID);

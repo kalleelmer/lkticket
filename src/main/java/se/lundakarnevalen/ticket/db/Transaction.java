@@ -15,6 +15,7 @@ public class Transaction extends Entity {
 	public static final int CUSTOMER_SET = 2;
 	public static final int TICKET_ADDED = 3;
 	public static final int TICKET_REMOVED = 4;
+	public static final int TICKET_PRINTED = 5;
 
 	@Column
 	public final int id;
@@ -47,14 +48,15 @@ public class Transaction extends Entity {
 		return new Mapper<Transaction>(stmt).toEntity(rs -> Transaction.create(rs));
 	}
 
-	public static int create(Connection con, int user_id, int order_id, int profile_id, int customer_id)
+	public static int create(Connection con, int user_id, int order_id, int profile_id, int customer_id, int printer_id)
 			throws SQLException {
-		String query = "INSERT INTO `transactions` SET `user_id`=?, `order_id`=?, `profile_id`=?, `customer_id`=?";
+		String query = "INSERT INTO `transactions` SET `user_id`=?, `order_id`=?, `profile_id`=?, `customer_id`=?, `printer_id`=?";
 		PreparedStatement stmt = con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 		stmt.setInt(1, user_id);
 		stmt.setInt(2, order_id);
 		setIntNullable(stmt, 3, profile_id);
 		setIntNullable(stmt, 4, customer_id);
+		setIntNullable(stmt, 5, printer_id);
 		int id = executeInsert(stmt);
 		return id;
 	}

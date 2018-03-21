@@ -32,6 +32,6 @@ GRANT SELECT, INSERT ON `customer_profiles` TO 'lkticket';
 
 GRANT SELECT, INSERT (`transaction_id`, `order_id`, `amount`, `method`, `reference`) ON `payments` TO 'lkticket';
 
-GRANT SELECT, INSERT (`user_id`, `order_id`, `profile_id`, `customer_id`) ON `transactions` TO 'lkticket';
+GRANT SELECT, INSERT (`user_id`, `order_id`, `profile_id`, `customer_id`, `printer_id`) ON `transactions` TO 'lkticket';
 
 GRANT SELECT, INSERT (`ticket_id`, `transaction_id`, `activity`) ON `ticket_transactions` TO 'lkticket';

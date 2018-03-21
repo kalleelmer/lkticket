@@ -149,7 +149,7 @@ public class Ticket extends Entity {
 			PreparedStatement stmt2 = con.prepareStatement(query2);
 			stmt2.setLong(1, id);
 			stmt2.executeUpdate();
-			int transaction_id = Transaction.create(con, user.id, order_id, 0, 0);
+			int transaction_id = Transaction.create(con, user.id, order_id, 0, 0, 0);
 			Transaction.addTicket(con, transaction_id, id, Transaction.TICKET_REMOVED);
 			con.commit();
 		} catch (SQLException e) {
@@ -172,9 +172,9 @@ public class Ticket extends Entity {
 		return json.toString();
 	}
 
-	public void setPrinted() throws SQLException {
+	public void setPrinted(Connection con) throws SQLException {
 		String query = "UPDATE `tickets` SET `tickets`.`printed`=1 WHERE `tickets`.`id`=?";
-		PreparedStatement stmt = prepare(query);
+		PreparedStatement stmt = prepare(con, query);
 		stmt.setInt(1, id);
 		stmt.executeUpdate();
 	}

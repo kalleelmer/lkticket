@@ -7,9 +7,12 @@ import org.json.JSONObject;
 import se.lundakarnevalen.ticket.api.Request;
 import se.lundakarnevalen.ticket.db.Printer;
 import se.lundakarnevalen.ticket.db.Ticket;
+import se.lundakarnevalen.ticket.db.User;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import java.sql.SQLException;
 import java.util.LinkedList;
@@ -44,7 +47,9 @@ public class DeskPrinters extends Request {
 
 	@POST
 	@Path("/{id}/print")
-	public Response printOrder(@PathParam("id") int id, String data) throws SQLException, JSONException {
+	public Response printOrder(@PathParam("id") int id, @Context ContainerRequestContext context, String data)
+			throws SQLException, JSONException {
+		User user = User.getCurrent(context);
 		Printer printer = Printer.getSingle(id);
 		assertNotNull(printer, 404);
 		List<Ticket> tickets = new LinkedList<Ticket>();
@@ -58,8 +63,7 @@ public class DeskPrinters extends Request {
 			tickets.add(ticket);
 		}
 		for (Ticket t : tickets) {
-			printer.print(t);
-			t.setPrinted();
+			printer.print(t, user);
 		}
 		return status(204).build();
 	}
