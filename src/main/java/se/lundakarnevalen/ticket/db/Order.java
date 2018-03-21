@@ -121,7 +121,13 @@ public class Order extends Entity {
 			int ticketsAvailable = 0;
 			while (rs.next()) {
 				int seat_id = rs.getInt("id");
+				
 				int ticketPrice = Math.max(0, price.price + performance.surcharge);
+				if (price.price == 0) {
+					// Complimentary tickets are not subject to surcharge
+					ticketPrice = 0;
+				}
+
 				Ticket ticket = Ticket.create(con, id, seat_id, rate_id, ticketPrice);
 				stmt = con.prepareStatement("UPDATE `seats` SET `active_ticket_id`=? WHERE `id`=?");
 				stmt.setInt(1, ticket.id);
