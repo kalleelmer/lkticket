@@ -41,8 +41,8 @@ public class DeskOrders extends Request {
 
 	@GET
 	@Path("/create")
-	public Response createOrder() throws SQLException {
-		Order order = Order.create();
+	public Response createOrder(@Context ContainerRequestContext context) throws SQLException {
+		Order order = Order.create(User.getCurrent(context));
 		return status(200).entity(order).build();
 	}
 

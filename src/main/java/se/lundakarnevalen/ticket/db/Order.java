@@ -82,14 +82,20 @@ public class Order extends Entity {
 		return new Mapper<Order>(stmt).toEntityList(rs -> Order.create(rs));
 	}
 
-	public static Order create() throws SQLException {
-		String query = "INSERT INTO `orders` SET `expires`=?, `identifier`=?";
-		PreparedStatement stmt = prepare(query);
-		stmt.setTimestamp(1, new Timestamp(System.currentTimeMillis() + 30 * 60)); // 30min
-		stmt.setString(2, new BigInteger(48, random).toString(32).substring(0, 8).toUpperCase());
-		int id = executeInsert(stmt);
-		stmt.getConnection().close();
-		return getSingle(id);
+	public static Order create(User user) throws SQLException {
+		Connection con = transaction();
+		try {
+			String query = "INSERT INTO `orders` SET `expires`=?, `identifier`=?";
+			PreparedStatement stmt = prepare(con, query);
+			stmt.setTimestamp(1, new Timestamp(System.currentTimeMillis() + 30 * 60)); // 30min
+			stmt.setString(2, new BigInteger(48, random).toString(32).substring(0, 8).toUpperCase());
+			int id = executeInsert(stmt);
+			Transaction.create(con, user.id, id, 0, 0);
+			commit(con);
+			return getSingle(id);
+		} finally {
+			rollback(con);
+		}
 	}
 
 	public List<Ticket> addTickets(Performance performance, int category_id, int rate_id, int profile_id,
