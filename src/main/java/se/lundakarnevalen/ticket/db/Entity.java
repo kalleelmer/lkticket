@@ -8,13 +8,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.sql.Types;
 
 import com.mysql.cj.api.jdbc.Statement;
 
 import se.lundakarnevalen.ticket.Environment;
 import se.lundakarnevalen.ticket.db.framework.Column;
 import se.lundakarnevalen.ticket.db.framework.Table;
-import se.lundakarnevalen.ticket.logging.Logger;
 
 /**
  * The superclass of all database entities. Each subclass implementation should
@@ -115,5 +115,14 @@ public abstract class Entity {
 		}
 		int id = rs.getInt(1);
 		return id;
+	}
+
+	/** Set an integer where 0 becomes NULL. */
+	protected static void setIntNullable(PreparedStatement stmt, int index, int value) throws SQLException {
+		if (value == 0) {
+			stmt.setNull(index, Types.INTEGER);
+		} else {
+			stmt.setInt(index, value);
+		}
 	}
 }

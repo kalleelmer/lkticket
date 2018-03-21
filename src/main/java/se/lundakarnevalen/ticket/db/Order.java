@@ -1,12 +1,10 @@
 package se.lundakarnevalen.ticket.db;
 
 import lombok.Getter;
-import org.json.JSONException;
 import se.lundakarnevalen.ticket.db.framework.Column;
 import se.lundakarnevalen.ticket.db.framework.Mapper;
 import se.lundakarnevalen.ticket.db.framework.Table;
 
-import javax.ws.rs.ClientErrorException;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.sql.*;
@@ -139,26 +137,35 @@ public class Order extends Entity {
 		}
 	}
 
-	public void setCustomer(int new_customer) throws SQLException {
+	public void setCustomer(int new_customer, User user) throws SQLException {
 		String query = "UPDATE `orders` SET `customer_id`=? WHERE `orders`.`id`=?";
-		PreparedStatement stmt = prepare(query);
-		stmt.setLong(2, id);
-		if (new_customer == 0) {
-			stmt.setNull(1, java.sql.Types.INTEGER);
-		} else {
-			stmt.setInt(1, new_customer);
-		}
-		stmt.executeUpdate();
-		stmt.getConnection().close();
-		this.customer_id = new_customer;
-	}
-
-	public Payment pay(int user_id, int profile_id, int amount, List<Ticket> tickets, String method, String reference)
-			throws SQLException, JSONException {
 		Connection con = getCon();
 		try {
 			con.setAutoCommit(false);
-			int transaction_id = Transaction.create(con, user_id, id, profile_id);
+			PreparedStatement stmt = con.prepareStatement(query);
+			stmt.setLong(2, id);
+			setIntNullable(stmt, 1, new_customer);
+			stmt.executeUpdate();
+			this.customer_id = new_customer;
+			int transaction_id = Transaction.create(con, user.id, id, 0, new_customer);
+			for (Ticket t : Ticket.getByOrder(id)) {
+				Transaction.addTicket(con, transaction_id, t.id, Transaction.CUSTOMER_SET);
+			}
+			con.commit();
+		} catch (SQLException e) {
+			con.rollback();
+			throw e;
+		} finally {
+			con.close();
+		}
+	}
+
+	public Payment pay(int user_id, int profile_id, int amount, List<Ticket> tickets, String method, String reference)
+			throws SQLException {
+		Connection con = getCon();
+		try {
+			con.setAutoCommit(false);
+			int transaction_id = Transaction.create(con, user_id, id, profile_id, 0);
 			int payment_id = Payment.create(con, transaction_id, id, amount, method, reference);
 			for (Ticket t : tickets) {
 				Transaction.addTicket(con, transaction_id, t.id, Transaction.TICKET_PAID);

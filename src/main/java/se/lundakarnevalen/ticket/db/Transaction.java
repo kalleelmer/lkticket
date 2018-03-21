@@ -7,12 +7,12 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 
-import org.json.JSONException;
 import se.lundakarnevalen.ticket.db.framework.Column;
 import se.lundakarnevalen.ticket.db.framework.Mapper;
 
 public class Transaction extends Entity {
 	public static final int TICKET_PAID = 1;
+	public static final int CUSTOMER_SET = 2;
 
 	@Column
 	public final int id;
@@ -45,13 +45,14 @@ public class Transaction extends Entity {
 		return new Mapper<Transaction>(stmt).toEntity(rs -> Transaction.create(rs));
 	}
 
-	public static int create(Connection con, int user_id, int order_id, int profile_id)
-			throws SQLException, JSONException {
-		String query = "INSERT INTO `transactions` SET `user_id`=?, `order_id`=?, `profile_id`=?";
+	public static int create(Connection con, int user_id, int order_id, int profile_id, int customer_id)
+			throws SQLException {
+		String query = "INSERT INTO `transactions` SET `user_id`=?, `order_id`=?, `profile_id`=?, `customer_id`=?";
 		PreparedStatement stmt = con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 		stmt.setInt(1, user_id);
 		stmt.setInt(2, order_id);
-		stmt.setInt(3, profile_id);
+		setIntNullable(stmt, 3, profile_id);
+		setIntNullable(stmt, 4, customer_id);
 		int id = executeInsert(stmt);
 		return id;
 	}

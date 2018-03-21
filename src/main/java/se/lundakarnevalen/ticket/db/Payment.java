@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 
-import org.json.JSONException;
 import se.lundakarnevalen.ticket.db.framework.Column;
 import se.lundakarnevalen.ticket.db.framework.Mapper;
 
@@ -53,7 +52,7 @@ public class Payment extends Entity {
 	}
 
 	public static int create(Connection con, int transaction_id, int order_id, int amount, String method,
-			String reference) throws SQLException, JSONException {
+			String reference) throws SQLException {
 		String query = "INSERT INTO `payments` SET `transaction_id`=?, `order_id`=?, `amount`=?, `method`=?, `reference`=?";
 		PreparedStatement stmt = con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 		stmt.setInt(1, transaction_id);

@@ -73,7 +73,8 @@ public class DeskOrders extends Request {
 
 	@PUT
 	@Path("/{id}/customer")
-	public Response setCustomer(@PathParam("id") int id, int data) throws SQLException {
+	public Response setCustomer(@PathParam("id") int id, @Context ContainerRequestContext context, int data)
+			throws SQLException {
 		Order order = Order.getSingle(id);
 		assertNotNull(order, 404);
 		if (order.getCustomer_id() > 0) {
@@ -81,13 +82,15 @@ public class DeskOrders extends Request {
 		}
 		Customer customer = Customer.getSingle(data);
 		assertNotNull(customer, 400);
-		order.setCustomer(customer.id);
+		User user = User.getCurrent(context);
+		order.setCustomer(customer.id, user);
 		return status(200).entity(customer).build();
 	}
 
 	@DELETE
 	@Path("/{id}/customer")
-	public Response deleteCustomer(@PathParam("id") int id) throws SQLException {
+	public Response deleteCustomer(@PathParam("id") int id, @Context ContainerRequestContext context)
+			throws SQLException {
 		Order order = Order.getSingle(id);
 		assertNotNull(order, 404);
 		if (order.isPaid()) {
@@ -95,7 +98,8 @@ public class DeskOrders extends Request {
 		} else if (order.hasTickets()) {
 			throw new ClientErrorException(409);
 		}
-		order.setCustomer(0);
+		User user = User.getCurrent(context);
+		order.setCustomer(0, user);
 		return status(204).build();
 	}
 
@@ -125,7 +129,7 @@ public class DeskOrders extends Request {
 		if (profile_id > 0) {
 			Profile profile = Profile.getSingle(profile_id);
 			assertNotNull(profile, 400);
-			User user = User.getSingle((Integer) context.getProperty("user_id"));
+			User user = User.getCurrent(context);
 			profile.assertAccess(user);
 		}
 		Show show = perf.getShow();
