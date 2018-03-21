@@ -99,7 +99,7 @@ public class Order extends Entity {
 	}
 
 	public List<Ticket> addTickets(Performance performance, int category_id, int rate_id, int profile_id,
-			int ticketCount) throws SQLException {
+			int ticketCount, User user) throws SQLException {
 		System.out.println("Reserving " + ticketCount + " tickets for perf=" + performance.id + ", cat=" + category_id
 				+ ", rate=" + rate_id + " and profile=" + profile_id);
 		Connection con = getCon();
@@ -115,6 +115,8 @@ public class Order extends Entity {
 
 			Price price = Price.getSingle(category_id, rate_id);
 
+			int transaction_id = Transaction.create(con, user.id, id, profile_id, 0);
+
 			List<Ticket> tickets = new LinkedList<Ticket>();
 			int ticketsAvailable = 0;
 			while (rs.next()) {
@@ -125,6 +127,7 @@ public class Order extends Entity {
 				stmt.setInt(1, ticket.id);
 				stmt.setInt(2, seat_id);
 				stmt.executeUpdate();
+				Transaction.addTicket(con, transaction_id, ticket.id, Transaction.TICKET_ADDED);
 				tickets.add(ticket);
 				ticketsAvailable++;
 			}
@@ -133,7 +136,6 @@ public class Order extends Entity {
 				return null;
 			}
 			con.commit();
-			con.close();
 			return tickets;
 		} catch (SQLException e) {
 			con.rollback();

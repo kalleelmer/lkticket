@@ -13,6 +13,8 @@ import se.lundakarnevalen.ticket.db.framework.Mapper;
 public class Transaction extends Entity {
 	public static final int TICKET_PAID = 1;
 	public static final int CUSTOMER_SET = 2;
+	public static final int TICKET_ADDED = 3;
+	public static final int TICKET_REMOVED = 4;
 
 	@Column
 	public final int id;

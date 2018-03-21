@@ -134,7 +134,7 @@ public class Ticket extends Entity {
 		return getSingle(con, id);
 	}
 
-	public void remove() throws SQLException {
+	public void remove(User user) throws SQLException {
 		if (paid != null) {
 			throw new ClientErrorException(409);
 		}
@@ -149,6 +149,8 @@ public class Ticket extends Entity {
 			PreparedStatement stmt2 = con.prepareStatement(query2);
 			stmt2.setLong(1, id);
 			stmt2.executeUpdate();
+			int transaction_id = Transaction.create(con, user.id, order_id, 0, 0);
+			Transaction.addTicket(con, transaction_id, id, Transaction.TICKET_REMOVED);
 			con.commit();
 		} catch (SQLException e) {
 			con.rollback();

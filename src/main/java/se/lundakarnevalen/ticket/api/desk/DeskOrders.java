@@ -117,6 +117,8 @@ public class DeskOrders extends Request {
 	public Response addTickets(@PathParam("id") int id, @Context ContainerRequestContext context, String data)
 			throws SQLException, JSONException {
 		JSONObject input = new JSONObject(data);
+		User user = User.getCurrent(context);
+
 		Order order = Order.getSingle(id);
 		assertNotNull(order, 404);
 		Performance perf = Performance.getSingle(input.getInt("performance_id"));
@@ -129,7 +131,6 @@ public class DeskOrders extends Request {
 		if (profile_id > 0) {
 			Profile profile = Profile.getSingle(profile_id);
 			assertNotNull(profile, 400);
-			User user = User.getCurrent(context);
 			profile.assertAccess(user);
 		}
 		Show show = perf.getShow();
@@ -137,14 +138,15 @@ public class DeskOrders extends Request {
 			throw new BadRequestException();
 		}
 		int ticketCount = input.getInt("count");
-		List<Ticket> tickets = order.addTickets(perf, cat.id, rate.id, profile_id, ticketCount);
+		List<Ticket> tickets = order.addTickets(perf, cat.id, rate.id, profile_id, ticketCount, user);
 		assertNotNull(tickets, 409);
 		return status(200).entity(tickets).build();
 	}
 
 	@DELETE
 	@Path("/{id}/tickets/{ticketID}")
-	public Response deleteTicket(@PathParam("id") int id, @PathParam("ticketID") int ticketID) throws SQLException {
+	public Response deleteTicket(@PathParam("id") int id, @PathParam("ticketID") int ticketID,
+			@Context ContainerRequestContext context) throws SQLException {
 		Order order = Order.getSingle(id);
 		assertNotNull(order, 404);
 		Ticket ticket = Ticket.getSingle(ticketID);
@@ -152,7 +154,7 @@ public class DeskOrders extends Request {
 		if (ticket.getOrder_id() != order.id) {
 			throw new ClientErrorException(409);
 		}
-		ticket.remove();
+		ticket.remove(User.getCurrent(context));
 		return status(204).build();
 	}
 
