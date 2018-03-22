@@ -5,6 +5,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import se.lundakarnevalen.ticket.api.Request;
+import se.lundakarnevalen.ticket.db.Order;
 import se.lundakarnevalen.ticket.db.Printer;
 import se.lundakarnevalen.ticket.db.Ticket;
 import se.lundakarnevalen.ticket.db.User;
@@ -61,6 +62,9 @@ public class DeskPrinters extends Request {
 				throw new ClientErrorException(409);
 			}
 			tickets.add(ticket);
+		}
+		if (tickets.size() > 0 && !Order.getSingle(tickets.get(0).getOrder_id()).isPaid()) {
+			throw new ClientErrorException(403);
 		}
 		for (Ticket t : tickets) {
 			printer.print(t, user);
