@@ -44,4 +44,12 @@ public abstract class Request {
 		}
 	}
 
+	/** Checks that an object is null, with a custom response code. */
+	protected static void assertNull(Object object, int status) throws WebApplicationException {
+		if (object != null) {
+			Logger.warn("Request object was null");
+			throw new WebApplicationException(status);
+		}
+	}
+
 }

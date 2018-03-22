@@ -97,6 +97,8 @@ public class DeskOrders extends Request {
 			throws SQLException, JSONException {
 		JSONObject input = new JSONObject(data);
 		Order order = Order.getSingle(id);
+		Payment payment = Payment.getSingle(order.getPayment_id());
+		assertNull(payment, 404);
 		assertNotNull(order, 404);
 		Performance perf = Performance.getSingle(input.getInt("performance_id"));
 		assertNotNull(perf, 404);
