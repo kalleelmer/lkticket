@@ -9,6 +9,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.ws.rs.container.ContainerRequestContext;
+
 public class User extends Entity {
 	@Column
 	public final int id;
@@ -43,6 +45,10 @@ public class User extends Entity {
 		PreparedStatement stmt = prepare(query);
 		stmt.setLong(1, id);
 		return new Mapper<User>(stmt).toEntity(rs -> User.create(rs));
+	}
+
+	public static User getCurrent(ContainerRequestContext context) throws SQLException {
+		return getSingle((Integer) context.getProperty("user_id"));
 	}
 
 	public static User getByEmail(String email) throws SQLException {

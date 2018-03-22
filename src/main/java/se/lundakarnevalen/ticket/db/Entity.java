@@ -8,13 +8,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.sql.Types;
 
 import com.mysql.cj.api.jdbc.Statement;
 
 import se.lundakarnevalen.ticket.Environment;
 import se.lundakarnevalen.ticket.db.framework.Column;
 import se.lundakarnevalen.ticket.db.framework.Table;
-import se.lundakarnevalen.ticket.logging.Logger;
 
 /**
  * The superclass of all database entities. Each subclass implementation should
@@ -42,12 +42,37 @@ public abstract class Entity {
 		}
 	}
 
+	/** Open a new connection with AutoCommit disabled. */
+	protected static Connection transaction() throws SQLException {
+		Connection con = getCon();
+		con.setAutoCommit(false);
+		return con;
+	}
+
+	/** Commit and close. */
+	protected static void commit(Connection con) throws SQLException {
+		con.commit();
+		con.close();
+	}
+
+	/** Rollback and close connection, if not already closed. */
+	protected static void rollback(Connection con) throws SQLException {
+		if (!con.isClosed()) {
+			con.rollback();
+			con.close();
+		}
+	}
+
 	protected static ResultSet query(String query) throws SQLException {
 		return getCon().createStatement().executeQuery(query);
 	}
 
 	protected static PreparedStatement prepare(String query) throws SQLException {
 		return getCon().prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+	}
+
+	protected static PreparedStatement prepare(Connection con, String query) throws SQLException {
+		return con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 	}
 
 	/**
@@ -115,5 +140,14 @@ public abstract class Entity {
 		}
 		int id = rs.getInt(1);
 		return id;
+	}
+
+	/** Set an integer where 0 becomes NULL. */
+	protected static void setIntNullable(PreparedStatement stmt, int index, int value) throws SQLException {
+		if (value == 0) {
+			stmt.setNull(index, Types.INTEGER);
+		} else {
+			stmt.setInt(index, value);
+		}
 	}
 }

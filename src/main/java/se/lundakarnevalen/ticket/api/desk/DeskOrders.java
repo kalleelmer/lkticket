@@ -41,8 +41,8 @@ public class DeskOrders extends Request {
 
 	@GET
 	@Path("/create")
-	public Response createOrder() throws SQLException {
-		Order order = Order.create();
+	public Response createOrder(@Context ContainerRequestContext context) throws SQLException {
+		Order order = Order.create(User.getCurrent(context));
 		return status(200).entity(order).build();
 	}
 
@@ -73,13 +73,34 @@ public class DeskOrders extends Request {
 
 	@PUT
 	@Path("/{id}/customer")
-	public Response setCustomer(@PathParam("id") int id, int data) throws SQLException {
+	public Response setCustomer(@PathParam("id") int id, @Context ContainerRequestContext context, int data)
+			throws SQLException {
 		Order order = Order.getSingle(id);
 		assertNotNull(order, 404);
+		if (order.getCustomer_id() > 0) {
+			throw new ClientErrorException(409);
+		}
 		Customer customer = Customer.getSingle(data);
 		assertNotNull(customer, 400);
-		order.setCustomer(customer.id);
+		User user = User.getCurrent(context);
+		order.setCustomer(customer.id, user);
 		return status(200).entity(customer).build();
+	}
+
+	@DELETE
+	@Path("/{id}/customer")
+	public Response deleteCustomer(@PathParam("id") int id, @Context ContainerRequestContext context)
+			throws SQLException {
+		Order order = Order.getSingle(id);
+		assertNotNull(order, 404);
+		if (order.isPaid()) {
+			throw new ClientErrorException(409);
+		} else if (order.hasTickets()) {
+			throw new ClientErrorException(409);
+		}
+		User user = User.getCurrent(context);
+		order.setCustomer(0, user);
+		return status(204).build();
 	}
 
 	@GET
@@ -96,6 +117,8 @@ public class DeskOrders extends Request {
 	public Response addTickets(@PathParam("id") int id, @Context ContainerRequestContext context, String data)
 			throws SQLException, JSONException {
 		JSONObject input = new JSONObject(data);
+		User user = User.getCurrent(context);
+
 		Order order = Order.getSingle(id);
 		Payment payment = Payment.getSingle(order.getPayment_id());
 		assertNull(payment, 404);
@@ -110,7 +133,6 @@ public class DeskOrders extends Request {
 		if (profile_id > 0) {
 			Profile profile = Profile.getSingle(profile_id);
 			assertNotNull(profile, 400);
-			User user = User.getSingle((Integer) context.getProperty("user_id"));
 			profile.assertAccess(user);
 		}
 		Show show = perf.getShow();
@@ -118,14 +140,15 @@ public class DeskOrders extends Request {
 			throw new BadRequestException();
 		}
 		int ticketCount = input.getInt("count");
-		List<Ticket> tickets = order.addTickets(perf, cat.id, rate.id, profile_id, ticketCount);
+		List<Ticket> tickets = order.addTickets(perf, cat.id, rate.id, profile_id, ticketCount, user);
 		assertNotNull(tickets, 409);
 		return status(200).entity(tickets).build();
 	}
 
 	@DELETE
 	@Path("/{id}/tickets/{ticketID}")
-	public Response deleteTicket(@PathParam("id") int id, @PathParam("ticketID") int ticketID) throws SQLException {
+	public Response deleteTicket(@PathParam("id") int id, @PathParam("ticketID") int ticketID,
+			@Context ContainerRequestContext context) throws SQLException {
 		Order order = Order.getSingle(id);
 		assertNotNull(order, 404);
 		Ticket ticket = Ticket.getSingle(ticketID);
@@ -133,7 +156,7 @@ public class DeskOrders extends Request {
 		if (ticket.getOrder_id() != order.id) {
 			throw new ClientErrorException(409);
 		}
-		ticket.remove();
+		ticket.remove(User.getCurrent(context));
 		return status(204).build();
 	}
 
