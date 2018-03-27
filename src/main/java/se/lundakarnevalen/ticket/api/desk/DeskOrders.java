@@ -114,8 +114,9 @@ public class DeskOrders extends Request {
 
 	@POST
 	@Path("/{id}/tickets")
-	public Response addTickets(@PathParam("id") int id, @Context ContainerRequestContext context, String data)
+	public Response addTickets(@PathParam("id") int id, @QueryParam("location") String location, @Context ContainerRequestContext context, String data)
 			throws SQLException, JSONException {
+		assertNotNull(location, 412);
 		JSONObject input = new JSONObject(data);
 		User user = User.getCurrent(context);
 
@@ -140,7 +141,7 @@ public class DeskOrders extends Request {
 			throw new BadRequestException();
 		}
 		int ticketCount = input.getInt("count");
-		List<Ticket> tickets = order.addTickets(perf, cat.id, rate.id, profile_id, ticketCount, user);
+		List<Ticket> tickets = order.addTickets(perf, cat.id, rate.id, profile_id, ticketCount, user, location);
 		assertNotNull(tickets, 409);
 		return status(200).entity(tickets).build();
 	}

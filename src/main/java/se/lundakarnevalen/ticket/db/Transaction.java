@@ -1,14 +1,9 @@
 package se.lundakarnevalen.ticket.db;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Timestamp;
-
 import se.lundakarnevalen.ticket.db.framework.Column;
 import se.lundakarnevalen.ticket.db.framework.Mapper;
+
+import java.sql.*;
 
 public class Transaction extends Entity {
 	public static final int TICKET_PAID = 1;
@@ -48,15 +43,16 @@ public class Transaction extends Entity {
 		return new Mapper<Transaction>(stmt).toEntity(rs -> Transaction.create(rs));
 	}
 
-	public static int create(Connection con, int user_id, int order_id, int profile_id, int customer_id, int printer_id)
+	public static int create(Connection con, int user_id, int order_id, int profile_id, int customer_id, int printer_id, int location_id)
 			throws SQLException {
-		String query = "INSERT INTO `transactions` SET `user_id`=?, `order_id`=?, `profile_id`=?, `customer_id`=?, `printer_id`=?";
+		String query = "INSERT INTO `transactions` SET `user_id`=?, `order_id`=?, `profile_id`=?, `customer_id`=?, `printer_id`=?, `location_id`=?";
 		PreparedStatement stmt = con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 		stmt.setInt(1, user_id);
 		stmt.setInt(2, order_id);
 		setIntNullable(stmt, 3, profile_id);
 		setIntNullable(stmt, 4, customer_id);
 		setIntNullable(stmt, 5, printer_id);
+		setIntNullable(stmt, 6, location_id);
 		int id = executeInsert(stmt);
 		return id;
 	}

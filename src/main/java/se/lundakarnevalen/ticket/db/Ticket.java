@@ -1,25 +1,18 @@
 package se.lundakarnevalen.ticket.db;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import com.mysql.cj.api.jdbc.Statement;
+import lombok.Getter;
+import org.json.JSONException;
+import org.json.JSONObject;
+import se.lundakarnevalen.ticket.db.framework.Column;
+import se.lundakarnevalen.ticket.db.framework.Mapper;
+import se.lundakarnevalen.ticket.db.framework.Table;
+
+import javax.ws.rs.ClientErrorException;
+import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.TimeZone;
-
-import javax.ws.rs.ClientErrorException;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.mysql.cj.api.jdbc.Statement;
-
-import lombok.Getter;
-import se.lundakarnevalen.ticket.db.framework.Column;
-import se.lundakarnevalen.ticket.db.framework.Table;
-import se.lundakarnevalen.ticket.db.framework.Mapper;
 
 @Table(name = "tickets")
 public class Ticket extends Entity {
@@ -149,7 +142,7 @@ public class Ticket extends Entity {
 			PreparedStatement stmt2 = con.prepareStatement(query2);
 			stmt2.setLong(1, id);
 			stmt2.executeUpdate();
-			int transaction_id = Transaction.create(con, user.id, order_id, 0, 0, 0);
+			int transaction_id = Transaction.create(con, user.id, order_id, 0, 0, 0, 0);
 			Transaction.addTicket(con, transaction_id, id, Transaction.TICKET_REMOVED);
 			con.commit();
 		} catch (SQLException e) {

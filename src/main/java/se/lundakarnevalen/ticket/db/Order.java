@@ -90,7 +90,7 @@ public class Order extends Entity {
 			stmt.setTimestamp(1, new Timestamp(System.currentTimeMillis() + 30 * 60)); // 30min
 			stmt.setString(2, new BigInteger(48, random).toString(32).substring(0, 8).toUpperCase());
 			int id = executeInsert(stmt);
-			Transaction.create(con, user.id, id, 0, 0, 0);
+			Transaction.create(con, user.id, id, 0, 0, 0, 0);
 			commit(con);
 			return getSingle(id);
 		} finally {
@@ -99,7 +99,7 @@ public class Order extends Entity {
 	}
 
 	public List<Ticket> addTickets(Performance performance, int category_id, int rate_id, int profile_id,
-			int ticketCount, User user) throws SQLException {
+	                               int ticketCount, User user, String location) throws SQLException {
 		System.out.println("Reserving " + ticketCount + " tickets for perf=" + performance.id + ", cat=" + category_id
 				+ ", rate=" + rate_id + " and profile=" + profile_id);
 		Connection con = getCon();
@@ -115,7 +115,8 @@ public class Order extends Entity {
 
 			Price price = Price.getSingle(category_id, rate_id);
 
-			int transaction_id = Transaction.create(con, user.id, id, profile_id, 0, 0);
+			int location_id = Location.getByLocation(location).id;
+			int transaction_id = Transaction.create(con, user.id, id, profile_id, 0, 0, location_id);
 
 			List<Ticket> tickets = new LinkedList<Ticket>();
 			int ticketsAvailable = 0;
@@ -161,7 +162,7 @@ public class Order extends Entity {
 			setIntNullable(stmt, 1, new_customer);
 			stmt.executeUpdate();
 			this.customer_id = new_customer;
-			int transaction_id = Transaction.create(con, user.id, id, 0, new_customer, 0);
+			int transaction_id = Transaction.create(con, user.id, id, 0, new_customer, 0, 0);
 			for (Ticket t : Ticket.getByOrder(id)) {
 				Transaction.addTicket(con, transaction_id, t.id, Transaction.CUSTOMER_SET);
 			}
@@ -179,7 +180,7 @@ public class Order extends Entity {
 		Connection con = getCon();
 		try {
 			con.setAutoCommit(false);
-			int transaction_id = Transaction.create(con, user_id, id, profile_id, 0, 0);
+			int transaction_id = Transaction.create(con, user_id, id, profile_id, 0, 0, 0);
 			int payment_id = Payment.create(con, transaction_id, id, amount, method, reference);
 			for (Ticket t : tickets) {
 				Transaction.addTicket(con, transaction_id, t.id, Transaction.TICKET_PAID);

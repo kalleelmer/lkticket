@@ -1,21 +1,15 @@
 package se.lundakarnevalen.ticket.db;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.util.List;
-
-import org.json.JSONException;
-
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClient;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
-
 import lombok.Getter;
+import org.json.JSONException;
 import se.lundakarnevalen.ticket.db.framework.Column;
 import se.lundakarnevalen.ticket.db.framework.Mapper;
+
+import java.sql.*;
+import java.util.List;
 
 public class Printer extends Entity {
 	@Column
@@ -63,7 +57,7 @@ public class Printer extends Entity {
 		System.out.println("Printing ticket: " + data);
 		Connection con = transaction();
 		try {
-			int transaction_id = Transaction.create(con, user.id, ticket.order_id, 0, 0, id);
+			int transaction_id = Transaction.create(con, user.id, ticket.order_id, 0, 0, id, 0);
 			Transaction.addTicket(con, transaction_id, ticket.id, Transaction.TICKET_PRINTED);
 			ticket.setPrinted(con);
 			AmazonSQS sqs = new AmazonSQSClient();
