@@ -45,7 +45,7 @@ public class Transaction extends Entity {
 
 	public static int create(Connection con, int user_id, int order_id, int profile_id, int customer_id, int printer_id, int location_id)
 			throws SQLException {
-		String query = "INSERT INTO `transactions` SET `user_id`=?, `order_id`=?, `profile_id`=?, `customer_id`=?, `printer_id`=?, `location_id`=?";
+		String query = "INSERT INTO `transactions` SET `user_id`=?, `order_id`=?, `profile_id`=?, `customer_id`=?, `printer_id`=?";
 		PreparedStatement stmt = con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 		stmt.setInt(1, user_id);
 		stmt.setInt(2, order_id);
