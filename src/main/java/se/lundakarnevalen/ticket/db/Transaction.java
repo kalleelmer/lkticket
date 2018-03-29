@@ -52,7 +52,7 @@ public class Transaction extends Entity {
 		setIntNullable(stmt, 3, profile_id);
 		setIntNullable(stmt, 4, customer_id);
 		setIntNullable(stmt, 5, printer_id);
-		setIntNullable(stmt, 6, location_id);
+//		setIntNullable(stmt, 6, location_id);
 		int id = executeInsert(stmt);
 		return id;
 	}
