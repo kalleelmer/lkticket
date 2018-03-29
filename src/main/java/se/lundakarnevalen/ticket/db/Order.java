@@ -115,7 +115,8 @@ public class Order extends Entity {
 
 			Price price = Price.getSingle(category_id, rate_id);
 
-			int location_id = Location.getByLocation(location).id;
+//			int location_id = Location.getByLocation(location).id;
+			int location_id = 0;
 			int transaction_id = Transaction.create(con, user.id, id, profile_id, 0, 0, location_id);
 
 			List<Ticket> tickets = new LinkedList<Ticket>();
