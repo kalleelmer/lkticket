@@ -121,9 +121,9 @@ public class DeskOrders extends Request {
 		User user = User.getCurrent(context);
 
 		Order order = Order.getSingle(id);
+		assertNotNull(order, 404);
 		Payment payment = Payment.getSingle(order.getPayment_id());
 		assertNull(payment, 404);
-		assertNotNull(order, 404);
 		Performance perf = Performance.getSingle(input.getInt("performance_id"));
 		assertNotNull(perf, 404);
 		Rate rate = Rate.getSingle(input.getInt("rate_id"));
@@ -152,6 +152,8 @@ public class DeskOrders extends Request {
 			@Context ContainerRequestContext context) throws SQLException {
 		Order order = Order.getSingle(id);
 		assertNotNull(order, 404);
+		Payment payment = Payment.getSingle(order.getPayment_id());
+		assertNull(payment, 404);
 		Ticket ticket = Ticket.getSingle(ticketID);
 		assertNotNull(ticket);
 		if (ticket.getOrder_id() != order.id) {
