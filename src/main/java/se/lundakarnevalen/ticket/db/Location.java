@@ -7,6 +7,7 @@ import se.lundakarnevalen.ticket.db.framework.Mapper;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Created by Jonathan Schurmann on 3/27/18.
@@ -36,5 +37,11 @@ public class Location extends Entity {
 		PreparedStatement stmt = prepare(query);
 		stmt.setString(1, location);
 		return new Mapper<Location>(stmt).toEntity(Location::create);
+	}
+
+	public static List<Location> getAll() throws SQLException {
+		String query = "SELECT " + COLS + " FROM " + TABLE + "";
+		PreparedStatement stmt = prepare(query);
+		return new Mapper<Location>(stmt).toEntityList(Location::create);
 	}
 }

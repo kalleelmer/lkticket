@@ -2,6 +2,8 @@ USE `lkticket`;
 
 GRANT SELECT ON `profiles` TO 'lkticket';
 
+GRANT SELECT ON `locations` TO 'lkticket';
+
 GRANT SELECT, UPDATE(`alive`) ON `printers` TO 'lkticket';
 
 GRANT SELECT, INSERT(`name`), UPDATE(`name`) ON `shows` TO 'lkticket';
