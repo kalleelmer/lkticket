@@ -116,7 +116,7 @@ public class DeskOrders extends Request {
 	@Path("/{id}/tickets")
 	public Response addTickets(@PathParam("id") int id, @QueryParam("location") String location, @Context ContainerRequestContext context, String data)
 			throws SQLException, JSONException {
-		assertNotNull(location, 412);
+		assertNotNull(location, 400);
 		JSONObject input = new JSONObject(data);
 		User user = User.getCurrent(context);
 
