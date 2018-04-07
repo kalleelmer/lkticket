@@ -114,9 +114,8 @@ public class DeskOrders extends Request {
 
 	@POST
 	@Path("/{id}/tickets")
-	public Response addTickets(@PathParam("id") int id, @QueryParam("location") String location, @Context ContainerRequestContext context, String data)
+	public Response addTickets(@PathParam("id") int id, @Context ContainerRequestContext context, String data)
 			throws SQLException, JSONException {
-		assertNotNull(location, 400);
 		JSONObject input = new JSONObject(data);
 		User user = User.getCurrent(context);
 
@@ -136,6 +135,8 @@ public class DeskOrders extends Request {
 			assertNotNull(profile, 400);
 			profile.assertAccess(user);
 		}
+		Location location = Location.getSingle(input.getInt("location_id"));
+		assertNotNull(location, 400);
 		Show show = perf.getShow();
 		if (!rate.showIs(show) || !cat.showIs(show)) {
 			throw new BadRequestException();

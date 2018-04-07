@@ -99,7 +99,7 @@ public class Order extends Entity {
 	}
 
 	public List<Ticket> addTickets(Performance performance, int category_id, int rate_id, int profile_id,
-	                               int ticketCount, User user, String location) throws SQLException {
+			int ticketCount, User user, Location location) throws SQLException {
 		System.out.println("Reserving " + ticketCount + " tickets for perf=" + performance.id + ", cat=" + category_id
 				+ ", rate=" + rate_id + " and profile=" + profile_id);
 		Connection con = getCon();
@@ -115,9 +115,7 @@ public class Order extends Entity {
 
 			Price price = Price.getSingle(category_id, rate_id);
 
-//			int location_id = Location.getByLocation(location).id;
-			int location_id = 0;
-			int transaction_id = Transaction.create(con, user.id, id, profile_id, 0, 0, location_id);
+			int transaction_id = Transaction.create(con, user.id, id, profile_id, 0, 0, location.id);
 
 			List<Ticket> tickets = new LinkedList<Ticket>();
 			int ticketsAvailable = 0;

@@ -32,10 +32,10 @@ public class Location extends Entity {
 		return location;
 	}
 
-	public static Location getByLocation(String location) throws SQLException {
-		String query = "SELECT " + COLS + " FROM " + TABLE + " WHERE `name`=?";
+	public static Location getSingle(int location_id) throws SQLException {
+		String query = "SELECT " + COLS + " FROM " + TABLE + " WHERE `id`=?";
 		PreparedStatement stmt = prepare(query);
-		stmt.setString(1, location);
+		stmt.setInt(1, location_id);
 		return new Mapper<Location>(stmt).toEntity(Location::create);
 	}
 
