@@ -61,19 +61,19 @@ public class Ticket extends Entity {
 
 	@Column
 	@Getter
-	protected Timestamp paid;
+	protected int paid;
 	@Column
 	@Getter
-	protected Timestamp printed;
+	protected int printed;
 	@Column
 	@Getter
-	protected Timestamp scanned;
+	protected int scanned;
 	@Column
 	@Getter
-	protected Timestamp confirmed;
+	protected int confirmed;
 	@Column
 	@Getter
-	protected Timestamp cancelled;
+	protected int cancelled;
 
 	private static final String TABLE = "`tickets` " + "LEFT JOIN `rates` ON `tickets`.`rate_id`=`rates`.`id` "
 			+ "LEFT JOIN `seats` ON `tickets`.`seat_id`=`seats`.`id` "
@@ -131,7 +131,7 @@ public class Ticket extends Entity {
 	}
 
 	public void remove(User user) throws SQLException {
-		if (paid != null) {
+		if (isPaid()) {
 			throw new ClientErrorException(409);
 		}
 		Connection con = getCon();
@@ -180,5 +180,17 @@ public class Ticket extends Entity {
 		PreparedStatement stmt = con.prepareStatement(query);
 		stmt.setInt(1, id);
 		stmt.executeUpdate();
+	}
+
+	public boolean isPaid() {
+		return paid != 0;
+	}
+
+	public boolean isPrinted() {
+		return printed != 0;
+	}
+
+	public void refund(User user) {
+		this.cancelled = 1;
 	}
 }

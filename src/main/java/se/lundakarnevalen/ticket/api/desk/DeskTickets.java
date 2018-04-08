@@ -6,6 +6,8 @@ import se.lundakarnevalen.ticket.db.*;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import java.sql.SQLException;
 
@@ -23,4 +25,14 @@ public class DeskTickets extends Request {
 		return status(200).entity(ticket).build();
 	}
 
+	@POST
+	@Path("/{id}/refund")
+	public Response refundTicket(@PathParam("id") int id, @Context ContainerRequestContext context)
+			throws SQLException {
+		Ticket ticket = Ticket.getSingle(id);
+		assertNotNull(ticket, 404);
+		User user = User.getCurrent(context);
+		ticket.refund(user);
+		return status(200).entity(ticket).build();
+	}
 }
