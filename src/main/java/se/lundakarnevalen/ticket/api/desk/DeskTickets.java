@@ -9,6 +9,10 @@ import javax.ws.rs.*;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+
+import com.amazonaws.util.json.JSONException;
+import com.amazonaws.util.json.JSONObject;
+
 import java.sql.SQLException;
 
 @Api
@@ -27,12 +31,16 @@ public class DeskTickets extends Request {
 
 	@POST
 	@Path("/{id}/refund")
-	public Response refundTicket(@PathParam("id") int id, @Context ContainerRequestContext context)
-			throws SQLException {
+	public Response refundTicket(@PathParam("id") int id, @Context ContainerRequestContext context, String data)
+			throws SQLException, JSONException {
+		JSONObject json = new JSONObject(data);
 		Ticket ticket = Ticket.getSingle(id);
 		assertNotNull(ticket, 404);
+		if (!ticket.isPaid() || ticket.isCancelled()) {
+			throw new ClientErrorException(409);
+		}
 		User user = User.getCurrent(context);
-		ticket.refund(user);
+		ticket.refund(user, json.getString("method"), json.getString("reference"));
 		return status(200).entity(ticket).build();
 	}
 }

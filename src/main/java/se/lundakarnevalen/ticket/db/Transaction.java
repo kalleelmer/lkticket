@@ -11,6 +11,8 @@ public class Transaction extends Entity {
 	public static final int TICKET_ADDED = 3;
 	public static final int TICKET_REMOVED = 4;
 	public static final int TICKET_PRINTED = 5;
+	public static final int TICKET_REFUNDED = 6;
+	public static final int TICKET_CANCELLED = 7;
 
 	@Column
 	public final int id;

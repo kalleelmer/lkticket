@@ -57,6 +57,13 @@ public class Seat extends Entity {
 		return new Mapper<Seat>(stmt).toEntityList(rs -> Seat.create(rs));
 	}
 
+	public static Seat getByTicket(int ticket_id) throws SQLException {
+		String query = "SELECT " + COLS + " FROM " + TABLE + " WHERE `active_ticket_id`=?";
+		PreparedStatement stmt = prepare(query);
+		stmt.setInt(1, ticket_id);
+		return new Mapper<Seat>(stmt).toEntity(rs -> Seat.create(rs));
+	}
+
 	public static Seat getSingle(long id) throws SQLException {
 		String query = "SELECT " + COLS + " FROM " + TABLE + " WHERE `seats`.`id`=?";
 		System.out.println(query);
@@ -105,5 +112,12 @@ public class Seat extends Entity {
 		stmt.setInt(1, id);
 		stmt.executeUpdate();
 		stmt.getConnection().close();
+	}
+
+	public void release(Connection con) throws SQLException {
+		String query = "UPDATE `seats` SET `active_ticket_id`=NULL WHERE `id`=?";
+		PreparedStatement stmt = prepare(con, query);
+		stmt.setInt(1, id);
+		stmt.executeUpdate();
 	}
 }

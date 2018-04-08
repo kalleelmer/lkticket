@@ -190,7 +190,38 @@ public class Ticket extends Entity {
 		return printed != 0;
 	}
 
-	public void refund(User user) {
-		this.cancelled = 1;
+	public boolean isCancelled() {
+		return cancelled != 0;
+	}
+
+	public void refund(User user, String method, String reference) throws SQLException {
+		Seat seat = Seat.getByTicket(id);
+		if (seat == null) {
+			throw new SQLException("Matching seat not found");
+		}
+		Connection con = transaction();
+		try {
+			// Mark ticket as cancelled and unpaid
+			String query = "UPDATE `tickets` SET `cancelled`=1, `paid`=NULL WHERE `id`=?";
+			PreparedStatement stmt = con.prepareStatement(query);
+			stmt.setInt(1, id);
+			stmt.executeUpdate();
+			this.cancelled = 1;
+			this.paid = 0;
+
+			// Create a transaction
+			int transaction_id = Transaction.create(con, user.id, order_id, 0, 0, 0, 0);
+			Transaction.addTicket(con, transaction_id, id, Transaction.TICKET_REFUNDED);
+			Transaction.addTicket(con, transaction_id, id, Transaction.TICKET_CANCELLED);
+
+			// Create a negative payment
+			Payment.create(con, transaction_id, order_id, -price, method, reference);
+
+			// Release the seat
+			seat.release(con);
+			commit(con);
+		} finally {
+			rollback(con);
+		}
 	}
 }
