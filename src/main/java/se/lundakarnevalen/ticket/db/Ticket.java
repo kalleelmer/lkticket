@@ -71,6 +71,9 @@ public class Ticket extends Entity {
 	@Column
 	@Getter
 	protected Timestamp confirmed;
+	@Column
+	@Getter
+	protected Timestamp cancelled;
 
 	private static final String TABLE = "`tickets` " + "LEFT JOIN `rates` ON `tickets`.`rate_id`=`rates`.`id` "
 			+ "LEFT JOIN `seats` ON `tickets`.`seat_id`=`seats`.`id` "
