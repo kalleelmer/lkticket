@@ -8,8 +8,7 @@ import se.lundakarnevalen.ticket.db.framework.Table;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.sql.*;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.Instant;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -89,7 +88,7 @@ public class Order extends Entity {
 		try {
 			String query = "INSERT INTO `orders` SET `expires`=?, `identifier`=?";
 			PreparedStatement stmt = prepare(con, query);
-			long expires = LocalDateTime.now().atZone(ZoneOffset.UTC).plusMinutes(30).toInstant().toEpochMilli(); //30 min
+			long expires = Instant.now().toEpochMilli() + 30 * 60000; //30 min
 			stmt.setTimestamp(1, new Timestamp(expires));
 			stmt.setString(2, new BigInteger(48, random).toString(32).substring(0, 8).toUpperCase());
 			int id = executeInsert(stmt);
@@ -102,7 +101,7 @@ public class Order extends Entity {
 	}
 
 	public List<Ticket> addTickets(Performance performance, int category_id, int rate_id, int profile_id,
-			int ticketCount, User user, Location location) throws SQLException {
+	                               int ticketCount, User user, Location location) throws SQLException {
 		System.out.println("Reserving " + ticketCount + " tickets for perf=" + performance.id + ", cat=" + category_id
 				+ ", rate=" + rate_id + " and profile=" + profile_id);
 		Connection con = getCon();
