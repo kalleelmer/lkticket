@@ -58,7 +58,7 @@ public class DeskPrinters extends Request {
 		JSONArray inputTickets = input.getJSONArray("tickets");
 		for (int i = 0; i < inputTickets.length(); i++) {
 			Ticket ticket = Ticket.getSingle(inputTickets.getInt(i));
-			if (ticket.getPrinted() != null) {
+			if (ticket.isPrinted()) {
 				throw new ClientErrorException(409);
 			}
 			tickets.add(ticket);

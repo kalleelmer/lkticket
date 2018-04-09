@@ -115,16 +115,15 @@ public class DeskOrders extends Request {
 
 	@POST
 	@Path("/{id}/tickets")
-	public Response addTickets(@PathParam("id") int id, @QueryParam("location") String location, @Context ContainerRequestContext context, String data)
+	public Response addTickets(@PathParam("id") int id, @Context ContainerRequestContext context, String data)
 			throws SQLException, JSONException {
-		assertNotNull(location, 412);
 		JSONObject input = new JSONObject(data);
 		User user = User.getCurrent(context);
 
 		Order order = Order.getSingle(id);
+		assertNotNull(order, 404);
 		Payment payment = Payment.getSingle(order.getPayment_id());
 		assertNull(payment, 404);
-		assertNotNull(order, 404);
 		Performance perf = Performance.getSingle(input.getInt("performance_id"));
 		assertNotNull(perf, 404);
 		Rate rate = Rate.getSingle(input.getInt("rate_id"));
@@ -137,6 +136,8 @@ public class DeskOrders extends Request {
 			assertNotNull(profile, 400);
 			profile.assertAccess(user);
 		}
+		Location location = Location.getSingle(input.getInt("location_id"));
+		assertNotNull(location, 400);
 		Show show = perf.getShow();
 		if (!rate.showIs(show) || !cat.showIs(show)) {
 			throw new BadRequestException();
@@ -153,6 +154,8 @@ public class DeskOrders extends Request {
 			@Context ContainerRequestContext context) throws SQLException {
 		Order order = Order.getSingle(id);
 		assertNotNull(order, 404);
+		Payment payment = Payment.getSingle(order.getPayment_id());
+		assertNull(payment, 404);
 		Ticket ticket = Ticket.getSingle(ticketID);
 		assertNotNull(ticket);
 		if (ticket.getOrder_id() != order.id) {
