@@ -19,7 +19,7 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
-@Api
+@Api(value = "Desk")
 @Path("/desk/printers")
 @RolesAllowed("USER")
 @Produces("application/json; charset=UTF-8")

@@ -7,7 +7,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
-@Api
+@Api(value = "Admin")
 @Path("/admin/orders")
 @RolesAllowed("USER")
 @Produces("application/json; charset=UTF-8")

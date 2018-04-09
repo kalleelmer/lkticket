@@ -7,7 +7,8 @@ import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
-@Api
+@Api(value = "Des" +
+		"k")
 @Path("/desk/categories")
 @RolesAllowed("USER")
 @Produces("application/json; charset=UTF-8")

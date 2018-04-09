@@ -15,7 +15,7 @@ import javax.ws.rs.core.Response;
 import java.sql.SQLException;
 import java.util.List;
 
-@Api
+@Api(value = "Public")
 @Path("/public/shows")
 @PermitAll
 @Produces("application/json; charset=UTF-8")

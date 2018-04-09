@@ -1,12 +1,12 @@
 package se.lundakarnevalen.ticket.api.desk;
 
 import io.swagger.annotations.Api;
+import org.json.JSONException;
+import org.json.JSONObject;
 import se.lundakarnevalen.ticket.api.PublicPerformances;
 import se.lundakarnevalen.ticket.db.Performance;
 import se.lundakarnevalen.ticket.db.Profile;
 import se.lundakarnevalen.ticket.db.User;
-
-import java.sql.SQLException;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.GET;
@@ -16,11 +16,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+import java.sql.SQLException;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-@Api
+@Api(value = "Desk")
 @Path("/desk/performances")
 @RolesAllowed("USER")
 @Produces("application/json; charset=UTF-8")

@@ -13,7 +13,7 @@ import javax.ws.rs.core.Response;
 import java.sql.SQLException;
 import java.util.List;
 
-@Api
+@Api(value = "Admin")
 @Path("/admin/users")
 @RolesAllowed("ADMIN")
 @Produces("application/json; charset=UTF-8")

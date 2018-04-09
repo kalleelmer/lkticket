@@ -12,7 +12,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import java.sql.SQLException;
 
-@Api
+@Api(value = "Public")
 @Path("/public/performances")
 @PermitAll
 @Produces("application/json; charset=UTF-8")
