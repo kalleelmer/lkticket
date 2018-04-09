@@ -1,21 +1,21 @@
 package se.lundakarnevalen.ticket.api.desk;
 
+import com.amazonaws.util.json.JSONException;
+import com.amazonaws.util.json.JSONObject;
 import io.swagger.annotations.Api;
 import se.lundakarnevalen.ticket.api.Request;
-import se.lundakarnevalen.ticket.db.*;
+import se.lundakarnevalen.ticket.db.Ticket;
+import se.lundakarnevalen.ticket.db.User;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
-
-import com.amazonaws.util.json.JSONException;
-import com.amazonaws.util.json.JSONObject;
-
 import java.sql.SQLException;
 
-@Api
+
+@Api(value = "Desk")
 @Path("/desk/tickets")
 @RolesAllowed("USER")
 @Produces("application/json; charset=UTF-8")
