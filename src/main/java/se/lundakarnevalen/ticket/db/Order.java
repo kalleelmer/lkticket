@@ -8,6 +8,8 @@ import se.lundakarnevalen.ticket.db.framework.Table;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.sql.*;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -87,7 +89,8 @@ public class Order extends Entity {
 		try {
 			String query = "INSERT INTO `orders` SET `expires`=?, `identifier`=?";
 			PreparedStatement stmt = prepare(con, query);
-			stmt.setTimestamp(1, new Timestamp(System.currentTimeMillis() + 30 * 60)); // 30min
+			long expires = LocalDateTime.now().atZone(ZoneOffset.UTC).plusMinutes(30).toInstant().toEpochMilli(); //30 min
+			stmt.setTimestamp(1, new Timestamp(expires));
 			stmt.setString(2, new BigInteger(48, random).toString(32).substring(0, 8).toUpperCase());
 			int id = executeInsert(stmt);
 			Transaction.create(con, user.id, id, 0, 0, 0, 0);
