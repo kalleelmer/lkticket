@@ -8,7 +8,6 @@ import se.lundakarnevalen.ticket.db.framework.Table;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.sql.*;
-import java.time.Instant;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -90,11 +89,9 @@ public class Order extends Entity {
 	public static Order create(User user) throws SQLException {
 		Connection con = transaction();
 		try {
-			String query = "INSERT INTO `orders` SET `expires`=?, `identifier`=?";
+			String query = "INSERT INTO `orders` SET `identifier`=?, `expires`=(CURRENT_TIMESTAMP + INTERVAL 30 MINUTE)";
 			PreparedStatement stmt = prepare(con, query);
-			long expires = Instant.now().toEpochMilli() + 30 * 60000; //30 min
-			stmt.setTimestamp(1, new Timestamp(expires));
-			stmt.setString(2, new BigInteger(48, random).toString(32).substring(0, 8).toUpperCase());
+			stmt.setString(1, new BigInteger(48, random).toString(32).substring(0, 8).toUpperCase());
 			int id = executeInsert(stmt);
 			Transaction.create(con, user.id, id, 0, 0, 0, 0);
 			commit(con);
