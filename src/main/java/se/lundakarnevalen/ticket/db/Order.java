@@ -91,7 +91,7 @@ public class Order extends Entity {
 		try {
 			String query = "INSERT INTO `orders` SET `identifier`=?, `expires`=(CURRENT_TIMESTAMP + INTERVAL 30 MINUTE)";
 			PreparedStatement stmt = prepare(con, query);
-			stmt.setString(1, new BigInteger(48, random).toString(32).substring(0, 8).toUpperCase());
+			stmt.setString(1, generateIdentifier());
 			int id = executeInsert(stmt);
 			Transaction.create(con, user.id, id, 0, 0, 0, 0);
 			commit(con);
@@ -101,8 +101,16 @@ public class Order extends Entity {
 		}
 	}
 
+	private static String generateIdentifier() {
+		String identifier = new BigInteger(48, random).toString(32).substring(0, 8);
+		identifier = identifier.toUpperCase();
+		identifier = identifier.replace('O', '0');
+		identifier = identifier.replace('I', '1');
+		return identifier;
+	}
+
 	public List<Ticket> addTickets(Performance performance, int category_id, int rate_id, int profile_id,
-	                               int ticketCount, User user, Location location) throws SQLException {
+			int ticketCount, User user, Location location) throws SQLException {
 		System.out.println("Reserving " + ticketCount + " tickets for perf=" + performance.id + ", cat=" + category_id
 				+ ", rate=" + rate_id + " and profile=" + profile_id);
 		Connection con = getCon();
