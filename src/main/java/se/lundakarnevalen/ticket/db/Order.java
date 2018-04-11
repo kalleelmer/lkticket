@@ -48,36 +48,40 @@ public class Order extends Entity {
 	}
 
 	public static List<Order> getAll() throws SQLException {
-		String query = "SELECT " + COLS + " FROM " + TABLE;
+		String query = "SELECT " + COLS + " FROM " + TABLE + " GROUP BY `orders`.`id`";
 		return new Mapper<Order>(getCon(), query).toEntityList(rs -> Order.create(rs));
 	}
 
 	public static List<Order> getUnpaid() throws SQLException {
-		String query = "SELECT " + COLS + " FROM " + TABLE + " WHERE `payments`.`id` IS NULL";
+		String query = "SELECT " + COLS + " FROM " + TABLE + " WHERE `payments`.`id` IS NULL"
+				+ " GROUP BY `orders`.`id`";
 		return new Mapper<Order>(getCon(), query).toEntityList(rs -> Order.create(rs));
 	}
 
 	public static List<Order> getPaid() throws SQLException {
-		String query = "SELECT " + COLS + " FROM " + TABLE + " WHERE `payments`.`id` IS NOT NULL";
+		String query = "SELECT " + COLS + " FROM " + TABLE + " WHERE `payments`.`id` IS NOT NULL"
+				+ " GROUP BY `orders`.`id`";
 		return new Mapper<Order>(getCon(), query).toEntityList(rs -> Order.create(rs));
 	}
 
 	public static Order getSingle(long id) throws SQLException {
-		String query = "SELECT " + COLS + " FROM " + TABLE + " WHERE `orders`.`id`=?";
+		String query = "SELECT " + COLS + " FROM " + TABLE + " WHERE `orders`.`id`=?" + " GROUP BY `orders`.`id`";
 		PreparedStatement stmt = prepare(query);
 		stmt.setLong(1, id);
 		return new Mapper<Order>(stmt).toEntity(rs -> Order.create(rs));
 	}
 
 	public static Order getByIdentifier(String id) throws SQLException {
-		String query = "SELECT " + COLS + " FROM " + TABLE + " WHERE `orders`.`identifier`=?";
+		String query = "SELECT " + COLS + " FROM " + TABLE + " WHERE `orders`.`identifier`=?"
+				+ " GROUP BY `orders`.`id`";
 		PreparedStatement stmt = prepare(query);
 		stmt.setString(1, id);
 		return new Mapper<Order>(stmt).toEntity(Order::create);
 	}
 
 	public static List<Order> getByCustomer(Customer customer) throws SQLException {
-		String query = "SELECT " + COLS + " FROM " + TABLE + " WHERE `orders`.`customer_id`=?";
+		String query = "SELECT " + COLS + " FROM " + TABLE + " WHERE `orders`.`customer_id`=?"
+				+ " GROUP BY `orders`.`id`";
 		PreparedStatement stmt = prepare(query);
 		stmt.setLong(1, customer.id);
 		return new Mapper<Order>(stmt).toEntityList(rs -> Order.create(rs));
