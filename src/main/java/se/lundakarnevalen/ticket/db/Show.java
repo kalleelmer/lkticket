@@ -21,6 +21,9 @@ public class Show extends Entity {
 	@Column(table = "shows")
 	@Getter
 	protected String description;
+	@Column(table = "shows")
+	@Getter
+	protected String image;
 
 	private static final String TABLE = "`shows`";
 	private static final String COLS = Entity.getCols(Show.class);
