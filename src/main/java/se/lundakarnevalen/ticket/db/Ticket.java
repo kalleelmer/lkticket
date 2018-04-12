@@ -158,7 +158,7 @@ public class Ticket extends Entity {
 
 	public String renderPrint() throws JSONException {
 		JSONObject json = new JSONObject();
-		json.put("id", id);
+		json.put("2id", id);
 		json.put("show_name", show_name);
 		json.put("rate_name", rate_name);
 		json.put("category_name", category_name);
