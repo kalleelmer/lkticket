@@ -168,11 +168,19 @@ public class Ticket extends Entity {
 		return json.toString();
 	}
 
-	public void setPrinted(Connection con) throws SQLException {
-		String query = "UPDATE `tickets` SET `tickets`.`printed`=1 WHERE `tickets`.`id`=?";
-		PreparedStatement stmt = prepare(con, query);
-		stmt.setInt(1, id);
-		stmt.executeUpdate();
+	public void setPrinted(User user, Printer printer) throws SQLException {
+		Connection con = transaction();
+		try {
+			String query = "UPDATE `tickets` SET `tickets`.`printed`=1 WHERE `tickets`.`id`=?";
+			PreparedStatement stmt = prepare(con, query);
+			stmt.setInt(1, id);
+			stmt.executeUpdate();
+			int transaction_id = Transaction.create(con, user.id, order_id, 0, 0, printer.id, 0);
+			Transaction.addTicket(con, transaction_id, id, Transaction.TICKET_PRINTED);
+			commit(con);
+		} finally {
+			rollback(con);
+		}
 	}
 
 	public void setPaid(Connection con) throws SQLException {
