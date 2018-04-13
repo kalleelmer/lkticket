@@ -24,6 +24,11 @@ public class Performance extends Entity {
 	@Column
 	@Getter
 	protected Timestamp start;
+	
+	// Replaces start on ticket if present
+	@Column
+	@Getter
+	protected String title;
 
 	private static final String TABLE = "`performances`";
 	private static final String COLS = Entity.getCols(Performance.class);
@@ -46,6 +51,7 @@ public class Performance extends Entity {
 	public static List<Performance> getByShow(int show_id) throws SQLException {
 		String query = "SELECT " + COLS + " FROM " + TABLE + " WHERE `show_id`=?";
 		PreparedStatement stmt = prepare(query);
+		System.out.println(query);
 		stmt.setInt(1, show_id);
 		return new Mapper<Performance>(stmt).toEntityList(rs -> Performance.create(rs));
 	}

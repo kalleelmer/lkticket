@@ -55,6 +55,14 @@ public class Ticket extends Entity {
 	@Getter
 	protected String show_name;
 
+	@Column(table = "performances", column = "note")
+	@Getter
+	protected String performance_note;
+
+	@Column(table = "performances", column = "title")
+	@Getter
+	protected String performance_title;
+
 	@Column
 	@Getter
 	protected int price;
@@ -162,9 +170,14 @@ public class Ticket extends Entity {
 		json.put("show_name", show_name);
 		json.put("rate_name", rate_name);
 		json.put("category_name", category_name);
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-		format.setTimeZone(TimeZone.getTimeZone("CET"));
-		json.put("performance_start", format.format(performance_start));
+		if (performance_title != null) {
+			json.put("performance_start", performance_title);
+		} else {
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+			format.setTimeZone(TimeZone.getTimeZone("CET"));
+			json.put("performance_start", format.format(performance_start));
+		}
+		json.put("performance_note", performance_note);
 		return json.toString();
 	}
 
