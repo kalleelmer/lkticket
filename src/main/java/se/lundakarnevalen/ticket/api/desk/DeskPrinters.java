@@ -56,10 +56,15 @@ public class DeskPrinters extends Request {
 		List<Ticket> tickets = new LinkedList<Ticket>();
 		JSONObject input = new JSONObject(data);
 		JSONArray inputTickets = input.getJSONArray("tickets");
+		boolean reprint = input.has("reprint") && input.getBoolean("reprint");
 		for (int i = 0; i < inputTickets.length(); i++) {
 			Ticket ticket = Ticket.getSingle(inputTickets.getInt(i));
 			if (ticket.isPrinted()) {
-				throw new ClientErrorException(409);
+				if (reprint) {
+					ticket.setUnprinted(User.getCurrent(context), printer);
+				} else {
+					throw new ClientErrorException(409);
+				}
 			}
 			tickets.add(ticket);
 		}
