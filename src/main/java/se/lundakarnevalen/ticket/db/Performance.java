@@ -24,7 +24,7 @@ public class Performance extends Entity {
 	@Column
 	@Getter
 	protected Timestamp start;
-	
+
 	// Replaces start on ticket if present
 	@Column
 	@Getter
@@ -115,6 +115,7 @@ public class Performance extends Entity {
 			category.put("available", rs.getInt("available"));
 			profile.put(Integer.toString(rs.getInt("category_id")), category);
 		}
+		stmt.getConnection().close();
 		return profile;
 	}
 }
