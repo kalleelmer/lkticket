@@ -40,6 +40,13 @@ public class AdminUsers extends Request {
 		return status(200).entity(user).build();
 	}
 
+	@GET
+	@Path("/{user_id}/profiles")
+	public Response getUserProfiles(@PathParam("user_id") int user_id) throws SQLException, JSONException {
+		List<Profile> profiles = Profile.getByUser(user_id);
+		return status(200).entity(profiles).build();
+	}
+
 	@PUT
 	@Path("/{id}/profiles/{profile_id}")
 	public Response addProfile(@PathParam("id") int id, @PathParam("profile_id") int profile_id)
