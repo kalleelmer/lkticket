@@ -215,4 +215,43 @@ public class Order extends Entity {
 		List<Ticket> tickets = Ticket.getByOrder(id);
 		return !tickets.isEmpty();
 	}
+
+	public static void cleanup(int profile_id) throws SQLException {
+		System.out.println("Starting abandoned order cleanup");
+		Connection con = transaction();
+		try {
+			String query = "SELECT `seats`.`id` as `seat_id`, `tickets`.`id` as `ticket_id`"
+					+ ", `orders`.`id` as `order_id`, `orders`.`identifier`"
+					+ " FROM `seats` LEFT JOIN `tickets` ON `seats`.`active_ticket_id` = `tickets`.`id`"
+					+ " LEFT JOIN `orders` ON `tickets`.`order_id` = `orders`.`id`"
+					+ " WHERE `seats`.`profile_id`=? AND `orders`.`expires` < (NOW() - INTERVAL 10 MINUTE)"
+					+ " AND `tickets`.`paid` IS NULL AND `tickets`.`printed` IS NULL";
+			PreparedStatement stmt = prepare(con, query);
+			stmt.setInt(1, profile_id);
+			ResultSet rs = stmt.executeQuery();
+
+			String removeTicketQuery = "UPDATE `tickets` SET `order_id`=NULL WHERE `id`=?";
+			PreparedStatement removeTicket = prepare(con, removeTicketQuery);
+			String releaseSeatQuery = "UPDATE `seats` SET `active_ticket_id` = NULL WHERE `active_ticket_id`=?";
+			PreparedStatement releaseSeat = prepare(con, releaseSeatQuery);
+
+			while (rs.next()) {
+				int seat_id = rs.getInt("seat_id");
+				int ticket_id = rs.getInt("ticket_id");
+				int order_id = rs.getInt("order_id");
+				String identifier = rs.getString("identifier");
+				System.out.println("Releasing seat " + seat_id + ", ticket " + ticket_id + ", order " + order_id + " "
+						+ identifier);
+				removeTicket.setInt(1, ticket_id);
+				removeTicket.executeUpdate();
+				releaseSeat.setInt(1, ticket_id);
+				releaseSeat.executeUpdate();
+				int transaction_id = Transaction.create(con, 1, order_id, 1, 0, 0, 0);
+				Transaction.addTicket(con, transaction_id, ticket_id, Transaction.TICKET_REMOVED);
+			}
+			commit(con);
+		} finally {
+			rollback(con);
+		}
+	}
 }
