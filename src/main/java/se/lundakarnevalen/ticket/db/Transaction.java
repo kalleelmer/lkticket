@@ -5,6 +5,10 @@ import se.lundakarnevalen.ticket.db.framework.Mapper;
 
 import java.sql.*;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class Transaction extends Entity {
 	public static final int TICKET_PAID = 1;
 	public static final int CUSTOMER_SET = 2;
@@ -68,5 +72,43 @@ public class Transaction extends Entity {
 		stmt.setInt(2, transaction_id);
 		stmt.setInt(3, activity);
 		stmt.executeUpdate();
+	}
+
+	public static JSONObject getSales() throws SQLException, JSONException {
+		String query = "SELECT DATE(`transactions`.`date`) as `day`" + ", `shows`.`name` as `show_name`"
+				+ ", SUM(IF(`ticket_transactions`.`activity`=1, `tickets`.`price`, 0)) as `sales`"
+				+ ", SUM(IF(`ticket_transactions`.`activity`=6, `tickets`.`price`, 0)) as `refunds`"
+				+ " FROM `ticket_transactions`"
+				+ " LEFT JOIN `transactions` ON `ticket_transactions`.`transaction_id`=`transactions`.`id`"
+				+ " LEFT JOIN `tickets` ON `ticket_transactions`.`ticket_id`=`tickets`.`id`"
+				+ " LEFT JOIN `seats` ON `tickets`.`seat_id`=`seats`.`id`"
+				+ " LEFT JOIN `performances` ON `seats`.`performance_id` = `performances`.`id`"
+				+ " LEFT JOIN `shows` ON `performances`.`show_id` = `shows`.`id`"
+				+ " WHERE `ticket_transactions`.`activity` IN (1, 6)" + " AND `tickets`.`price` != 0"
+				+ " GROUP BY `day`, `show_name` ORDER BY `day`, `show_name`;";
+		PreparedStatement stmt = prepare(query);
+		ResultSet rs = stmt.executeQuery();
+		JSONArray days = new JSONArray();
+		int totalSales = 0;
+		int totalRefunds = 0;
+		while (rs.next()) {
+			JSONObject entry = new JSONObject();
+			int sales = rs.getInt("sales");
+			int refunds = rs.getInt("refunds");
+			entry.put("day", rs.getString("day"));
+			entry.put("show_name", rs.getString("show_name"));
+			entry.put("sales", sales);
+			entry.put("refunds", refunds);
+			entry.put("net", sales - refunds);
+			days.put(entry);
+			totalSales += sales;
+			totalRefunds += refunds;
+		}
+		JSONObject report = new JSONObject();
+		report.put("entries", days);
+		report.put("sales", totalSales);
+		report.put("refunds", totalRefunds);
+		report.put("net", totalSales - totalRefunds);
+		return report;
 	}
 }
