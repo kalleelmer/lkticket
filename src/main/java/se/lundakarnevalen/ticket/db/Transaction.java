@@ -76,6 +76,7 @@ public class Transaction extends Entity {
 
 	public static JSONObject getSales() throws SQLException, JSONException {
 		String query = "SELECT DATE(`transactions`.`date`) as `day`" + ", `shows`.`name` as `show_name`"
+				+ ", `profiles`.`name` as `profile_name`"
 				+ ", SUM(IF(`ticket_transactions`.`activity`=1, `tickets`.`price`, 0)) as `sales`"
 				+ ", SUM(IF(`ticket_transactions`.`activity`=6, `tickets`.`price`, 0)) as `refunds`"
 				+ " FROM `ticket_transactions`"
@@ -84,8 +85,9 @@ public class Transaction extends Entity {
 				+ " LEFT JOIN `seats` ON `tickets`.`seat_id`=`seats`.`id`"
 				+ " LEFT JOIN `performances` ON `seats`.`performance_id` = `performances`.`id`"
 				+ " LEFT JOIN `shows` ON `performances`.`show_id` = `shows`.`id`"
+				+ " LEFT JOIN `profiles` ON `transactions`.`profile_id` = `profiles`.`id`"
 				+ " WHERE `ticket_transactions`.`activity` IN (1, 6)" + " AND `tickets`.`price` != 0"
-				+ " GROUP BY `day`, `show_name` ORDER BY `day`, `show_name`;";
+				+ " GROUP BY `day`, `show_name`, `profile_name`" + " ORDER BY `day`, `show_name`, `profile_name`;";
 		PreparedStatement stmt = prepare(query);
 		ResultSet rs = stmt.executeQuery();
 		JSONArray days = new JSONArray();
@@ -97,6 +99,7 @@ public class Transaction extends Entity {
 			int refunds = rs.getInt("refunds");
 			entry.put("day", rs.getString("day"));
 			entry.put("show_name", rs.getString("show_name"));
+			entry.put("profile_name", rs.getString("profile_name"));
 			entry.put("sales", sales);
 			entry.put("refunds", refunds);
 			entry.put("net", sales - refunds);
