@@ -221,13 +221,16 @@ public class Order extends Entity {
 		Connection con = transaction();
 		try {
 			String query = "SELECT `seats`.`id` as `seat_id`, `tickets`.`id` as `ticket_id`"
-					+ ", `orders`.`id` as `order_id`, `orders`.`identifier`"
+					+ ", `orders`.`id` as `order_id`, `orders`.`identifier`" + ", `orders`.`customer_id`"
 					+ " FROM `seats` LEFT JOIN `tickets` ON `seats`.`active_ticket_id` = `tickets`.`id`"
 					+ " LEFT JOIN `orders` ON `tickets`.`order_id` = `orders`.`id`"
 					+ " WHERE `seats`.`profile_id`=? AND `orders`.`expires` < (NOW() - INTERVAL 10 MINUTE)"
-					+ " AND `tickets`.`paid` IS NULL AND `tickets`.`printed` IS NULL";
+					+ " AND `tickets`.`paid` IS NULL AND `tickets`.`printed` IS NULL"
+					+ " AND (`orders`.`customer_id` IS NULL OR `orders`.`customer_id`"
+					+ " IN (SELECT `customer_id` FROM `customer_profiles` WHERE `profile_id`=?))";
 			PreparedStatement stmt = prepare(con, query);
 			stmt.setInt(1, profile_id);
+			stmt.setInt(2, profile_id);
 			ResultSet rs = stmt.executeQuery();
 
 			String removeTicketQuery = "UPDATE `tickets` SET `order_id`=NULL WHERE `id`=?";
