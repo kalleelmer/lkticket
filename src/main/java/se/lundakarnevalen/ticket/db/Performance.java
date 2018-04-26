@@ -30,6 +30,10 @@ public class Performance extends Entity {
 	@Getter
 	protected String title;
 
+	@Column
+	@Getter
+	protected String note;
+
 	private static final String TABLE = "`performances`";
 	private static final String COLS = Entity.getCols(Performance.class);
 
