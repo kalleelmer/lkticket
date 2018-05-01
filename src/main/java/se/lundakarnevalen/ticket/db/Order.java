@@ -86,14 +86,14 @@ public class Order extends Entity {
 		return new Mapper<Order>(stmt).toEntityList(rs -> Order.create(rs));
 	}
 
-	public static Order create(User user) throws SQLException {
+	public static Order create(User user, int location_id) throws SQLException {
 		Connection con = transaction();
 		try {
 			String query = "INSERT INTO `orders` SET `identifier`=?, `expires`=(CURRENT_TIMESTAMP + INTERVAL 30 MINUTE)";
 			PreparedStatement stmt = prepare(con, query);
 			stmt.setString(1, generateIdentifier());
 			int id = executeInsert(stmt);
-			Transaction.create(con, user.id, id, 0, 0, 0, 0);
+			Transaction.create(con, user.id, id, 0, 0, 0, location_id);
 			commit(con);
 			return getSingle(id);
 		} finally {
@@ -162,7 +162,7 @@ public class Order extends Entity {
 		}
 	}
 
-	public void setCustomer(int new_customer, User user) throws SQLException {
+	public void setCustomer(int new_customer, User user, int location_id) throws SQLException {
 		String query = "UPDATE `orders` SET `customer_id`=? WHERE `orders`.`id`=?";
 		Connection con = getCon();
 		try {
@@ -172,7 +172,7 @@ public class Order extends Entity {
 			setIntNullable(stmt, 1, new_customer);
 			stmt.executeUpdate();
 			this.customer_id = new_customer;
-			int transaction_id = Transaction.create(con, user.id, id, 0, new_customer, 0, 0);
+			int transaction_id = Transaction.create(con, user.id, id, 0, new_customer, 0, location_id);
 			for (Ticket t : Ticket.getByOrder(id)) {
 				Transaction.addTicket(con, transaction_id, t.id, Transaction.CUSTOMER_SET);
 			}
@@ -185,12 +185,12 @@ public class Order extends Entity {
 		}
 	}
 
-	public Payment pay(int user_id, int profile_id, int amount, List<Ticket> tickets, String method, String reference)
-			throws SQLException {
+	public Payment pay(int user_id, int profile_id, int amount, List<Ticket> tickets, String method, String reference,
+			int location_id) throws SQLException {
 		Connection con = getCon();
 		try {
 			con.setAutoCommit(false);
-			int transaction_id = Transaction.create(con, user_id, id, profile_id, 0, 0, 0);
+			int transaction_id = Transaction.create(con, user_id, id, profile_id, 0, 0, location_id);
 			int payment_id = Payment.create(con, transaction_id, id, amount, method, reference);
 			for (Ticket t : tickets) {
 				Transaction.addTicket(con, transaction_id, t.id, Transaction.TICKET_PAID);
@@ -249,7 +249,7 @@ public class Order extends Entity {
 				removeTicket.executeUpdate();
 				releaseSeat.setInt(1, ticket_id);
 				releaseSeat.executeUpdate();
-				int transaction_id = Transaction.create(con, 1, order_id, 1, 0, 0, 0);
+				int transaction_id = Transaction.create(con, 1, order_id, profile_id, 0, 0, 0);
 				Transaction.addTicket(con, transaction_id, ticket_id, Transaction.TICKET_REMOVED);
 			}
 			commit(con);

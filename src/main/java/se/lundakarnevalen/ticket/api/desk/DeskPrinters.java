@@ -48,8 +48,8 @@ public class DeskPrinters extends Request {
 
 	@POST
 	@Path("/{id}/print")
-	public Response printOrder(@PathParam("id") int id, @Context ContainerRequestContext context, String data)
-			throws SQLException, JSONException {
+	public Response printOrder(@PathParam("id") int id, @Context ContainerRequestContext context,
+			@QueryParam("location_id") int location_id, String data) throws SQLException, JSONException {
 		User user = User.getCurrent(context);
 		Printer printer = Printer.getSingle(id);
 		assertNotNull(printer, 404);
@@ -61,7 +61,7 @@ public class DeskPrinters extends Request {
 			Ticket ticket = Ticket.getSingle(inputTickets.getInt(i));
 			if (ticket.isPrinted()) {
 				if (reprint) {
-					ticket.setUnprinted(User.getCurrent(context), printer);
+					ticket.setUnprinted(User.getCurrent(context), printer, location_id);
 				} else {
 					throw new ClientErrorException(409);
 				}
@@ -72,7 +72,7 @@ public class DeskPrinters extends Request {
 			throw new ClientErrorException(403);
 		}
 		for (Ticket t : tickets) {
-			printer.addToPrintQueue(t, user);
+			printer.addToPrintQueue(t, user, location_id);
 		}
 		return status(204).build();
 	}

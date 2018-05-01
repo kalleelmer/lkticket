@@ -52,12 +52,12 @@ public class Printer extends Entity {
 		return new Mapper<Printer>(stmt).toEntity(rs -> Printer.create(rs));
 	}
 
-	public void addToPrintQueue(Ticket ticket, User user) throws JSONException, SQLException {
+	public void addToPrintQueue(Ticket ticket, User user, int location_id) throws JSONException, SQLException {
 		String data = ticket.renderPrint();
 		System.out.println("Printing ticket: " + data);
 		Connection con = transaction();
 		try {
-			int transaction_id = Transaction.create(con, user.id, ticket.order_id, 0, 0, id, 0);
+			int transaction_id = Transaction.create(con, user.id, ticket.order_id, 0, 0, id, location_id);
 			Transaction.addTicket(con, transaction_id, ticket.id, Transaction.TICKET_PRINT_QUEUED);
 			AmazonSQS sqs = new AmazonSQSClient();
 			SendMessageRequest request = new SendMessageRequest().withQueueUrl(url).withMessageBody(data);

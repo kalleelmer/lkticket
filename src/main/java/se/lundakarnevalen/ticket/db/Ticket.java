@@ -138,7 +138,7 @@ public class Ticket extends Entity {
 		return getSingle(con, id);
 	}
 
-	public void remove(User user) throws SQLException {
+	public void remove(User user, int location_id) throws SQLException {
 		if (isPaid()) {
 			throw new ClientErrorException(409);
 		}
@@ -153,7 +153,7 @@ public class Ticket extends Entity {
 			PreparedStatement stmt2 = con.prepareStatement(query2);
 			stmt2.setLong(1, id);
 			stmt2.executeUpdate();
-			int transaction_id = Transaction.create(con, user.id, order_id, 0, 0, 0, 0);
+			int transaction_id = Transaction.create(con, user.id, order_id, 0, 0, 0, location_id);
 			Transaction.addTicket(con, transaction_id, id, Transaction.TICKET_REMOVED);
 			con.commit();
 		} catch (SQLException e) {
@@ -196,14 +196,14 @@ public class Ticket extends Entity {
 		}
 	}
 
-	public void setUnprinted(User user, Printer printer) throws SQLException {
+	public void setUnprinted(User user, Printer printer, int location_id) throws SQLException {
 		Connection con = transaction();
 		try {
 			String query = "UPDATE `tickets` SET `tickets`.`printed`=0 WHERE `tickets`.`id`=?";
 			PreparedStatement stmt = prepare(con, query);
 			stmt.setInt(1, id);
 			stmt.executeUpdate();
-			int transaction_id = Transaction.create(con, user.id, order_id, 0, 0, printer.id, 0);
+			int transaction_id = Transaction.create(con, user.id, order_id, 0, 0, printer.id, location_id);
 			Transaction.addTicket(con, transaction_id, id, Transaction.TICKET_UNPRINTED);
 			commit(con);
 		} finally {
@@ -230,7 +230,7 @@ public class Ticket extends Entity {
 		return cancelled != 0;
 	}
 
-	public void refund(User user, String method, String reference) throws SQLException {
+	public void refund(User user, String method, String reference, int location_id) throws SQLException {
 		Seat seat = Seat.getByTicket(id);
 		if (seat == null) {
 			throw new SQLException("Matching seat not found");
@@ -246,7 +246,7 @@ public class Ticket extends Entity {
 			this.paid = 0;
 
 			// Create a transaction
-			int transaction_id = Transaction.create(con, user.id, order_id, 0, 0, 0, 0);
+			int transaction_id = Transaction.create(con, user.id, order_id, 0, 0, 0, location_id);
 			Transaction.addTicket(con, transaction_id, id, Transaction.TICKET_REFUNDED);
 			Transaction.addTicket(con, transaction_id, id, Transaction.TICKET_CANCELLED);
 

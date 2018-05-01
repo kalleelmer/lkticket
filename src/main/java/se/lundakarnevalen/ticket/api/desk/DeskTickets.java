@@ -14,7 +14,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import java.sql.SQLException;
 
-
 @Api(value = "Desk")
 @Path("/desk/tickets")
 @RolesAllowed("USER")
@@ -40,7 +39,7 @@ public class DeskTickets extends Request {
 			throw new ClientErrorException(409);
 		}
 		User user = User.getCurrent(context);
-		ticket.refund(user, json.getString("method"), json.getString("reference"));
+		ticket.refund(user, json.getString("method"), json.getString("reference"), json.getInt("location_id"));
 		return status(200).entity(ticket).build();
 	}
 }
