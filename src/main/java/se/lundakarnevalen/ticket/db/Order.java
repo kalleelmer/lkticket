@@ -11,6 +11,8 @@ import java.sql.*;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.ws.rs.ClientErrorException;
+
 @Table(name = "orders")
 public class Order extends Entity {
 	@Column
@@ -110,7 +112,7 @@ public class Order extends Entity {
 	}
 
 	public List<Ticket> addTickets(Performance performance, int category_id, int rate_id, int profile_id,
-			int ticketCount, User user, Location location) throws SQLException {
+			int ticketCount, User user, Location location, boolean block_free) throws SQLException {
 		System.out.println("Reserving " + ticketCount + " tickets for perf=" + performance.id + ", cat=" + category_id
 				+ ", rate=" + rate_id + " and profile=" + profile_id);
 		Connection con = getCon();
@@ -135,6 +137,9 @@ public class Order extends Entity {
 
 				int ticketPrice = Math.max(0, price.price + performance.surcharge);
 				if (price.price == 0) {
+					if(block_free) {
+						throw new ClientErrorException("Free tickets denied", 403);
+					}
 					// Complimentary tickets are not subject to surcharge
 					ticketPrice = 0;
 				}
