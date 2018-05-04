@@ -2,13 +2,18 @@ package se.lundakarnevalen.ticket.db;
 
 import se.lundakarnevalen.ticket.db.framework.Column;
 import se.lundakarnevalen.ticket.db.framework.Mapper;
+import se.lundakarnevalen.ticket.db.framework.Table;
 
 import java.sql.*;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import lombok.Getter;
+
+@Table(name = "transactions")
 public class Transaction extends Entity {
 	public static final int TICKET_PAID = 1;
 	public static final int CUSTOMER_SET = 2;
@@ -21,14 +26,19 @@ public class Transaction extends Entity {
 	public static final int TICKET_UNPRINTED = 9;
 
 	@Column
+	@Getter
 	public final int id;
 	@Column
+	@Getter
 	protected int user_id;
 	@Column
+	@Getter
 	protected Timestamp date;
 	@Column
+	@Getter
 	protected int order_id;
 	@Column
+	@Getter
 	protected int profile_id;
 
 	private static final String TABLE = "`transactions`";
@@ -113,5 +123,13 @@ public class Transaction extends Entity {
 		report.put("refunds", totalRefunds);
 		report.put("net", totalSales - totalRefunds);
 		return report;
+	}
+
+	public static List<Transaction> getByOrder(int order_id) throws SQLException {
+		String query = "SELECT " + COLS + " FROM " + TABLE + " WHERE `order_id`=?";
+		System.out.println(query);
+		PreparedStatement stmt = prepare(query);
+		stmt.setInt(1, order_id);
+		return new Mapper<Transaction>(stmt).toEntityList(Transaction::create);
 	}
 }

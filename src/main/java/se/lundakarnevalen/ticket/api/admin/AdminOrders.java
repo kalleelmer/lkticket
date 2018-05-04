@@ -3,12 +3,17 @@ package se.lundakarnevalen.ticket.api.admin;
 import io.swagger.annotations.Api;
 import se.lundakarnevalen.ticket.api.desk.DeskOrders;
 import se.lundakarnevalen.ticket.db.Order;
+import se.lundakarnevalen.ticket.db.Transaction;
 
 import java.sql.SQLException;
+import java.util.List;
+
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.ClientErrorException;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
@@ -26,5 +31,12 @@ public class AdminOrders extends DeskOrders {
 		}
 		Order.cleanup(profile_id);
 		return status(204).build();
+	}
+
+	@GET
+	@Path("/{order_id}/transactions")
+	public Response getTransactions(@PathParam("order_id") int order_id) throws SQLException {
+		List<Transaction> transactions = Transaction.getByOrder(order_id);
+		return status(200).entity(transactions).build();
 	}
 }
