@@ -96,8 +96,8 @@ public abstract class Entity {
 				String prefix = fieldTable.isEmpty() ? classPrefix : "`" + fieldTable + "`.";
 				String fieldColumn = column.column().isEmpty() ? field.getName() : column.column();
 				cols.append((index == 0 ? "" : ",") + prefix + "`" + fieldColumn + "` as `" + field.getName() + "`");
+				index++;
 			}
-			index++;
 		}
 		System.out.println(cols.toString());
 		return cols.toString();
