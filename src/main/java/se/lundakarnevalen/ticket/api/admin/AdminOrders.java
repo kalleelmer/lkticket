@@ -26,11 +26,12 @@ import javax.ws.rs.core.Response;
 public class AdminOrders extends DeskOrders {
 	@POST
 	@Path("/cleanup")
-	public Response cleanup(@QueryParam("profile_id") int profile_id) throws SQLException {
+	public Response cleanup(@QueryParam("profile_id") int profile_id, @QueryParam("customer_mode") String customer_mode)
+			throws SQLException {
 		if (profile_id == 0) {
 			throw new ClientErrorException(400);
 		}
-		Order.cleanup(profile_id);
+		Order.cleanup(profile_id, "any".equals(customer_mode));
 		return status(204).build();
 	}
 

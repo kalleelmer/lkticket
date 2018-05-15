@@ -137,7 +137,7 @@ public class Order extends Entity {
 
 				int ticketPrice = Math.max(0, price.price + performance.surcharge);
 				if (price.price == 0) {
-					if(block_free) {
+					if (block_free) {
 						throw new ClientErrorException("Free tickets denied", 403);
 					}
 					// Complimentary tickets are not subject to surcharge
@@ -221,7 +221,7 @@ public class Order extends Entity {
 		return !tickets.isEmpty();
 	}
 
-	public static void cleanup(int profile_id) throws SQLException {
+	public static void cleanup(int profile_id, boolean all_customers) throws SQLException {
 		System.out.println("Starting abandoned order cleanup");
 		Connection con = transaction();
 		try {
@@ -230,12 +230,16 @@ public class Order extends Entity {
 					+ " FROM `seats` LEFT JOIN `tickets` ON `seats`.`active_ticket_id` = `tickets`.`id`"
 					+ " LEFT JOIN `orders` ON `tickets`.`order_id` = `orders`.`id`"
 					+ " WHERE `seats`.`profile_id`=? AND `orders`.`expires` < (NOW() - INTERVAL 10 MINUTE)"
-					+ " AND `tickets`.`paid` IS NULL AND `tickets`.`printed` IS NULL"
-					+ " AND (`orders`.`customer_id` IS NULL OR `orders`.`customer_id`"
-					+ " IN (SELECT `customer_id` FROM `customer_profiles` WHERE `profile_id`=?))";
+					+ " AND `tickets`.`paid` IS NULL AND `tickets`.`printed` IS NULL";
+			if (!all_customers) {
+				query += " AND (`orders`.`customer_id` IS NULL OR `orders`.`customer_id`"
+						+ " IN (SELECT `customer_id` FROM `customer_profiles` WHERE `profile_id`=?))";
+			}
 			PreparedStatement stmt = prepare(con, query);
 			stmt.setInt(1, profile_id);
-			stmt.setInt(2, profile_id);
+			if (!all_customers) {
+				stmt.setInt(2, profile_id);
+			}
 			ResultSet rs = stmt.executeQuery();
 
 			String removeTicketQuery = "UPDATE `tickets` SET `order_id`=NULL WHERE `id`=?";
