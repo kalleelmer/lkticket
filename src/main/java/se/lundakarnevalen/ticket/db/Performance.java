@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -121,5 +122,34 @@ public class Performance extends Entity {
 		}
 		stmt.getConnection().close();
 		return profile;
+	}
+
+	public static JSONObject getReportByShow() throws JSONException, SQLException {
+		String query = "SELECT `performances`.`start` as `performance_start`" + ", `shows`.`name` as `show_name`"
+				+ ", `categories`.`name` as `category_name`"
+				+ ", SUM(IF(`seats`.`active_ticket_id` IS NULL, 1, 0)) as `available`" //
+				+ ", COUNT(*) as `total`" //
+				+ " FROM `seats`" //
+				+ " LEFT JOIN `performances` ON `seats`.`performance_id`=`performances`.`id`"
+				+ " LEFT JOIN `categories` ON `seats`.`category_id` = `categories`.`id`"
+				+ " LEFT JOIN `tickets` ON `seats`.`active_ticket_id`=`tickets`.`id`"
+				+ " LEFT JOIN `shows` ON `performances`.`show_id` = `shows`.`id`"
+				+ " GROUP BY `show_name`, `performance_start`, `category_name`"
+				+ " ORDER BY `show_name`, `performance_start`, `category_name`;";
+		PreparedStatement stmt = prepare(query);
+		ResultSet rs = stmt.executeQuery();
+		JSONArray entries = new JSONArray();
+		while (rs.next()) {
+			JSONObject entry = new JSONObject();
+			entry.put("performance_start", rs.getString("performance_start"));
+			entry.put("show_name", rs.getString("show_name"));
+			entry.put("category_name", rs.getString("category_name"));
+			entry.put("available", rs.getInt("available"));
+			entry.put("total", rs.getInt("total"));
+			entries.put(entry);
+		}
+		JSONObject report = new JSONObject();
+		report.put("entries", entries);
+		return report;
 	}
 }

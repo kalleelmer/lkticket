@@ -2,6 +2,7 @@ package se.lundakarnevalen.ticket.api.admin;
 
 import io.swagger.annotations.Api;
 import se.lundakarnevalen.ticket.api.Request;
+import se.lundakarnevalen.ticket.db.Performance;
 import se.lundakarnevalen.ticket.db.Transaction;
 
 import java.sql.SQLException;
@@ -22,6 +23,13 @@ public class AdminReports extends Request {
 	@Path("/sales")
 	public Response getSales() throws SQLException, JSONException {
 		JSONObject report = Transaction.getSales();
+		return status(200).entity(report.toString()).build();
+	}
+
+	@GET
+	@Path("/shows")
+	public Response getShow() throws SQLException, JSONException {
+		JSONObject report = Performance.getReportByShow();
 		return status(200).entity(report.toString()).build();
 	}
 }
