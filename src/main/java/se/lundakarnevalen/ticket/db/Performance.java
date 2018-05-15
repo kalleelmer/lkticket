@@ -126,9 +126,11 @@ public class Performance extends Entity {
 
 	public static JSONObject getReportByShow() throws JSONException, SQLException {
 		String query = "SELECT `performances`.`start` as `performance_start`" + ", `shows`.`name` as `show_name`"
-				+ ", `categories`.`name` as `category_name`"
+				+ ", `categories`.`name` as `category_name`" + ", COUNT(*) as `total`" //
 				+ ", SUM(IF(`seats`.`active_ticket_id` IS NULL, 1, 0)) as `available`" //
-				+ ", COUNT(*) as `total`" //
+				+ ", SUM(IF(`tickets`.`paid`=1, 1, 0)) as `paid`" //
+				+ ", SUM(IF(`tickets`.`paid`=1 AND `tickets`.`printed`=1, 1, 0)) as `printed`" //
+				+ ", SUM(IF(`tickets`.`paid`=1 AND `tickets`.`printed` IS NULL, 1, 0)) as `nonprinted`" //
 				+ " FROM `seats`" //
 				+ " LEFT JOIN `performances` ON `seats`.`performance_id`=`performances`.`id`"
 				+ " LEFT JOIN `categories` ON `seats`.`category_id` = `categories`.`id`"
@@ -146,6 +148,9 @@ public class Performance extends Entity {
 			entry.put("category_name", rs.getString("category_name"));
 			entry.put("available", rs.getInt("available"));
 			entry.put("total", rs.getInt("total"));
+			entry.put("paid", rs.getInt("paid"));
+			entry.put("printed", rs.getInt("printed"));
+			entry.put("nonprinted", rs.getInt("nonprinted"));
 			entries.put(entry);
 		}
 		JSONObject report = new JSONObject();
