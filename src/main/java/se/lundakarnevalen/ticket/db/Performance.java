@@ -143,7 +143,7 @@ public class Performance extends Entity {
 		JSONArray entries = new JSONArray();
 		while (rs.next()) {
 			JSONObject entry = new JSONObject();
-			entry.put("performance_start", rs.getString("performance_start"));
+			entry.put("performance_start", rs.getTimestamp("performance_start").getTime());
 			entry.put("show_name", rs.getString("show_name"));
 			entry.put("category_name", rs.getString("category_name"));
 			entry.put("available", rs.getInt("available"));
