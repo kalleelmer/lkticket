@@ -120,4 +120,13 @@ public class Seat extends Entity {
 		stmt.setInt(1, id);
 		stmt.executeUpdate();
 	}
+
+	public static void add(Performance perf, Category cat) throws SQLException {
+		String query = "INSERT INTO `seats` (`performance_id`, `category_id`) VALUES (?, ?)";
+		PreparedStatement stmt = prepare(query);
+		stmt.setInt(1, perf.id);
+		stmt.setInt(2, cat.id);
+		stmt.executeUpdate();
+		stmt.getConnection().close();
+	}
 }

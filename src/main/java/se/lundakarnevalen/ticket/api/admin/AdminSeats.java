@@ -4,6 +4,8 @@ import io.swagger.annotations.Api;
 import org.json.JSONException;
 import org.json.JSONObject;
 import se.lundakarnevalen.ticket.api.Request;
+import se.lundakarnevalen.ticket.db.Category;
+import se.lundakarnevalen.ticket.db.Performance;
 import se.lundakarnevalen.ticket.db.Profile;
 import se.lundakarnevalen.ticket.db.Seat;
 
@@ -22,6 +24,17 @@ public class AdminSeats extends Request {
 	public Response getSeat(@PathParam("id") int id) throws SQLException {
 		Seat seat = Seat.getSingle(id);
 		return status(200).entity(seat).build();
+	}
+
+	@POST
+	public Response addSeat(String data) throws SQLException, JSONException {
+		JSONObject input = new JSONObject(data);
+		Performance perf = Performance.getSingle(input.getInt("performance_id"));
+		assertNotNull(perf);
+		Category cat = Category.getSingle(input.getInt("category_id"));
+		assertNotNull(cat);
+		Seat.add(perf, cat);
+		return status(204).build();
 	}
 
 	@PUT
