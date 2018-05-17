@@ -31,9 +31,15 @@ public class Performance extends Entity {
 	@Getter
 	protected String title;
 
+	// Printed on ticket if present
 	@Column
 	@Getter
 	protected String note;
+	
+	// Shown in list if present
+	@Column
+	@Getter
+	protected String label;
 
 	private static final String TABLE = "`performances`";
 	private static final String COLS = Entity.getCols(Performance.class);
