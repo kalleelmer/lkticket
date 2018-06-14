@@ -29,7 +29,7 @@ public class Order extends Entity {
 	@Column
 	@Getter
 	protected int customer_id;
-	@Column(table = "payments", column = "id")
+	@Column(table = "payments", column = "id", specifier="MIN(`payments`.`id`)")
 	@Getter
 	protected int payment_id;
 
@@ -67,6 +67,7 @@ public class Order extends Entity {
 
 	public static Order getSingle(long id) throws SQLException {
 		String query = "SELECT " + COLS + " FROM " + TABLE + " WHERE `orders`.`id`=?" + " GROUP BY `orders`.`id`";
+		System.err.println(query);
 		PreparedStatement stmt = prepare(query);
 		stmt.setLong(1, id);
 		return new Mapper<Order>(stmt).toEntity(rs -> Order.create(rs));

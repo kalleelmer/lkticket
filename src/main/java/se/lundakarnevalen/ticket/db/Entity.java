@@ -25,129 +25,135 @@ import se.lundakarnevalen.ticket.db.framework.Table;
  */
 public abstract class Entity {
 
-	protected static Connection getCon() throws SQLException {
-		try {
-			Class.forName("com.mysql.jdbc.Driver");
-			String dbName = Environment.getProperty("db.name");
-			String userName = Environment.getProperty("db.user");
-			String password = Environment.getProperty("db.password");
-			String hostname = Environment.getProperty("db.host");
-			String port = Environment.getProperty("db.port");
-			String jdbcUrl = "jdbc:mysql://" + hostname + ":" + port + "/" + dbName + "?user=" + userName + "&password="
-					+ password + "&serverTimezone=UTC";
-			Connection con = DriverManager.getConnection(jdbcUrl);
-			return con;
-		} catch (ClassNotFoundException e) {
-			throw new SQLException(e);
-		}
-	}
+    protected static Connection getCon() throws SQLException {
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            String dbName = Environment.getProperty("db.name");
+            String userName = Environment.getProperty("db.user");
+            String password = Environment.getProperty("db.password");
+            String hostname = Environment.getProperty("db.host");
+            String port = Environment.getProperty("db.port");
+            String jdbcUrl = "jdbc:mysql://" + hostname + ":" + port + "/" + dbName + "?user=" + userName + "&password="
+                    + password + "&serverTimezone=UTC";
+            Connection con = DriverManager.getConnection(jdbcUrl);
+            return con;
+        } catch (ClassNotFoundException e) {
+            throw new SQLException(e);
+        }
+    }
 
-	/** Open a new connection with AutoCommit disabled. */
-	protected static Connection transaction() throws SQLException {
-		Connection con = getCon();
-		con.setAutoCommit(false);
-		return con;
-	}
+    /** Open a new connection with AutoCommit disabled. */
+    protected static Connection transaction() throws SQLException {
+        Connection con = getCon();
+        con.setAutoCommit(false);
+        return con;
+    }
 
-	/** Commit and close. */
-	protected static void commit(Connection con) throws SQLException {
-		con.commit();
-		con.close();
-	}
+    /** Commit and close. */
+    protected static void commit(Connection con) throws SQLException {
+        con.commit();
+        con.close();
+    }
 
-	/** Rollback and close connection, if not already closed. */
-	protected static void rollback(Connection con) throws SQLException {
-		if (!con.isClosed()) {
-			con.rollback();
-			con.close();
-		}
-	}
+    /** Rollback and close connection, if not already closed. */
+    protected static void rollback(Connection con) throws SQLException {
+        if (!con.isClosed()) {
+            con.rollback();
+            con.close();
+        }
+    }
 
-	protected static ResultSet query(String query) throws SQLException {
-		return getCon().createStatement().executeQuery(query);
-	}
+    protected static ResultSet query(String query) throws SQLException {
+        return getCon().createStatement().executeQuery(query);
+    }
 
-	protected static PreparedStatement prepare(String query) throws SQLException {
-		return getCon().prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-	}
+    protected static PreparedStatement prepare(String query) throws SQLException {
+        return getCon().prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+    }
 
-	protected static PreparedStatement prepare(Connection con, String query) throws SQLException {
-		return con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-	}
+    protected static PreparedStatement prepare(Connection con, String query) throws SQLException {
+        return con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+    }
 
-	/**
-	 * Generates a list of columns for an SQL query string based on @Column
-	 * annotations on the fields.
-	 * 
-	 * @param entity
-	 * @return A String in the format "`id`,`col1`,`col2`" etc.
-	 */
-	public static String getCols(Class<? extends Entity> entity) {
-		StringBuilder cols = new StringBuilder();
-		Field[] fields = entity.getDeclaredFields();
-		int index = 0;
-		String classPrefix = entity.isAnnotationPresent(Table.class)
-				? "`" + entity.getAnnotation(Table.class).name() + "`." : "";
+    /**
+     * Generates a list of columns for an SQL query string based on @Column
+     * annotations on the fields.
+     * 
+     * @param entity
+     * @return A String in the format "`id`,`col1`,`col2`" etc.
+     */
+    public static String getCols(Class<? extends Entity> entity) {
+        StringBuilder cols = new StringBuilder();
+        Field[] fields = entity.getDeclaredFields();
+        int index = 0;
+        String classPrefix = entity.isAnnotationPresent(Table.class)
+                ? "`" + entity.getAnnotation(Table.class).name() + "`." : "";
 
-		for (Field field : fields) {
-			if (field.isAnnotationPresent(Column.class)) {
-				Column column = field.getAnnotation(Column.class);
-				String fieldTable = column.table();
-				String prefix = fieldTable.isEmpty() ? classPrefix : "`" + fieldTable + "`.";
-				String fieldColumn = column.column().isEmpty() ? field.getName() : column.column();
-				cols.append((index == 0 ? "" : ",") + prefix + "`" + fieldColumn + "` as `" + field.getName() + "`");
-				index++;
-			}
-		}
-		System.out.println(cols.toString());
-		return cols.toString();
-	}
+        for (Field field : fields) {
+            if (field.isAnnotationPresent(Column.class)) {
+                Column column = field.getAnnotation(Column.class);
+                String fieldTable = column.table();
+                String prefix = fieldTable.isEmpty() ? classPrefix : "`" + fieldTable + "`.";
+                String fieldColumn = column.column().isEmpty() ? field.getName() : column.column();
+                String specifier;
+                if (column.specifier().isEmpty()) {
+                    specifier = prefix + "`" + fieldColumn + "`";
+                } else {
+                    specifier = column.specifier();
+                }
+                cols.append((index == 0 ? "" : ",") + specifier + " as `" + field.getName() + "`");
+                index++;
+            }
+        }
+        System.out.println(cols.toString());
+        return cols.toString();
+    }
 
-	public static void populateColumns(Entity object, ResultSet rs) throws SQLException {
-		Class<? extends Entity> entity = object.getClass();
-		Field[] fields = entity.getDeclaredFields();
-		try {
-			for (Field field : fields) {
-				if (field.isAnnotationPresent(Column.class) && !Modifier.isFinal(field.getModifiers())) {
-					if (field.getType().equals(int.class)) {
-						field.setInt(object, rs.getInt(field.getName()));
-					} else if (field.getType().equals(String.class)) {
-						field.set(object, rs.getString(field.getName()));
-					} else if (field.getType().equals(Timestamp.class)) {
-						field.set(object, rs.getTimestamp(field.getName()));
-					} else if (field.getType().equals(double.class)) {
-						field.setDouble(object, rs.getDouble(field.getName()));
-					} else {
-						throw new SQLException("Unknown column type '" + field.getType().toString() + "'");
-					}
-				}
-			}
-		} catch (IllegalArgumentException | IllegalAccessException e) {
-			throw new SQLException(e);
-		}
-	}
+    public static void populateColumns(Entity object, ResultSet rs) throws SQLException {
+        Class<? extends Entity> entity = object.getClass();
+        Field[] fields = entity.getDeclaredFields();
+        try {
+            for (Field field : fields) {
+                if (field.isAnnotationPresent(Column.class) && !Modifier.isFinal(field.getModifiers())) {
+                    if (field.getType().equals(int.class)) {
+                        field.setInt(object, rs.getInt(field.getName()));
+                    } else if (field.getType().equals(String.class)) {
+                        field.set(object, rs.getString(field.getName()));
+                    } else if (field.getType().equals(Timestamp.class)) {
+                        field.set(object, rs.getTimestamp(field.getName()));
+                    } else if (field.getType().equals(double.class)) {
+                        field.setDouble(object, rs.getDouble(field.getName()));
+                    } else {
+                        throw new SQLException("Unknown column type '" + field.getType().toString() + "'");
+                    }
+                }
+            }
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            throw new SQLException(e);
+        }
+    }
 
-	/**
-	 * Executes an INSERT and returns the generated key.
-	 * 
-	 * @throws SQLException
-	 */
-	protected static int executeInsert(PreparedStatement stmt) throws SQLException {
-		stmt.executeUpdate();
-		ResultSet rs = stmt.getGeneratedKeys();
-		if (!rs.next()) {
-			throw new SQLException("No AUTO_INCREMENT ID generated");
-		}
-		int id = rs.getInt(1);
-		return id;
-	}
+    /**
+     * Executes an INSERT and returns the generated key.
+     * 
+     * @throws SQLException
+     */
+    protected static int executeInsert(PreparedStatement stmt) throws SQLException {
+        stmt.executeUpdate();
+        ResultSet rs = stmt.getGeneratedKeys();
+        if (!rs.next()) {
+            throw new SQLException("No AUTO_INCREMENT ID generated");
+        }
+        int id = rs.getInt(1);
+        return id;
+    }
 
-	/** Set an integer where 0 becomes NULL. */
-	protected static void setIntNullable(PreparedStatement stmt, int index, int value) throws SQLException {
-		if (value == 0) {
-			stmt.setNull(index, Types.INTEGER);
-		} else {
-			stmt.setInt(index, value);
-		}
-	}
+    /** Set an integer where 0 becomes NULL. */
+    protected static void setIntNullable(PreparedStatement stmt, int index, int value) throws SQLException {
+        if (value == 0) {
+            stmt.setNull(index, Types.INTEGER);
+        } else {
+            stmt.setInt(index, value);
+        }
+    }
 }

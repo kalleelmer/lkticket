@@ -12,4 +12,6 @@ public @interface Column {
 	String table() default "";
 
 	String column() default "";
+
+	String specifier() default "";
 }
